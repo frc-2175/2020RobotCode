@@ -1,5 +1,6 @@
 package frc.info;
 
+import java.io.File;
 import java.util.HashMap;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -14,12 +15,32 @@ public class RobotInfo {
 	}
 
     private static final String CAN_T_CONTINUE_MSG = "; can't continue";
-    private final boolean isComp;
+    private boolean isComp = true;
     private HashMap<String, Object> info;
 
     public RobotInfo() {
+        File propertyDirectory = new File("/home/lvuser");
+        if(propertyDirectory.exists()) {
+            boolean hasComp = false;
+            boolean hasPractice = false;
+            File[] lvuserFiles = propertyDirectory.listFiles();
+            for (File file : lvuserFiles) { //look through every file in here!! and check what they have
+                if ( file.getName().equals("practice")) { //seeing if it has practice file
+                    hasPractice = true;
+                }
+                if (file.getName().equals("comp")) { //seeing if it has comp file
+                    hasComp = true; 
+                }
+            }
+            if (!hasComp && hasPractice) { //only be practice mode if there's only the practice file 
+                isComp = false;
+            } else {
+                isComp = true;
+            } //TODO: add a lil message in case there's nothing there??
+        } else { //if the whole directory isn't even there then we guess it's comp??????
+            isComp = true;
+        }
 		ServiceLocator.register(this);
-        isComp = true;
         info = new HashMap<>();
         populate();
     }
