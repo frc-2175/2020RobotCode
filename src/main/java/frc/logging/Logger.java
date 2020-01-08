@@ -2,7 +2,6 @@ package frc.logging;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 
 public class Logger {
     public ArrayList<LogField> baseFields;
@@ -110,18 +109,5 @@ public class Logger {
             default:
                 return "?";
         }
-    }
-
-    public static void main(String args[]) {
-        // Example with base fields
-        Logger logger = new Logger(new LogHandler[] {
-            new StdoutHandler()
-        }, new LogField("Robot", "Competition"), new LogField("Team", 2175));
-
-        // Example without base fields
-        // Logger logger = new Logger(new LogHandler[] {
-        //     new StdoutHandler()
-        // });
-        logger.info("Test log", new LogField("GryoAngle", 22.2), new LogField("LeftEncoder", 400));
     }
 }
