@@ -7,9 +7,14 @@
 
 package frc.robot;
 
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -23,6 +28,34 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  CANSparkMax prototypeMotor;
+  Joystick gamepad;
+  /*
+      (y)
+  (x)     (b)
+      (a)
+  */
+  public static final int GAMEPAD_X = 1;
+	public static final int GAMEPAD_A = 2;
+	public static final int GAMEPAD_B = 3;
+	public static final int GAMEPAD_Y = 4;
+	public static final int GAMEPAD_LEFT_BUMPER = 5;
+	public static final int GAMEPAD_RIGHT_BUMPER = 6;
+	public static final int GAMEPAD_LEFT_TRIGGER = 7;
+	public static final int GAMEPAD_RIGHT_TRIGGER = 8;
+	public static final int GAMEPAD_BACK = 9;
+	public static final int GAMEPAD_START = 10;
+	public static final int GAMEPAD_LEFT_STICK_PRESS = 11;
+	public static final int GAMEPAD_RIGHT_STICK_PRESS = 12;
+
+	public static final int POV_UP = 0;
+	public static final int POV_UP_RIGHT = 45;
+	public static final int POV_RIGHT = 90;
+	public static final int POV_DOWN_RIGHT = 135;
+	public static final int POV_DOWN = 180;
+	public static final int POV_DOWN_LEFT = 225;
+	public static final int POV_LEFT = 270;
+	public static final int POV_UP_LEFT = 315;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -33,6 +66,8 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
+    prototypeMotor = new CANSparkMax(0, MotorType.kBrushless);
+    gamepad = new Joystick(0);
   }
 
   /**
@@ -86,6 +121,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
+    if(gamepad.getRawButton(GAMEPAD_X)) {
+      prototypeMotor.set(1);
+    } else {
+      prototypeMotor.set(0);
+    }
   }
 
   /**
