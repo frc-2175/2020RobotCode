@@ -8,8 +8,20 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import frc.MotorWrapper;
 import frc.ServiceLocator;
+import frc.SolenoidWrapper;
+import frc.info.RobotInfo.ValueContainer;
 
 public class RobotInfo {
+
+    public static final String LEFT_MOTOR_MASTER = "LEFT_MOTOR_MASTER";
+    public static final String LEFT_MOTOR_FOLLOWER_ONE = "LEFT_MOTOR_FOLLOWER_ONE";
+    public static final String LEFT_MOTOR_FOLLOWER_TWO = "LEFT_MOTOR_FOLLOWER_TWO";
+	public static final String RIGHT_MOTOR_MASTER = "RIGHT_MOTOR_MASTER";
+    public static final String RIGHT_MOTOR_FOLLOWER_ONE = "RIGHT_MOTOR_FOLLOWER_ONE";
+    public static final String RIGHT_MOTOR_FOLLOWER_TWO = "RIGHT_MOTOR_FOLLOWER_TWO";
+    public static final String LEFT_PISTON = "LEFT_PISTON";
+    public static final String RIGHT_PISTON = "RIGHT_PISTON";
+    
 	public static interface ValueContainer {
 		public Object get();
 	}
@@ -50,6 +62,14 @@ public class RobotInfo {
      * @see frc.info.RobotInfo#put(String, Object)
      * */
     public void populate() {
+        put(LEFT_MOTOR_MASTER, talon(new WPI_TalonSRX(1)));
+        put(LEFT_MOTOR_FOLLOWER_ONE, victor(new WPI_VictorSPX(2)));
+        put(LEFT_MOTOR_FOLLOWER_TWO, victor(new WPI_VictorSPX(3)));
+        put(RIGHT_MOTOR_MASTER, talon(new WPI_TalonSRX(4)));
+		put(RIGHT_MOTOR_FOLLOWER_ONE, victor(new WPI_VictorSPX(5)));
+        put(RIGHT_MOTOR_FOLLOWER_TWO, victor(new WPI_VictorSPX(6)));
+        put(LEFT_PISTON, () -> new SolenoidWrapper(1));
+        put(RIGHT_PISTON, () -> new SolenoidWrapper(2));
 	}
 
 	private MotorWrapper talon(WPI_TalonSRX talon) {
