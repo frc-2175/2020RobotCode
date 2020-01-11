@@ -7,8 +7,8 @@
 
 package frc.robot;
 
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -28,7 +28,10 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  CANSparkMax prototypeMotor;
+  WPI_VictorSPX leftMotor1;
+  WPI_VictorSPX leftMotor2;
+  WPI_TalonSRX rightMotor1;
+  WPI_VictorSPX rightMotor2;
   Joystick gamepad;
   /*
       (y)
@@ -55,7 +58,9 @@ public class Robot extends TimedRobot {
 	public static final int POV_DOWN = 180;
 	public static final int POV_DOWN_LEFT = 225;
 	public static final int POV_LEFT = 270;
-	public static final int POV_UP_LEFT = 315;
+  public static final int POV_UP_LEFT = 315;
+
+  public static final double topSpeed = 1;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -66,7 +71,10 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    prototypeMotor = new CANSparkMax(0, MotorType.kBrushless);
+    leftMotor2 = new WPI_VictorSPX(2);
+    leftMotor1 = new WPI_VictorSPX(5);
+    rightMotor1 = new WPI_TalonSRX(9);
+    rightMotor2 = new WPI_VictorSPX(1);
     gamepad = new Joystick(0);
   }
 
@@ -98,6 +106,7 @@ public class Robot extends TimedRobot {
     m_autoSelected = m_chooser.getSelected();
     // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
     System.out.println("Auto selected: " + m_autoSelected);
+
   }
 
   /**
@@ -121,10 +130,21 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    if(gamepad.getRawButton(GAMEPAD_X)) {
-      prototypeMotor.set(1);
+    leftMotor2.set(deadband(-gamepad.getRawAxis(1),.05)*topSpeed); //set left side wheels to go by gamepad joystick, and modify by top speed ratio
+    rightMotor2.set(deadband(-gamepad.getRawAxis(3),.05)*topSpeed);
+    if(gamepad.getRawButton(GAMEPAD_LEFT_BUMPER)) {
+      leftMotor1.set(-.7);
+      rightMotor1.set(.7);
     } else {
-      prototypeMotor.set(0);
+      leftMotor1.set(0);
+      rightMotor1.set(0);
+    }
+    if(gamepad.getRawButton(GAMEPAD_B)) {
+      leftMotor2.set(-.75*topSpeed);
+      rightMotor2.set(1*topSpeed);
+    } else if(gamepad.getRawButton(GAMEPAD_A)) {
+      leftMotor2.set(-.5*topSpeed);
+      rightMotor2.set(1*topSpeed);
     }
   }
 
@@ -134,4 +154,16 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
   }
+
+  public static double deadband(double value, double deadband) {
+		if (Math.abs(value) > deadband) {
+			if (value > 0.0) {
+				return (value - deadband) / (1.0 - deadband);
+			} else {
+				return (value + deadband) / (1.0 - deadband);
+			}
+		} else {
+			return 0.0;
+		}
+	}
 }
