@@ -36,6 +36,7 @@ public class Robot extends TimedRobot {
   WPI_VictorSPX leftMotor2;
   WPI_TalonSRX rightMotor1;
   WPI_VictorSPX rightMotor2;
+  WPI_VictorSPX rollerbarMotor;
   Joystick gamepad;
   /*
       (y)
@@ -64,7 +65,7 @@ public class Robot extends TimedRobot {
 	public static final int POV_LEFT = 270;
   public static final int POV_UP_LEFT = 315;
 
-  public static final double topSpeed = .75;
+  public static final double topSpeed = .5;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -79,6 +80,7 @@ public class Robot extends TimedRobot {
     leftMotor1 = new FC_VictorSPX(5);
     rightMotor1 = new FC_TalonSRX(9);
     rightMotor2 = new FC_VictorSPX(1);
+    rollerbarMotor = new FC_VictorSPX(7);
     gamepad = new Joystick(0);
   }
 
@@ -135,7 +137,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     leftMotor2.set(deadband(gamepad.getRawAxis(1),.05)*topSpeed); //set left side wheels to go by gamepad joystick, and modify by top speed ratio
-    rightMotor2.set(deadband(gamepad.getRawAxis(3),.05)*topSpeed);
+    rollerbarMotor.set(deadband(gamepad.getRawAxis(3),.05)*topSpeed);
     if(gamepad.getRawButton(GAMEPAD_LEFT_BUMPER)) {
       leftMotor1.set(.5);
       rightMotor1.set(.5);
@@ -150,7 +152,6 @@ public class Robot extends TimedRobot {
       leftMotor2.set(-.5*topSpeed);
       rightMotor2.set(1*topSpeed);
     }
-    karinaSpeed.set(leftMotor2.get());
   }
 
   /**
