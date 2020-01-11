@@ -10,10 +10,9 @@ package frc.robot;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-import edu.wpi.first.hal.SimDevice;
-import edu.wpi.first.hal.SimDouble;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.wrappers.FC_TalonSRX;
@@ -32,12 +31,17 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  
   WPI_VictorSPX leftMotor1;
-  WPI_VictorSPX leftMotor2;
-  WPI_TalonSRX rightMotor1;
+  WPI_TalonSRX leftMotor2;
+  WPI_VictorSPX rightMotor1;
   WPI_VictorSPX rightMotor2;
   WPI_VictorSPX rollerbarMotor;
   Joystick gamepad;
+  Joystick leftJoystick;
+  Joystick rightJoystick;
+  DifferentialDrive driving;
+  
   /*
       (y)
   (x)     (b)
@@ -76,12 +80,20 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    leftMotor2 = new FC_VictorSPX(2);
+    
+    leftMotor2 = new FC_TalonSRX(9);
     leftMotor1 = new FC_VictorSPX(5);
-    rightMotor1 = new FC_TalonSRX(9);
-    rightMotor2 = new FC_VictorSPX(1);
-    rollerbarMotor = new FC_VictorSPX(7);
+    rightMotor1 = new FC_VictorSPX(1);
+    rightMotor2 = new FC_VictorSPX(2);
+    rollerbarMotor = new FC_VictorSPX(6);
+
     gamepad = new Joystick(0);
+    leftJoystick = new Joystick(1);
+    rightJoystick = new Joystick(2);
+    
+    leftMotor2.follow(leftMotor1);
+    rightMotor2.follow(rightMotor1);
+    driving = new DifferentialDrive(leftMotor1, rightMotor1);
   }
 
   /**
@@ -136,9 +148,17 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    leftMotor2.set(deadband(gamepad.getRawAxis(1),.05)*topSpeed); //set left side wheels to go by gamepad joystick, and modify by top speed ratio
-    rollerbarMotor.set(deadband(gamepad.getRawAxis(3),.05)*topSpeed);
-    if(gamepad.getRawButton(GAMEPAD_LEFT_BUMPER)) {
+    //leftMotor2.set(deadband(gamepad.getRawAxis(1),.05)*topSpeed); //set left side wheels to go by gamepad joystick, and modify by top speed ratio
+
+    if(rightJoystick.getRawButton(1)) {
+      rollerbarMotor.set(1);
+    } else {
+      rollerbarMotor.set(0);
+    }
+
+    driving.curvatureDrive(deadband(leftJoystick.getY(), .05), deadband(rightJoystick.getX(), .05), true);
+
+    /* if(gamepad.getRawButton(GAMEPAD_LEFT_BUMPER)) {
       leftMotor1.set(.5);
       rightMotor1.set(.5);
     } else {
@@ -151,7 +171,7 @@ public class Robot extends TimedRobot {
     } else if(gamepad.getRawButton(GAMEPAD_A)) {
       leftMotor2.set(-.5*topSpeed);
       rightMotor2.set(1*topSpeed);
-    }
+    } */
   }
 
   /**
