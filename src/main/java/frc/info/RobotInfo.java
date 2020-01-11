@@ -26,7 +26,6 @@ public class RobotInfo {
 		public Object get();
 	}
 
-    private static final String CAN_T_CONTINUE_MSG = "; can't continue";
     private boolean isComp = true;
     private HashMap<String, Object> info;
 
@@ -62,12 +61,12 @@ public class RobotInfo {
      * @see frc.info.RobotInfo#put(String, Object)
      * */
     public void populate() {
-        put(LEFT_MOTOR_MASTER, talon(new WPI_TalonSRX(1)));
-        put(LEFT_MOTOR_FOLLOWER_ONE, victor(new WPI_VictorSPX(2)));
-        put(LEFT_MOTOR_FOLLOWER_TWO, victor(new WPI_VictorSPX(3)));
-        put(RIGHT_MOTOR_MASTER, talon(new WPI_TalonSRX(4)));
-		put(RIGHT_MOTOR_FOLLOWER_ONE, victor(new WPI_VictorSPX(5)));
-        put(RIGHT_MOTOR_FOLLOWER_TWO, victor(new WPI_VictorSPX(6)));
+        put(LEFT_MOTOR_MASTER, () -> talon(new WPI_TalonSRX(1)));
+        put(LEFT_MOTOR_FOLLOWER_ONE, () -> victor(new WPI_VictorSPX(2)));
+        put(LEFT_MOTOR_FOLLOWER_TWO, () -> victor(new WPI_VictorSPX(3)));
+        put(RIGHT_MOTOR_MASTER, () -> talon(new WPI_TalonSRX(4)));
+		put(RIGHT_MOTOR_FOLLOWER_ONE, () -> victor(new WPI_VictorSPX(5)));
+        put(RIGHT_MOTOR_FOLLOWER_TWO, () -> victor(new WPI_VictorSPX(6)));
         put(LEFT_PISTON, () -> new SolenoidWrapper(1));
         put(RIGHT_PISTON, () -> new SolenoidWrapper(2));
 	}
@@ -87,27 +86,6 @@ public class RobotInfo {
 	private MotorWrapper victor(WPI_VictorSPX victor, boolean inverted) {
 		return new MotorWrapper(victor, inverted);
 	}
-    /**
-     * Puts an object in the hash map
-     * @param key the key by which the object is referred to
-     * @param comp will be put in the hash map if the robot the code is
-     * being run on is the competition robot
-     * @param practice will be put in the has map if the robot the code is
-     * being run on is the practice robot
-     */
-    private void put(String key, Object comp, Object practice) {
-		Object choice = isComp ? comp : practice;
-		info.put(key, choice);
-	}
-    /**
-     * Puts an object in the hash map
-     * @param key the key by which the object is referred to
-     * @param value the object to put into the hash map (regardless of
-     * competition/practice robot)
-     */
-	private void put(String key, Object value) {
-		info.put(key, value);
-    }
 
     /**
      * Puts an object in the hash map. This is used for solenoids to
@@ -121,7 +99,11 @@ public class RobotInfo {
     private void put(String key, ValueContainer comp, ValueContainer practice) {
 		Object choice = isComp ? comp.get() : practice.get();
 		info.put(key, choice);
-	}
+    }
+    
+    private void put(String key, ValueContainer value) {
+        info.put(key, value.get());
+    }
 
 	// TODO(low): Should there be a version of put that take just a single ValueContainer? Technically you could always just use the version that takes a single object, but it might be nice to have consistency.
 

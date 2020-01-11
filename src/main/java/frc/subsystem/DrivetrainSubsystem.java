@@ -20,8 +20,8 @@ public class DrivetrainSubsystem {
 	private static VirtualSpeedController leftVirtualSpeedController = new VirtualSpeedController();
 	private static VirtualSpeedController rightVirtualSpeedController = new VirtualSpeedController();
 	private static DifferentialDrive virtualRobotDrive;
+	public static final double INPUT_THRESHOLD = 0.1; // TODO(low): Constants should move to the top of the class.
 	
-
     public DrivetrainSubsystem() {
         ServiceLocator.register(this);
 
