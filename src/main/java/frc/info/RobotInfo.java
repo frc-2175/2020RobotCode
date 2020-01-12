@@ -22,6 +22,8 @@ public class RobotInfo {
     public static final String LEFT_PISTON = "LEFT_PISTON";
     public static final String RIGHT_PISTON = "RIGHT_PISTON";
     public static final String INTAKE_MOTOR = "INTAKE_MOTOR";
+    public static final String SHOOTER_MOTOR_MASTER = "SHOOTER_MOTOR_MASTER";
+    public static final String SHOOTER_MOTOR_FOLLOWER = "SHOOTER_MOTOR_FOLLOWER";
     
 	public static interface ValueContainer {
 		public Object get();
@@ -71,6 +73,8 @@ public class RobotInfo {
         put(LEFT_PISTON, () -> new SolenoidWrapper(1));
         put(RIGHT_PISTON, () -> new SolenoidWrapper(2));
         put(INTAKE_MOTOR, () -> talon(new WPI_TalonSRX(9)));
+        put(SHOOTER_MOTOR_MASTER, () -> talon(new WPI_TalonSRX(7)));
+        put(SHOOTER_MOTOR_FOLLOWER, () -> talon(new WPI_TalonSRX(8)));
 	}
 
 	private MotorWrapper talon(WPI_TalonSRX talon) {

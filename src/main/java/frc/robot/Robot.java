@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.info.RobotInfo;
 import frc.subsystem.IntakeSubsystem;
+import frc.subsystem.ShooterSubsystem;
 
 
 /**
@@ -37,6 +38,7 @@ public class Robot extends TimedRobot {
   Joystick gamepad;
   public RobotInfo robotInfo;
   public IntakeSubsystem intakeSubsystem;
+  public ShooterSubsystem shooterSubsystem;
 
   /*
       (y)
@@ -84,6 +86,7 @@ public class Robot extends TimedRobot {
     gamepad = new Joystick(0);
     robotInfo = new RobotInfo();
     intakeSubsystem = new IntakeSubsystem();
+    shooterSubsystem = new ShooterSubsystem();
   }
 
   /**
@@ -161,6 +164,11 @@ public class Robot extends TimedRobot {
       intakeSubsystem.intakeRollOut();
     } else {
       intakeSubsystem.stopIntake();
+    }
+    if (gamepad.getRawButton(GAMEPAD_A)) {
+      shooterSubsystem.shootOut();
+    } else {
+      shooterSubsystem.stopShootOut();
     }
   }
 
