@@ -14,6 +14,8 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.info.RobotInfo;
+import frc.subsystem.IntakeSubsystem;
 
 
 /**
@@ -33,6 +35,9 @@ public class Robot extends TimedRobot {
   WPI_TalonSRX rightMotor1;
   WPI_VictorSPX rightMotor2;
   Joystick gamepad;
+  public RobotInfo robotInfo;
+  public IntakeSubsystem intakeSubsystem;
+
   /*
       (y)
   (x)     (b)
@@ -61,6 +66,7 @@ public class Robot extends TimedRobot {
   public static final int POV_UP_LEFT = 315;
 
   public static final double topSpeed = 1;
+  
 
   /**
    * This function is run when the robot is first started up and should be
@@ -76,6 +82,8 @@ public class Robot extends TimedRobot {
     rightMotor1 = new WPI_TalonSRX(9);
     rightMotor2 = new WPI_VictorSPX(1);
     gamepad = new Joystick(0);
+    robotInfo = new RobotInfo();
+    intakeSubsystem = new IntakeSubsystem();
   }
 
   /**
@@ -145,6 +153,14 @@ public class Robot extends TimedRobot {
     } else if(gamepad.getRawButton(GAMEPAD_A)) {
       leftMotor2.set(-.5*topSpeed);
       rightMotor2.set(1*topSpeed);
+    }
+
+    if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER)) {
+      intakeSubsystem.intakeRollIn();
+    } else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER)) {
+      intakeSubsystem.intakeRollOut();
+    } else {
+      intakeSubsystem.stopIntake();
     }
   }
 
