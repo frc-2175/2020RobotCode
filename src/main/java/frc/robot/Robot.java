@@ -69,9 +69,8 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    prototypeMotor = new WPI_TalonSRX(0);
-    otherPrototypeMotor = new WPI_TalonSRX(1);
-    otherPrototypeMotor.follow(prototypeMotor);
+    prototypeMotor = new WPI_TalonSRX(9);
+    otherPrototypeMotor = new WPI_TalonSRX(11);
     gamepad = new Joystick(0);
   }
 
@@ -128,8 +127,10 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     if(gamepad.getRawButton(GAMEPAD_X)) {
       prototypeMotor.set(1);
+      otherPrototypeMotor.set(1);
     } else {
       prototypeMotor.set(0);
+      otherPrototypeMotor.set(0);
     }
   }
 
