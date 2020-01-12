@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -28,7 +29,9 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  CANSparkMax prototypeMotor;
+  WPI_TalonSRX prototypeMotor;
+  WPI_TalonSRX otherPrototypeMotor;
+
   Joystick gamepad;
   /*
       (y)
@@ -66,7 +69,9 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    prototypeMotor = new CANSparkMax(0, MotorType.kBrushless);
+    prototypeMotor = new WPI_TalonSRX(0);
+    otherPrototypeMotor = new WPI_TalonSRX(1);
+    otherPrototypeMotor.follow(prototypeMotor);
     gamepad = new Joystick(0);
   }
 
