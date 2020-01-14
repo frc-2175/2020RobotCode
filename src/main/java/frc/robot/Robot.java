@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.info.RobotInfo;
 import frc.subsystem.IntakeSubsystem;
 import frc.subsystem.ShooterSubsystem;
+import frc.subsystem.ControlPanelSubsystem;
 
 
 /**
@@ -87,6 +88,7 @@ public class Robot extends TimedRobot {
     robotInfo = new RobotInfo();
     intakeSubsystem = new IntakeSubsystem();
     shooterSubsystem = new ShooterSubsystem();
+    controlPanelSubsystem = new ControlPanelSubsystem();
   }
 
   /**
@@ -157,7 +159,6 @@ public class Robot extends TimedRobot {
       leftMotor2.set(-.5*topSpeed);
       rightMotor2.set(1*topSpeed);
     }
-
     if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER)) {
       intakeSubsystem.intakeRollIn();
     } else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER)) {
@@ -169,6 +170,11 @@ public class Robot extends TimedRobot {
       shooterSubsystem.shootOut();
     } else {
       shooterSubsystem.stopShootOut();
+    }
+    if(gamepad.getRawButton(GAMEPAD_X)) {
+      controlPanelSubsystem.spinControlPanel();
+    } else {
+      controlPanelSubsytem.stopSpinControlPanel();
     }
   }
 
