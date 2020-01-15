@@ -29,8 +29,8 @@ public class Robot extends TimedRobot {
   private static final String kCustomAuto = "My Auto";
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  WPI_TalonSRX prototypeMotor;
-  WPI_TalonSRX otherPrototypeMotor;
+  CANSparkMax prototypeMotor;
+  CANSparkMax otherPrototypeMotor;
 
   Joystick gamepad;
   /*
@@ -69,8 +69,8 @@ public class Robot extends TimedRobot {
     m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
     m_chooser.addOption("My Auto", kCustomAuto);
     SmartDashboard.putData("Auto choices", m_chooser);
-    prototypeMotor = new WPI_TalonSRX(9);
-    otherPrototypeMotor = new WPI_TalonSRX(11);
+    prototypeMotor = new CANSparkMax(1, MotorType.kBrushless);
+    otherPrototypeMotor = new CANSparkMax(2, MotorType.kBrushless);
     gamepad = new Joystick(0);
   }
 
