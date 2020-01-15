@@ -71,6 +71,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putData("Auto choices", m_chooser);
     prototypeMotor = new CANSparkMax(1, MotorType.kBrushless);
     otherPrototypeMotor = new CANSparkMax(2, MotorType.kBrushless);
+    prototypeMotor.setInverted(false);
+    otherPrototypeMotor.setInverted(true);
     gamepad = new Joystick(0);
   }
 
