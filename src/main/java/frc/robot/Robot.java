@@ -19,7 +19,6 @@ import frc.subsystem.IntakeSubsystem;
 import frc.subsystem.ShooterSubsystem;
 import frc.subsystem.ControlPanelSubsystem;
 
-
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -40,6 +39,7 @@ public class Robot extends TimedRobot {
   public RobotInfo robotInfo;
   public IntakeSubsystem intakeSubsystem;
   public ShooterSubsystem shooterSubsystem;
+  public ControlPanelSubsystem controlPanelSubsystem;
 
   /*
       (y)
@@ -174,7 +174,7 @@ public class Robot extends TimedRobot {
     if(gamepad.getRawButton(GAMEPAD_X)) {
       controlPanelSubsystem.spinControlPanel();
     } else {
-      controlPanelSubsytem.stopSpinControlPanel();
+      controlPanelSubsystem.stopSpinControlPanel();
     }
   }
 
