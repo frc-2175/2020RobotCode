@@ -9,7 +9,9 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -40,6 +42,8 @@ public class Robot extends TimedRobot {
   public RobotInfo robotInfo;
   public IntakeSubsystem intakeSubsystem;
   public ShooterSubsystem shooterSubsystem;
+  public ControlPanelSubsystem controlPanelSubsystem;
+  public ColorSensorV3 colorSensor;
 
   /*
       (y)
@@ -70,6 +74,7 @@ public class Robot extends TimedRobot {
 
   public static final double topSpeed = 1;
   
+  
 
   /**
    * This function is run when the robot is first started up and should be
@@ -89,6 +94,7 @@ public class Robot extends TimedRobot {
     intakeSubsystem = new IntakeSubsystem();
     shooterSubsystem = new ShooterSubsystem();
     controlPanelSubsystem = new ControlPanelSubsystem();
+    colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
   }
 
   /**
@@ -174,8 +180,15 @@ public class Robot extends TimedRobot {
     if(gamepad.getRawButton(GAMEPAD_X)) {
       controlPanelSubsystem.spinControlPanel();
     } else {
-      controlPanelSubsytem.stopSpinControlPanel();
+      controlPanelSubsystem.stopSpinControlPanel();
     }
+
+    SmartDashboard.putNumber("Red", colorSensor.getColor().red);
+    SmartDashboard.putNumber("Green", colorSensor.getColor().green);
+    SmartDashboard.putNumber("Blue", colorSensor.getColor().blue);
+    SmartDashboard.putNumber("IR", colorSensor.getIR());
+    SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
+
   }
 
   /**
