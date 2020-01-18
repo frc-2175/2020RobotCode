@@ -43,7 +43,6 @@ public class Robot extends TimedRobot {
   public IntakeSubsystem intakeSubsystem;
   public ShooterSubsystem shooterSubsystem;
   public ControlPanelSubsystem controlPanelSubsystem;
-  public ColorSensorV3 colorSensor;
 
   /*
       (y)
@@ -94,7 +93,6 @@ public class Robot extends TimedRobot {
     intakeSubsystem = new IntakeSubsystem();
     shooterSubsystem = new ShooterSubsystem();
     controlPanelSubsystem = new ControlPanelSubsystem();
-    colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
   }
 
   /**
@@ -182,12 +180,12 @@ public class Robot extends TimedRobot {
     } else {
       controlPanelSubsystem.stopSpinControlPanel();
     }
-
-    SmartDashboard.putNumber("Red", colorSensor.getColor().red);
-    SmartDashboard.putNumber("Green", colorSensor.getColor().green);
-    SmartDashboard.putNumber("Blue", colorSensor.getColor().blue);
-    SmartDashboard.putNumber("IR", colorSensor.getIR());
-    SmartDashboard.putNumber("Proximity", colorSensor.getProximity());
+    double hue = ControlPanelSubsystem.getHue(controlPanelSubsystem.getColorSensorRed(), 
+      controlPanelSubsystem.getColorSensorGreen(), controlPanelSubsystem.getColorSensorBlue());
+    SmartDashboard.putNumber("ColorSensorRed", controlPanelSubsystem.getColorSensorRed());
+    SmartDashboard.putNumber("ColorSensorGreen", controlPanelSubsystem.getColorSensorGreen());
+    SmartDashboard.putNumber("ColorSensorBlue", controlPanelSubsystem.getColorSensorBlue());
+    SmartDashboard.putString("ControlPanelColor", ControlPanelSubsystem.getControlPanelColor(hue));
 
   }
 

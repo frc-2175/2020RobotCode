@@ -3,6 +3,7 @@ package frc.subsystem;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.I2C;
+import frc.MathUtility;
 import frc.MotorWrapper;
 import frc.ServiceLocator;
 import frc.info.RobotInfo;
@@ -12,10 +13,10 @@ public class ControlPanelSubsystem {
     private final RobotInfo robotInfo;
     private final MotorWrapper controlPanelMotor;
     private final ColorSensorV3 colorSensor; 
-    public static double[] controlPanelCyan = {0, 255, 255};
-    public static double[] controlPanelGreen = {0, 255, 0};
-    public static double[] controlPanelRed = {255, 0, 0};
-    public static double[] controlPanelYellow = {255, 255, 0};
+    public static double redHue = 0;
+    public static double yellowHue = 60;
+    public static double greenHue = 120;
+    public static double cyanHue = 180;
 
 
     public ControlPanelSubsystem() {
@@ -52,8 +53,24 @@ public class ControlPanelSubsystem {
         return colorSensor.getProximity();
     }
 
-    public String getControlPanelColor(double red, double green, double blue) {
-
+    public static String getControlPanelColor(double hue) {
+      double redDistance = Math.abs(MathUtility.getDistanceBetweenAngles(hue, redHue));
+      double yellowDistance = Math.abs(MathUtility.getDistanceBetweenAngles(hue, yellowHue));
+      double greenDistance = Math.abs(MathUtility.getDistanceBetweenAngles(hue, greenHue));
+      double cyanDistance = Math.abs(MathUtility.getDistanceBetweenAngles(hue, cyanHue));
+      double lowestDistance = Math.min(Math.min(redDistance, yellowDistance), Math.min(greenDistance, cyanDistance));
+      System.out.println("rd: " + redDistance + " yd: " + yellowDistance + " gd: " + greenDistance + " ld: " + lowestDistance);
+      if (lowestDistance == redDistance) {
+        return "red";
+      } else if (lowestDistance == yellowDistance) {
+        return "yellow";
+      } else if (lowestDistance == greenDistance) {
+        return "green";
+      } else if (lowestDistance == cyanDistance) {
+        return "cyan";
+      } else {
+        return "";
+      }
     }
 
     public static double getHue(double red, double green, double blue) {
@@ -67,7 +84,7 @@ public class ControlPanelSubsystem {
           return 0;
         } else if (cMax == red) {
           System.out.println("red");
-          return 60 * mod(((green - blue) / delta), 6);
+          return 60 * MathUtility.mod(((green - blue) / delta), 6);
         } else if (cMax == green) {
           System.out.println("green");
           return 60 * (((blue - red) / delta) + 2);
@@ -79,7 +96,4 @@ public class ControlPanelSubsystem {
         }
       } 
 
-      public static double mod(double a, double b) {
-        return ((a % b) + b) % b;
-      }
 }
