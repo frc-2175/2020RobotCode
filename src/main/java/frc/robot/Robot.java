@@ -31,6 +31,7 @@ public class Robot extends TimedRobot {
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
   CANSparkMax prototypeMotor;
   CANSparkMax otherPrototypeMotor;
+  double topSpeed = 1;
 
   Joystick gamepad;
   /*
@@ -127,11 +128,17 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    if(gamepad.getRawButton(GAMEPAD_X)) {
-      prototypeMotor.set(1);
-      otherPrototypeMotor.set(1);
+    if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER)) {
+      prototypeMotor.set(.75) ;
+
     } else {
       prototypeMotor.set(0);
+ 
+    }
+
+    if(gamepad.getRawButton(GAMEPAD_LEFT_BUMPER)) {
+      otherPrototypeMotor.set(.75);
+    } else {
       otherPrototypeMotor.set(0);
     }
   }
