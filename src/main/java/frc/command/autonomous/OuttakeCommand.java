@@ -5,15 +5,15 @@ import frc.ServiceLocator;
 import frc.command.Command;
 import frc.subsystem.IntakeSubsystem;
 
-public class IntakeCommand extends Command {
+public class OuttakeCommand extends Command {
 
-    private double timeToSpinIn;
+    private double timeToSpinOut;
     private IntakeSubsystem intakeSubsystem;
     private double startTime;
     private double currentTime;
 
-    public IntakeCommand(double timeToSpinIn) {
-        this.timeToSpinIn = timeToSpinIn;
+    public OuttakeCommand(double timeToSpinOut) {
+        this.timeToSpinOut = timeToSpinOut;
         intakeSubsystem = ServiceLocator.get(IntakeSubsystem.class);
     }
     public void init() {
@@ -26,10 +26,11 @@ public class IntakeCommand extends Command {
     }
 
     public boolean isFinished() {
-        return (currentTime - startTime) >= timeToSpinIn;
+        return (currentTime - startTime) >= timeToSpinOut;
     }
 
     public void end() {
         intakeSubsystem.stopIntake();
     }
 }
+
