@@ -18,6 +18,7 @@ import frc.info.RobotInfo;
 import frc.subsystem.IntakeSubsystem;
 import frc.subsystem.ShooterSubsystem;
 import frc.subsystem.ControlPanelSubsystem;
+import frc.subsystem.DrivetrainSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,10 +37,14 @@ public class Robot extends TimedRobot {
   WPI_TalonSRX rightMotor1;
   WPI_VictorSPX rightMotor2;
   Joystick gamepad;
+  Joystick leftJoystick;
+  Joystick rightJoystick;
   public RobotInfo robotInfo;
   public IntakeSubsystem intakeSubsystem;
   public ShooterSubsystem shooterSubsystem;
   public ControlPanelSubsystem controlPanelSubsystem;
+  public DrivetrainSubsystem drivetrainSubsystem;
+  
 
   /*
       (y)
@@ -85,10 +90,13 @@ public class Robot extends TimedRobot {
     rightMotor1 = new WPI_TalonSRX(9);
     rightMotor2 = new WPI_VictorSPX(1);
     gamepad = new Joystick(0);
+    leftJoystick = new Joystick(1);
+    rightJoystick = new Joystick(2);
     robotInfo = new RobotInfo();
     intakeSubsystem = new IntakeSubsystem();
     shooterSubsystem = new ShooterSubsystem();
     controlPanelSubsystem = new ControlPanelSubsystem();
+    drivetrainSubsystem = new DrivetrainSubsystem();
   }
 
   /**
@@ -176,6 +184,9 @@ public class Robot extends TimedRobot {
     } else {
       controlPanelSubsystem.stopSpinControlPanel();
     }
+    //driving stuff I guess.....
+    drivetrainSubsystem.blendedDrive(leftJoystick.getY(), rightJoystick.getX());
+    //end of teleop periodic !!!!!!!!!!
   }
 
   /**
