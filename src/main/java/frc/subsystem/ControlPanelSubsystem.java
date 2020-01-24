@@ -25,9 +25,13 @@ public class ControlPanelSubsystem {
         colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
     }
 
-    public void spinControlPanel() {
+    public void spinControlPanelForward() {
         controlPanelMotor.set(0.5);
     }
+
+    public void spinControlPanelBackward() {
+      controlPanelMotor.set(-0.5);
+  }
 
     public void stopSpinControlPanel() {
         controlPanelMotor.set(0);
