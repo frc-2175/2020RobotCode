@@ -5,16 +5,16 @@ public class MathUtility {
         return ((a % b) + b) % b;
     }
       
-    public static double getDistanceBetweenAngles(double angle1, double angle2) {
-        angle1 = (angle1 % 360);
-        while (angle1 < 0) {
-            angle1 = angle1 + 360;
+    public static double getDistanceBetweenAngles(double startAngle, double endAngle) {
+        startAngle = (startAngle % 360);
+        while (startAngle < 0) {
+            startAngle = startAngle + 360;
         }
-        angle2 = (angle2 % 360);
-        while (angle2 < 0) {
-            angle2 = angle2 + 360;
+        endAngle = (endAngle % 360);
+        while (endAngle < 0) {
+            endAngle = endAngle + 360;
         }
-        double difference = angle2 - angle1;
+        double difference = endAngle - startAngle;
         if (difference > 180) {
             difference = difference - 360; 
         } else if (difference < -180) {

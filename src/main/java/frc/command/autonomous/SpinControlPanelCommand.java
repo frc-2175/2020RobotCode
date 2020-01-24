@@ -32,7 +32,7 @@ public class SpinControlPanelCommand extends Command {
         if (currentColor == "red") {
             currentAngle = blueAngles[0];
         }
-        if (currentColor == "green") {
+        if (currentColor == "green")` {
             currentAngle = yellowAngles[0];
         }
         if (currentColor == "blue") {
@@ -56,8 +56,8 @@ public class SpinControlPanelCommand extends Command {
         } else {
             goalAngles = new double[] { 0, 0 };
         }
-        double distance1 = MathUtility.getDistanceBetweenAngles(goalAngles[0], currentAngle);
-        double distance2 = MathUtility.getDistanceBetweenAngles(goalAngles[1], currentAngle);
+        double distance1 = MathUtility.getDistanceBetweenAngles(currentAngle, goalAngles[0]);
+        double distance2 = MathUtility.getDistanceBetweenAngles(currentAngle, goalAngles[1]);
 
         double shortestDistance;
         if (Math.abs(distance1) < Math.abs(distance2)) {
