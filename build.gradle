@@ -58,6 +58,7 @@ dependencies {
     // upon debugging
     simulation wpi.deps.sim.gui(wpi.platforms.desktop, false)
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    compile 'io.javalin:javalin:3.7.0'
 }
 
 // Setting up my Jar File. In this case, adding all libraries into the main jar ('fat jar')

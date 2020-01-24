@@ -15,9 +15,10 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.info.RobotInfo;
+import frc.logging.LogServer;
+import frc.subsystem.ControlPanelSubsystem;
 import frc.subsystem.IntakeSubsystem;
 import frc.subsystem.ShooterSubsystem;
-import frc.subsystem.ControlPanelSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -36,10 +37,11 @@ public class Robot extends TimedRobot {
   WPI_TalonSRX rightMotor1;
   WPI_VictorSPX rightMotor2;
   Joystick gamepad;
-  public RobotInfo robotInfo;
-  public IntakeSubsystem intakeSubsystem;
-  public ShooterSubsystem shooterSubsystem;
-  public ControlPanelSubsystem controlPanelSubsystem;
+  private RobotInfo robotInfo;
+  private IntakeSubsystem intakeSubsystem;
+  private ShooterSubsystem shooterSubsystem;
+  private ControlPanelSubsystem controlPanelSubsystem;
+
 
   /*
       (y)
@@ -89,6 +91,8 @@ public class Robot extends TimedRobot {
     intakeSubsystem = new IntakeSubsystem();
     shooterSubsystem = new ShooterSubsystem();
     controlPanelSubsystem = new ControlPanelSubsystem();
+    LogServer logServer = new LogServer();
+    logServer.startServer();
   }
 
   /**

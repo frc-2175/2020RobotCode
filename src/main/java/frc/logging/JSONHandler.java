@@ -8,12 +8,13 @@ import java.io.IOException;
 import com.google.gson.Gson;
 
 public class JSONHandler implements LogHandler {
-    Gson gson;
-    BufferedWriter bufferedWriter;
+    private Gson gson;
+    private BufferedWriter bufferedWriter;
+    public static final String BASE_DIRECTORY = "/home/lvuser/logs";
 
     public JSONHandler(String fileName) {
         gson = new Gson();
-        File file = new File("/home/noah/RemoteRepos/Logging/example-logs/" + fileName);
+        File file = new File(fileName);
         try {
             file.createNewFile();
             bufferedWriter = new BufferedWriter(new FileWriter(file));
