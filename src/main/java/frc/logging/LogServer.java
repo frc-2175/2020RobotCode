@@ -1,7 +1,11 @@
 package frc.logging;
 
-import io.javalin.Javalin;
 import java.io.File;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+
+import io.javalin.Javalin;
 
 public class LogServer {
     private boolean isRunning;
@@ -9,7 +13,7 @@ public class LogServer {
     public static class ServerRunnable implements Runnable {
         @Override
         public void run() {
-            Javalin server = Javalin.create().port(9000).start();
+            Javalin server = Javalin.create().start(9000);
             server.before(ctx -> {
                 ctx.header("Access-Control-Allow-Origin", "*");
                 System.out.println("Access Header Set");
