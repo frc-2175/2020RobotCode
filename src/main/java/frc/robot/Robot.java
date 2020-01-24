@@ -175,7 +175,7 @@ public class Robot extends TimedRobot {
       shooterSubsystem.stopShootOut();
     }
     if(gamepad.getRawButton(GAMEPAD_X)) {
-      controlPanelSubsystem.spinControlPanel();
+      controlPanelSubsystem.spinControlPanelForward();
     } else {
       controlPanelSubsystem.stopSpinControlPanel();
     }
