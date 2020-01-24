@@ -10,7 +10,7 @@ public class SpinControlPanelCommandTest {
         assertEquals(-45, SpinControlPanelCommand.getShortestDistance("red", "green"), 0.001);
         assertEquals(0, SpinControlPanelCommand.getShortestDistance("green", "yellow"), 0.001);
         assertEquals(-45, SpinControlPanelCommand.getShortestDistance("green", "blue"), 0.001);
-        assertEquals(-90, SpinControlPanelCommand.getShortestDistance("green", "green"), 0.001);
+        assertEquals(90, SpinControlPanelCommand.getShortestDistance("green", "green"), 0.001);
         assertEquals(45, SpinControlPanelCommand.getShortestDistance("yellow", "blue"), 0.001);
    }
 }
