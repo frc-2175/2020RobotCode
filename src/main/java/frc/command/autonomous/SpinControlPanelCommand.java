@@ -37,7 +37,17 @@ public class SpinControlPanelCommand extends Command {
     }
 
     public boolean isFinished() {
-        return currentColor == goalColor;
+        if (currentColor.equals("red")) {
+            return goalColor.equals("blue");
+        } else if (currentColor.equals("green")) {
+            return goalColor.equals("yellow");
+        } else if (currentColor.equals("blue")) {
+            return goalColor.equals("red");
+        } else if (currentColor.equals("yellow")) {
+            return goalColor.equals("green");
+        } else {
+            return false; 
+        }
 
     }
 
@@ -58,7 +68,6 @@ public class SpinControlPanelCommand extends Command {
             currentAngle = greenAngles[0];
         } else {
             currentAngle = 0;
-            System.out.print("current angle not set");
         }
 
         double[] goalAngles;
