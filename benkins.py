@@ -10,18 +10,16 @@ def fail(msg):
         f.write(msg)
     exit(1)
 
-print(os.getcwd())
-
 gradle = "./gradlew"
 if platform.system == "Windows":
     gradle = "gradlew.bat"
 
 try:
-    subprocess.run([gradle, "build"], check=True)
+    subprocess.run([gradle, "build"], check=True, shell=True)
 except subprocess.CalledProcessError as e:
     fail("Failed to compile code. See the logs for more details.")
 
 try:
-    subprocess.run([gradle, "test"], check=True)
+    subprocess.run([gradle, "test"], check=True, shell=True)
 except subprocess.CalledProcessError as e:
     fail("Tests failed. See the logs for more details.")
