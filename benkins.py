@@ -11,7 +11,7 @@ def fail(msg):
 
 gradle = "./gradlew"
 if platform.system == "Windows":
-    gradle = "gradlew.bat"
+    gradle = "./gradlew.bat"
 
 try:
     subprocess.run([gradle, "build"], check=True)
