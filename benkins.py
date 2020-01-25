@@ -22,3 +22,8 @@ try:
     subprocess.run([gradle, "test"], check=True)
 except subprocess.CalledProcessError as e:
     fail("Tests failed. See the logs for more details.")
+
+try:
+    subprocess.run([gradle, "deploy"], check=True)
+except subprocess.CalledProcessError as e:
+    fail("Failed to deploy code to the roboRIO. See the logs for more details.")
