@@ -48,7 +48,7 @@ public class ShooterSubsystem {
     }
 
     public double pidSpeed() {
-        
+        return 0;
     }
 }
 
