@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 
+import os
 import platform
 import subprocess
 
@@ -9,9 +10,11 @@ def fail(msg):
         f.write(msg)
     exit(1)
 
+print(os.getcwd())
+
 gradle = "./gradlew"
 if platform.system == "Windows":
-    gradle = "./gradlew.bat"
+    gradle = "gradlew.bat"
 
 try:
     subprocess.run([gradle, "build"], check=True)
