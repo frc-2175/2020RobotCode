@@ -9,7 +9,9 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.revrobotics.ColorSensorV3;
 
+import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -76,6 +78,7 @@ public class Robot extends TimedRobot {
   public static final int POV_UP_LEFT = 315;
 
   public static final double topSpeed = 1;
+  
   
 
   /**
@@ -184,13 +187,20 @@ public class Robot extends TimedRobot {
       shooterSubsystem.stopShootOut();
     }
     if(gamepad.getRawButton(GAMEPAD_X)) {
-      controlPanelSubsystem.spinControlPanel();
+      controlPanelSubsystem.spinControlPanelForward();
     } else {
       controlPanelSubsystem.stopSpinControlPanel();
     }
     //driving stuff I guess.....
     drivetrainSubsystem.blendedDrive(leftJoystick.getY(), rightJoystick.getX());
     //end of teleop periodic !!!!!!!!!!
+    double hue = ControlPanelSubsystem.getHue(controlPanelSubsystem.getColorSensorRed(), 
+      controlPanelSubsystem.getColorSensorGreen(), controlPanelSubsystem.getColorSensorBlue());
+    SmartDashboard.putNumber("ColorSensorRed", controlPanelSubsystem.getColorSensorRed());
+    SmartDashboard.putNumber("ColorSensorGreen", controlPanelSubsystem.getColorSensorGreen());
+    SmartDashboard.putNumber("ColorSensorBlue", controlPanelSubsystem.getColorSensorBlue());
+    SmartDashboard.putString("ControlPanelColor", ControlPanelSubsystem.getControlPanelColor(hue));
+
   }
 
   /**
