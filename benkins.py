@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import os
 import platform
 import subprocess
 
@@ -11,7 +10,7 @@ def fail(msg):
     exit(1)
 
 gradle = "./gradlew"
-if platform.system == "Windows":
+if platform.system() == "Windows":
     gradle = "gradlew.bat"
 
 try:
