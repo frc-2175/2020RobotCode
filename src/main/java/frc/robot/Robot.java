@@ -79,7 +79,6 @@ public class Robot extends TimedRobot {
 
   public static final double topSpeed = 1;
   
-  
 
   /**
    * This function is run when the robot is first started up and should be
@@ -181,10 +180,10 @@ public class Robot extends TimedRobot {
     } else {
       intakeSubsystem.stopIntake();
     }
-    if (gamepad.getRawButton(GAMEPAD_A)) {
-      shooterSubsystem.shootOut();
+    if (gamepad.getRawButton(GAMEPAD_Y)) {
+      shooterSubsystem.setManualSpeed(1.0);
     } else {
-      shooterSubsystem.stopShootOut();
+      shooterSubsystem.setManualSpeed(0);
     }
     if(gamepad.getRawButton(GAMEPAD_X)) {
       controlPanelSubsystem.spinControlPanelForward();

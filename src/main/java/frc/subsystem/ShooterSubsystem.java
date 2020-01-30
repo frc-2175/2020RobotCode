@@ -1,7 +1,6 @@
 package frc.subsystem;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-
 import frc.MotorWrapper;
 import frc.PIDController;
 import frc.ServiceLocator;
@@ -14,7 +13,10 @@ public class ShooterSubsystem {
     private final MotorWrapper shooterMotorFollower;
     private final PIDController pidController; 
     double conversionNumber = 4096;
-
+    public enum Mode {Manual, PID, BangBang};
+    private Mode currentMode = Mode.Manual;
+    private double goalSpeedRPM;
+    private double manualSpeed = 0;
 
 
     public ShooterSubsystem() {
@@ -24,12 +26,23 @@ public class ShooterSubsystem {
         double kp = 1.0 / 36.0;
         double ki = 1.0 / 30.0;
         double kd = 0;
+        
         pidController = new PIDController(kp, ki, kd);
         
         shooterMotorFollower.follow(shooterMotorMaster);
 
         shooterMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
         shooterMotorMaster.setSelectedSensorPosition(0, 0, 0);
+    }
+
+    public void periodic() {
+        if (currentMode == Mode.PID) { //PID!!
+            shooterMotorMaster.set(shooterMotorMaster.get() + pidController.pid(getSpeedInRPM(), goalSpeedRPM));
+        } else if (currentMode == Mode.BangBang) { //Bang bang !!!!!
+
+        } else { //do manual stuff!!!!!!!!
+            shooterMotorMaster.set(manualSpeed);
+        }
     }
 
     public void shootOut() {
@@ -40,15 +53,23 @@ public class ShooterSubsystem {
         shooterMotorMaster.set(0);
     }
 
-    public double convertToRPM() {
-        double originalSpeed = shooterMotorMaster.getSelectedSensorVelocity();
+    public double convertToRPM(double originalSpeed) {
         double ticksPerSecond = originalSpeed * 10;
         double ticksPerMinute = ticksPerSecond * 60;
         return ticksPerMinute / conversionNumber; //revolutions per minute
     }
 
-    public double pidSpeed() {
-        return 0;
+    public double getSpeedInRPM() {
+        double curSpeed = shooterMotorMaster.getSelectedSensorVelocity();
+        return convertToRPM(curSpeed);
+    }
+
+    public void setMode(Mode noah) {
+        currentMode = noah;
+    }
+
+    public void setManualSpeed(double jacob) {
+        manualSpeed = jacob;
     }
 }
 
