@@ -9,20 +9,19 @@ package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.revrobotics.ColorSensorV3;
 
-import edu.wpi.first.wpilibj.I2C;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.info.RobotInfo;
+import frc.logging.LogHandler;
 import frc.logging.LogServer;
-import frc.subsystem.ControlPanelSubsystem;
-import frc.subsystem.IntakeSubsystem;
-import frc.subsystem.ShooterSubsystem;
+import frc.logging.Logger;
+import frc.logging.StdoutHandler;
 import frc.subsystem.ControlPanelSubsystem;
 import frc.subsystem.DrivetrainSubsystem;
+import frc.subsystem.IntakeSubsystem;
+import frc.subsystem.ShooterSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -32,10 +31,10 @@ import frc.subsystem.DrivetrainSubsystem;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
+  Logger logger = new Logger(new LogHandler[] {
+    new StdoutHandler()
+  });
+
   WPI_VictorSPX leftMotor1;
   WPI_VictorSPX leftMotor2;
   WPI_TalonSRX rightMotor1;
@@ -87,9 +86,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
     leftMotor2 = new WPI_VictorSPX(2);
     leftMotor1 = new WPI_VictorSPX(5);
     rightMotor1 = new WPI_TalonSRX(9);
@@ -118,6 +114,11 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
   }
 
+  @Override
+  public void disabledInit() {
+    logger.info("Robot program is disabled and ready.");
+  }
+
   /**
    * This autonomous (along with the chooser code above) shows how to select
    * between different autonomous modes using the dashboard. The sendable
@@ -131,10 +132,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
-
   }
 
   /**
@@ -142,15 +139,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
   }
 
   /**
