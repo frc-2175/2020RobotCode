@@ -1,11 +1,34 @@
 package frc.command.autonomous;
 
-import edu.wpi.first.wpilibj.Timer;
 import frc.ServiceLocator;
 import frc.command.Command;
-import frc.subsystem.IntakeSubsystem;
 import frc.subsystem.DrivetrainSubsystem;
 
-// public class DriveForwardCommand extends Command {
+public class DriveForwardCommand extends Command {
+    double distance;
+    DrivetrainSubsystem drivetrainSubsystem;
+    
+    public DriveForwardCommand(double distance) {
+        this.distance = distance;
+        drivetrainSubsystem = ServiceLocator.get(DrivetrainSubsystem.class);
+    }
+    public void init() {
+        drivetrainSubsystem.resetTracking();
+    }
+    public void execute() {
+        drivetrainSubsystem.tankDrive( .6, .6);
+    }
+    public boolean isFinished() {
+        if(drivetrainSubsystem.getAverageEncoderDistance() >= distance) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 
-// }
+    public void end() {
+        drivetrainSubsystem.stopAllMotors();
+
+    }
+}
+

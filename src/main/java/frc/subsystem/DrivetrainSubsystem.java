@@ -1,5 +1,7 @@
 package frc.subsystem;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import frc.MotorWrapper;
@@ -21,9 +23,15 @@ public class DrivetrainSubsystem {
 	private static VirtualSpeedController rightVirtualSpeedController = new VirtualSpeedController();
 	private static DifferentialDrive virtualRobotDrive;
 	public static final double INPUT_THRESHOLD = 0.1; // TODO(low): Constants should move to the top of the class.
+	double lastEncoderDistanceLeft;
+	double lastEncoderDistanceRight;
+	private double zeroEncoderLeft;
+	private double zeroEncoderRight;
+	public static final double TICKS_TO_INCHES = 0.0045933578;
+	
 	
     public DrivetrainSubsystem() {
-        ServiceLocator.register(this);
+		ServiceLocator.register(this);
 
 		robotInfo = ServiceLocator.get(RobotInfo.class);
 		leftMaster = robotInfo.get(RobotInfo.LEFT_MOTOR_MASTER);
@@ -43,6 +51,12 @@ public class DrivetrainSubsystem {
         leftVirtualSpeedController = new VirtualSpeedController(); // TODO(low): There is no need to set these here since they are also initialized above.
 		rightVirtualSpeedController = new VirtualSpeedController();
 		virtualRobotDrive = new DifferentialDrive(leftVirtualSpeedController, rightVirtualSpeedController);
+
+		leftMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
+		rightMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
+
+		lastEncoderDistanceLeft = 0;
+		lastEncoderDistanceRight = 0;
     }
          
     public void stopAllMotors() {
@@ -143,5 +157,16 @@ public class DrivetrainSubsystem {
     public static double proportional(double input, double setpoint, double kp) {
 		return (setpoint - input) * kp;
 	}
+	public double getAverageEncoderDistance() {
+		//in inches
+		return (((rightMaster.getSelectedSensorPosition(0) + leftMaster.getSelectedSensorPosition(0))/2)*TICKS_TO_INCHES);
+	}
+	public void resetTracking() {
+		lastEncoderDistanceLeft = 0;
+		lastEncoderDistanceRight = 0;
+		zeroEncoderLeft = leftMaster.getSelectedSensorPosition(0);
+		zeroEncoderRight = rightMaster.getSelectedSensorPosition(0);
+	}
 
 }
+
