@@ -11,18 +11,22 @@ public class ShooterSubsystem {
     private final RobotInfo robotInfo;
     private final MotorWrapper shooterMotorMaster;
     private final MotorWrapper shooterMotorFollower;
+    private final MotorWrapper turretMotor;
     private final PIDController pidController; 
     double conversionNumber = 4096;
     public enum Mode {Manual, PID, BangBang};
     private Mode currentMode = Mode.Manual;
     private double goalSpeedRPM;
     private double manualSpeed = 0;
-
+    private double speedThreshold = 5;
+    private double speedRange = 5;
+    
 
     public ShooterSubsystem() {
         robotInfo = ServiceLocator.get(RobotInfo.class);
         shooterMotorMaster = robotInfo.get(RobotInfo.SHOOTER_MOTOR_MASTER);
         shooterMotorFollower = robotInfo.get(RobotInfo.SHOOTER_MOTOR_FOLLOWER);
+        turretMotor = robotInfo.get(RobotInfo.TURRET_MOTOR);
         double kp = 1.0 / 36.0;
         double ki = 1.0 / 30.0;
         double kd = 0;
@@ -39,7 +43,11 @@ public class ShooterSubsystem {
         if (currentMode == Mode.PID) { //PID!!
             shooterMotorMaster.set(shooterMotorMaster.get() + pidController.pid(getSpeedInRPM(), goalSpeedRPM));
         } else if (currentMode == Mode.BangBang) { //Bang bang !!!!!
-
+            if ( getSpeedInRPM() >  (speedThreshold + speedRange)) {
+                shooterMotorMaster.set(0);
+            } else if ( getSpeedInRPM() < (speedThreshold - speedRange)) {
+                shooterMotorMaster.set(1);
+            } 
         } else { //do manual stuff!!!!!!!!
             shooterMotorMaster.set(manualSpeed);
         }
