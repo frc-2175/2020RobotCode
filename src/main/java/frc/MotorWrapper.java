@@ -77,6 +77,14 @@ public class MotorWrapper {
 		}
 	}
 
+	public int getSelectedSensorVelocity() {
+		if (isTalon) {
+			return talon.getSelectedSensorVelocity();
+		} else {
+			return victor.getSelectedSensorVelocity();
+		}
+	}
+
 	public void setInverted(boolean isInverted) {
 		if (isTalon) {
 			talon.setInverted(isInverted);

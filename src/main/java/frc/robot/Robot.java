@@ -8,14 +8,20 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import frc.info.RobotInfo;
+import frc.logging.LogHandler;
+import frc.logging.LogServer;
+import frc.logging.Logger;
+import frc.logging.StdoutHandler;
+import frc.subsystem.ControlPanelSubsystem;
+import frc.subsystem.DrivetrainSubsystem;
+import frc.subsystem.IntakeSubsystem;
+import frc.subsystem.ShooterSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -25,15 +31,24 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  * project.
  */
 public class Robot extends TimedRobot {
-  private static final String kDefaultAuto = "Default";
-  private static final String kCustomAuto = "My Auto";
-  private String m_autoSelected;
-  private final SendableChooser<String> m_chooser = new SendableChooser<>();
-  CANSparkMax prototypeMotor;
-  CANSparkMax otherPrototypeMotor;
-  double topSpeed = 1;
+  Logger logger = new Logger(new LogHandler[] {
+    new StdoutHandler()
+  });
 
+  WPI_VictorSPX leftMotor1;
+  WPI_VictorSPX leftMotor2;
+  WPI_TalonSRX rightMotor1;
+  WPI_VictorSPX rightMotor2;
   Joystick gamepad;
+  Joystick leftJoystick;
+  Joystick rightJoystick;
+  public RobotInfo robotInfo;
+  public IntakeSubsystem intakeSubsystem;
+  public ShooterSubsystem shooterSubsystem;
+  public ControlPanelSubsystem controlPanelSubsystem;
+  public DrivetrainSubsystem drivetrainSubsystem;
+  
+
   /*
       (y)
   (x)     (b)
@@ -59,7 +74,11 @@ public class Robot extends TimedRobot {
 	public static final int POV_DOWN = 180;
 	public static final int POV_DOWN_LEFT = 225;
 	public static final int POV_LEFT = 270;
-	public static final int POV_UP_LEFT = 315;
+  public static final int POV_UP_LEFT = 315;
+
+  public static final double topSpeed = 1;
+  
+  
 
   /**
    * This function is run when the robot is first started up and should be
@@ -67,14 +86,20 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    m_chooser.setDefaultOption("Default Auto", kDefaultAuto);
-    m_chooser.addOption("My Auto", kCustomAuto);
-    SmartDashboard.putData("Auto choices", m_chooser);
-    prototypeMotor = new CANSparkMax(1, MotorType.kBrushless);
-    otherPrototypeMotor = new CANSparkMax(2, MotorType.kBrushless);
-    prototypeMotor.setInverted(false);
-    otherPrototypeMotor.setInverted(true);
+    leftMotor2 = new WPI_VictorSPX(2);
+    leftMotor1 = new WPI_VictorSPX(5);
+    rightMotor1 = new WPI_TalonSRX(9);
+    rightMotor2 = new WPI_VictorSPX(1);
     gamepad = new Joystick(0);
+    leftJoystick = new Joystick(1);
+    rightJoystick = new Joystick(2);
+    robotInfo = new RobotInfo();
+    intakeSubsystem = new IntakeSubsystem();
+    shooterSubsystem = new ShooterSubsystem();
+    controlPanelSubsystem = new ControlPanelSubsystem();
+    LogServer logServer = new LogServer();
+    logServer.startServer();
+    drivetrainSubsystem = new DrivetrainSubsystem();
   }
 
   /**
@@ -87,6 +112,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotPeriodic() {
+  }
+
+  @Override
+  public void disabledInit() {
+    logger.info("Robot program is disabled and ready.");
   }
 
   /**
@@ -102,9 +132,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    m_autoSelected = m_chooser.getSelected();
-    // m_autoSelected = SmartDashboard.getString("Auto Selector", kDefaultAuto);
-    System.out.println("Auto selected: " + m_autoSelected);
   }
 
   /**
@@ -112,15 +139,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    switch (m_autoSelected) {
-      case kCustomAuto:
-        // Put custom auto code here
-        break;
-      case kDefaultAuto:
-      default:
-        // Put default auto code here
-        break;
-    }
   }
 
   /**
@@ -128,19 +146,49 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER)) {
-      prototypeMotor.set(.75) ;
-
-    } else {
-      prototypeMotor.set(0);
- 
-    }
-
+    leftMotor2.set(deadband(-gamepad.getRawAxis(1),.05)*topSpeed); //set left side wheels to go by gamepad joystick, and modify by top speed ratio
+    rightMotor2.set(deadband(-gamepad.getRawAxis(3),.05)*topSpeed);
     if(gamepad.getRawButton(GAMEPAD_LEFT_BUMPER)) {
-      otherPrototypeMotor.set(.75);
+      leftMotor1.set(-.7);
+      rightMotor1.set(.7);
     } else {
-      otherPrototypeMotor.set(0);
+      leftMotor1.set(0);
+      rightMotor1.set(0);
     }
+    if(gamepad.getRawButton(GAMEPAD_B)) {
+      leftMotor2.set(-.75*topSpeed);
+      rightMotor2.set(1*topSpeed);
+    } else if(gamepad.getRawButton(GAMEPAD_A)) {
+      leftMotor2.set(-.5*topSpeed);
+      rightMotor2.set(1*topSpeed);
+    }
+    if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER)) {
+      intakeSubsystem.intakeRollIn();
+    } else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER)) {
+      intakeSubsystem.intakeRollOut();
+    } else {
+      intakeSubsystem.stopIntake();
+    }
+    if (gamepad.getRawButton(GAMEPAD_A)) {
+      shooterSubsystem.shootOut();
+    } else {
+      shooterSubsystem.stopShootOut();
+    }
+    if(gamepad.getRawButton(GAMEPAD_X)) {
+      controlPanelSubsystem.spinControlPanelForward();
+    } else {
+      controlPanelSubsystem.stopSpinControlPanel();
+    }
+    //driving stuff I guess.....
+    drivetrainSubsystem.blendedDrive(leftJoystick.getY(), rightJoystick.getX());
+    //end of teleop periodic !!!!!!!!!!
+    double hue = ControlPanelSubsystem.getHue(controlPanelSubsystem.getColorSensorRed(), 
+      controlPanelSubsystem.getColorSensorGreen(), controlPanelSubsystem.getColorSensorBlue());
+    SmartDashboard.putNumber("ColorSensorRed", controlPanelSubsystem.getColorSensorRed());
+    SmartDashboard.putNumber("ColorSensorGreen", controlPanelSubsystem.getColorSensorGreen());
+    SmartDashboard.putNumber("ColorSensorBlue", controlPanelSubsystem.getColorSensorBlue());
+    SmartDashboard.putString("ControlPanelColor", ControlPanelSubsystem.getControlPanelColor(hue));
+
   }
 
   /**
@@ -149,4 +197,16 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
   }
+
+  public static double deadband(double value, double deadband) {
+		if (Math.abs(value) > deadband) {
+			if (value > 0.0) {
+				return (value - deadband) / (1.0 - deadband);
+			} else {
+				return (value + deadband) / (1.0 - deadband);
+			}
+		} else {
+			return 0.0;
+		}
+	}
 }
