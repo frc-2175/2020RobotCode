@@ -36,7 +36,7 @@ public class SpinControlPanelCommand extends Command {
         }
     }
 
-    public boolean isFinished() {
+    public boolean isFinished() { //remember that your current color is not the one under the pointer !!
         if (currentColor.equals("red")) {
             return goalColor.equals("blue");
         } else if (currentColor.equals("green")) {
