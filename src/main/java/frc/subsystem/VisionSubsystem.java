@@ -1,6 +1,6 @@
 package frc.subsystem;
 
-import frc.Vector;
+import frc.math.Vector;
 
 public class VisionSubsystem {
     private static final double cameraAngle = Math.toRadians(20);

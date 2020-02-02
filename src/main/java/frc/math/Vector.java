@@ -1,4 +1,4 @@
-package frc;
+package frc.math;
 
 public class Vector {
     public double x;

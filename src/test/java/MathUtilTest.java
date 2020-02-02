@@ -1,6 +1,6 @@
 import static org.junit.Assert.assertEquals;
 import org.junit.Test;
-import frc.MathUtility;
+import frc.math.MathUtility;
 
 public class MathUtilTest {
    @Test

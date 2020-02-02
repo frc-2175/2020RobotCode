@@ -1,10 +1,5 @@
 package frc.command.autonomous;
 
-import edu.wpi.first.wpilibj.Timer;
-import frc.ServiceLocator;
-import frc.command.Command;
-import frc.subsystem.ShooterSubsystem;
-
 // public class ShootCommand extends Command {
 //     private double shootingTime;
 //     private ShooterSubsystem shooterSubsystem;

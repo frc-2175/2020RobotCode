@@ -1,17 +1,15 @@
 package frc.subsystem;
 
-import frc.MotorWrapper;
-import frc.ServiceLocator;
-import frc.info.RobotInfo;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
+import edu.wpi.first.wpilibj.SpeedController;
 
 public class IntakeSubsystem {
 
-    private final RobotInfo robotInfo;
-    private final MotorWrapper intakeMotor;
+    private final SpeedController intakeMotor;
 
     public IntakeSubsystem() {
-        robotInfo = ServiceLocator.get(RobotInfo.class);
-        intakeMotor = robotInfo.get(RobotInfo.INTAKE_MOTOR);
+        intakeMotor = new WPI_VictorSPX(9);
     }
 
     public void intakeRollIn() {

@@ -1,8 +1,8 @@
 package frc.command.autonomous;
 
-import frc.MathUtility;
 import frc.ServiceLocator;
 import frc.command.Command;
+import frc.math.MathUtility;
 import frc.subsystem.ControlPanelSubsystem;
 
 public class SpinControlPanelCommand extends Command {

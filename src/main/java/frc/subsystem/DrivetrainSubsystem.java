@@ -1,52 +1,54 @@
 package frc.subsystem;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
-import frc.MotorWrapper;
 import frc.ServiceLocator;
 import frc.VirtualSpeedController;
 import frc.info.RobotInfo;
 
 public class DrivetrainSubsystem {
-
     private final RobotInfo robotInfo;
-	private final MotorWrapper leftMaster;
-    private final MotorWrapper leftFollowerOne;
-    private final MotorWrapper leftFollowerTwo;
-	private final MotorWrapper rightMaster;
-    private final MotorWrapper rightFollowerOne;
-    private final MotorWrapper rightFollowerTwo;
+	private final WPI_TalonFX leftMaster;
+    private final BaseMotorController leftFollowerOne;
+    private final BaseMotorController leftFollowerTwo;
+	private final WPI_TalonFX rightMaster;
+    private final BaseMotorController rightFollowerOne;
+    private final BaseMotorController rightFollowerTwo;
 	private final DifferentialDrive robotDrive;
-	private static VirtualSpeedController leftVirtualSpeedController = new VirtualSpeedController();
-	private static VirtualSpeedController rightVirtualSpeedController = new VirtualSpeedController();
-	private static DifferentialDrive virtualRobotDrive;
 	public static final double INPUT_THRESHOLD = 0.1; // TODO(low): Constants should move to the top of the class.
 	double lastEncoderDistanceLeft;
 	double lastEncoderDistanceRight;
 	private double zeroEncoderLeft;
 	private double zeroEncoderRight;
 	public static final double TICKS_TO_INCHES = 0.0045933578;
+
+	private static VirtualSpeedController leftVirtualSpeedController = new VirtualSpeedController();
+	private static VirtualSpeedController rightVirtualSpeedController = new VirtualSpeedController();
+	private static DifferentialDrive virtualRobotDrive;
 	
 	
     public DrivetrainSubsystem() {
 		ServiceLocator.register(this);
 
 		robotInfo = ServiceLocator.get(RobotInfo.class);
-		leftMaster = robotInfo.get(RobotInfo.LEFT_MOTOR_MASTER);
-        leftFollowerOne = robotInfo.get(RobotInfo.LEFT_MOTOR_FOLLOWER_ONE);
-        leftFollowerTwo = robotInfo.get(RobotInfo.LEFT_MOTOR_FOLLOWER_TWO);
-		rightMaster = robotInfo.get(RobotInfo.RIGHT_MOTOR_MASTER);
-        rightFollowerOne = robotInfo.get(RobotInfo.RIGHT_MOTOR_FOLLOWER_ONE);
-        rightFollowerTwo = robotInfo.get(RobotInfo.RIGHT_MOTOR_FOLLOWER_TWO);
+		leftMaster = new WPI_TalonFX(1);
+        leftFollowerOne = new WPI_VictorSPX(2);
+        leftFollowerTwo = new WPI_VictorSPX(3);
+		rightMaster = new WPI_TalonFX(4);
+        rightFollowerOne = new WPI_VictorSPX(5);
+        rightFollowerTwo = new WPI_VictorSPX(6);
 
         leftFollowerOne.follow(leftMaster);
         leftFollowerTwo.follow(leftMaster);
         rightFollowerOne.follow(rightMaster);
         rightFollowerTwo.follow(rightMaster);
 
-        robotDrive = new DifferentialDrive(leftMaster.getMotor(), rightMaster.getMotor());
+        robotDrive = new DifferentialDrive(leftMaster, rightMaster);
         
         leftVirtualSpeedController = new VirtualSpeedController(); // TODO(low): There is no need to set these here since they are also initialized above.
 		rightVirtualSpeedController = new VirtualSpeedController();

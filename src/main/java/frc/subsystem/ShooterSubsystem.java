@@ -1,26 +1,22 @@
 package frc.subsystem;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import frc.MotorWrapper;
 import frc.PIDController;
-import frc.ServiceLocator;
-import frc.info.RobotInfo;
 
 public class ShooterSubsystem {
     
-    private final RobotInfo robotInfo;
-    private final MotorWrapper shooterMotorMaster;
-    private final MotorWrapper shooterMotorFollower;
+    private final CANSparkMax shooterMotorMaster;
+    private final CANSparkMax shooterMotorFollower;
     private final PIDController pidController; 
     double conversionNumber = 4096;
 
 
 
     public ShooterSubsystem() {
-        robotInfo = ServiceLocator.get(RobotInfo.class);
-        shooterMotorMaster = robotInfo.get(RobotInfo.SHOOTER_MOTOR_MASTER);
-        shooterMotorFollower = robotInfo.get(RobotInfo.SHOOTER_MOTOR_FOLLOWER);
+        shooterMotorMaster = new CANSparkMax(7, MotorType.kBrushless);
+        shooterMotorFollower = new CANSparkMax(8, MotorType.kBrushless);
         double kp = 1.0 / 36.0;
         double ki = 1.0 / 30.0;
         double kd = 0;
@@ -28,8 +24,6 @@ public class ShooterSubsystem {
         
         shooterMotorFollower.follow(shooterMotorMaster);
 
-        shooterMotorMaster.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
-        shooterMotorMaster.setSelectedSensorPosition(0, 0, 0);
     }
 
     public void shootOut() {
@@ -41,7 +35,7 @@ public class ShooterSubsystem {
     }
 
     public double convertToRPM() {
-        double originalSpeed = shooterMotorMaster.getSelectedSensorVelocity();
+        double originalSpeed = 0; // TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!S
         double ticksPerSecond = originalSpeed * 10;
         double ticksPerMinute = ticksPerSecond * 60;
         return ticksPerMinute / conversionNumber; //revolutions per minute

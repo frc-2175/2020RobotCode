@@ -1,4 +1,4 @@
-package frc;
+package frc.math;
 
 public class MathUtility {
     public static double mod(double a, double b) {

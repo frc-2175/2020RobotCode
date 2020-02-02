@@ -1,17 +1,14 @@
 package frc.subsystem;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.I2C;
-import frc.MathUtility;
-import frc.MotorWrapper;
-import frc.ServiceLocator;
-import frc.info.RobotInfo;
+import frc.math.MathUtility;
 
 public class ControlPanelSubsystem {
 
-    private final RobotInfo robotInfo;
-    private final MotorWrapper controlPanelMotor;
+    private final WPI_TalonSRX controlPanelMotor;
     private final ColorSensorV3 colorSensor; 
     public static double redHue = 0;
     public static double yellowHue = 60;
@@ -20,8 +17,7 @@ public class ControlPanelSubsystem {
 
 
     public ControlPanelSubsystem() {
-        robotInfo = ServiceLocator.get(RobotInfo.class);
-        controlPanelMotor = robotInfo.get(RobotInfo.CONTROL_PANEL_MOTOR);
+        controlPanelMotor = new WPI_TalonSRX(10);
         colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
     }
 
