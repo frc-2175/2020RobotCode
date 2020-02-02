@@ -13,16 +13,16 @@ import cv2
 import numpy
 import math
 
-hue = (63.129496402877685, 103.5993208828523)
-saturation = (43.57014388489208, 255.0)
-value = (91.72661870503595, 255.0)
+hueThreshold = (63.129496402877685, 103.5993208828523) # min/max
+saturationThreshold = (43.57014388489208, 255.0)
+valueThreshold = (91.72661870503595, 255.0)
 minArea = 200
 
 # Processes an image and returns the following:
 # final image to view, NetworkTables keys/values
 def process(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-    img = cv2.inRange(img, (hue[0], saturation[0], value[0]),  (hue[1], saturation[1], value[1]))
+    img = cv2.inRange(img, (hueThreshold[0], saturationThreshold[0], valueThreshold[0]),  (hueThreshold[1], saturationThreshold[1], valueThreshold[1]))
     _, contours, _ = cv2.findContours(img, mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_SIMPLE)
     
     biggestContour = None
@@ -38,7 +38,7 @@ def process(img):
     
     biggestContour = cv2.convexHull(biggestContour)
     shapeImage = numpy.zeros(img.shape)
-    cv2.drawContours(shapeImage, [biggestContour], -1, (255,255,255), cv2.FILLED)
+    shapeImage = cv2.drawContours(shapeImage, [biggestContour], -1, (255,255,255), cv2.FILLED)
     return shapeImage, {
         'test1': 3,
         'test2': True,
