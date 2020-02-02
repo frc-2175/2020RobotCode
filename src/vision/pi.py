@@ -23,7 +23,7 @@ minArea = 200
 def process(img):
     img = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     img = cv2.inRange(img, (hue[0], saturation[0], value[0]),  (hue[1], saturation[1], value[1]))
-    contours, _ = cv2.findContours(img, mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_SIMPLE)
+    _, contours, _ = cv2.findContours(img, mode = cv2.RETR_EXTERNAL, method = cv2.CHAIN_APPROX_SIMPLE)
     
     biggestContour = None
     maxAreaSoFar = 0
@@ -40,8 +40,8 @@ def process(img):
     shapeImage = numpy.zeros(img.shape)
     cv2.drawContours(shapeImage, [biggestContour], -1, (255,255,255), cv2.FILLED)
     return shapeImage, {
-        test1: 3,
-        test2: True,
+        'test1': 3,
+        'test2': True,
     }
 
 # ---------------------------------------------------------------------------

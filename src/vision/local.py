@@ -7,8 +7,10 @@ if __name__ == '__main__':
     while True:
         ret_val, img = cam.read()
         img = cv2.flip(img, 1)
-        img, contour = process(img)        
+        img, values = process(img)
         cv2.imshow('my webcam', img)
+        print(values)
+
         if cv2.waitKey(1) == 27: 
             break  # esc to quit
     cv2.destroyAllWindows()
