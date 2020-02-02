@@ -1,9 +1,8 @@
 import cv2
 
-from pipeline import process
+from pi import process
 
-
-def main():
+if __name__ == '__main__':
     cam = cv2.VideoCapture(0)
     while True:
         ret_val, img = cam.read()
@@ -13,7 +12,3 @@ def main():
         if cv2.waitKey(1) == 27: 
             break  # esc to quit
     cv2.destroyAllWindows()
-
-
-if __name__ == '__main__':
-    main()
