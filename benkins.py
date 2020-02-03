@@ -14,7 +14,7 @@ if platform.system() == "Windows":
     gradle = "gradlew.bat"
 
 try:
-    subprocess.run(["pip3", "install", "-r", "requirements.txt"])
+    subprocess.run(["pip3", "install", "-r", "requirements-benkins.txt"])
 except subprocess.CalledProcessError as e:
     fail("Failed to install Python dependencies.")
 

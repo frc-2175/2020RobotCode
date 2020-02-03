@@ -11,15 +11,32 @@ public class VisionSubsystem {
     private static final double targetTopHeightFromFloor = targetBottomHeightFromFloor + targetHeight;
 
 
-    public double getDistanceFromTarget(double pixelAngleY) {
+    public double getDistanceFromTarget(double pixelAngleY, double height) {
         double angle = pixelAngleY + cameraAngle;
-        return (targetHeight - cameraHeight) / Math.tan(angle);
+        return (height - cameraHeight) / Math.tan(angle);
     }
 
-    public Vector getTargetPositionInCameraSpace(double pixelAngleX, double pixelAngleY) {
-        double distance = getDistanceFromTarget(pixelAngleY);
+    public Vector getPixelPositionInCameraSpace(double pixelAngleX, double pixelAngleY, double height) {
+        double distance = getDistanceFromTarget(pixelAngleY, height);
         double yPosition = Math.sin(pixelAngleX) * distance;
         double xPosition = Math.cos(pixelAngleX) * distance;
         return new Vector(xPosition, yPosition);
+    }
+
+    public Vector getTargetPositionInCameraSpace(
+        Vector topLeftCorner,
+        Vector topRightCorner, 
+        Vector bottomLeftCorner,
+        Vector bottomRightCorner
+    ) {
+        Vector topLeftCornerPosition = getPixelPositionInCameraSpace(topLeftCorner.x, topLeftCorner.y, targetTopHeightFromFloor);
+        Vector topRightCornerPosition = getPixelPositionInCameraSpace(topRightCorner.x, topRightCorner.y, targetTopHeightFromFloor);
+        Vector bottomRightCornerPosition = getPixelPositionInCameraSpace(bottomRightCorner.x, bottomRightCorner.y, targetBottomHeightFromFloor);
+        Vector bottomLeftCornerPosition = getPixelPositionInCameraSpace(bottomLeftCorner.x, bottomLeftCorner.y, targetBottomHeightFromFloor);
+        
+        double centerXPosition = (topLeftCornerPosition.x + topRightCornerPosition.x + bottomLeftCornerPosition.x + bottomRightCornerPosition.x)/4 ; 
+        double centerYPosition = (topLeftCornerPosition.y + topRightCornerPosition.y + bottomLeftCornerPosition.y + bottomRightCornerPosition.y)/4 ; 
+       
+        return new Vector(centerXPosition, centerYPosition);
     }
 }
