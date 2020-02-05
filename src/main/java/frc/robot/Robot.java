@@ -86,10 +86,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    leftMotor2 = new WPI_VictorSPX(2);
-    leftMotor1 = new WPI_VictorSPX(5);
-    rightMotor1 = new WPI_TalonSRX(9);
-    rightMotor2 = new WPI_VictorSPX(1);
     gamepad = new Joystick(0);
     leftJoystick = new Joystick(1);
     rightJoystick = new Joystick(2);
@@ -146,22 +142,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void teleopPeriodic() {
-    leftMotor2.set(deadband(-gamepad.getRawAxis(1),.05)*topSpeed); //set left side wheels to go by gamepad joystick, and modify by top speed ratio
-    rightMotor2.set(deadband(-gamepad.getRawAxis(3),.05)*topSpeed);
-    if(gamepad.getRawButton(GAMEPAD_LEFT_BUMPER)) {
-      leftMotor1.set(-.7);
-      rightMotor1.set(.7);
-    } else {
-      leftMotor1.set(0);
-      rightMotor1.set(0);
-    }
-    if(gamepad.getRawButton(GAMEPAD_B)) {
-      leftMotor2.set(-.75*topSpeed);
-      rightMotor2.set(1*topSpeed);
-    } else if(gamepad.getRawButton(GAMEPAD_A)) {
-      leftMotor2.set(-.5*topSpeed);
-      rightMotor2.set(1*topSpeed);
-    }
     if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER)) {
       intakeSubsystem.intakeRollIn();
     } else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER)) {
