@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import frc.ServiceLocator;
 import frc.VirtualSpeedController;
 import frc.info.RobotInfo;
+import frc.math.MathUtility;
 
 public class DrivetrainSubsystem {
     private final RobotInfo robotInfo;
@@ -23,7 +24,7 @@ public class DrivetrainSubsystem {
 	public static final double INPUT_THRESHOLD = 0.1; // TODO(low): Constants should move to the top of the class.
 	double lastEncoderDistanceLeft;
 	double lastEncoderDistanceRight;
-	private double zeroEncoderLeft;
+	private double zeroEncoderLeft; 
 	private double zeroEncoderRight;
 	public static final double TICKS_TO_INCHES = 0.0045933578;
 
@@ -73,10 +74,10 @@ public class DrivetrainSubsystem {
 		double leftCurvatureValue = leftVirtualSpeedController.get();
 		double rightCurvatureValue = rightVirtualSpeedController.get();
 
-		double lerpT = Math.abs(deadband(moveValue, RobotDriveBase.kDefaultDeadband)) / inputThreshold;
-		lerpT = clamp(lerpT, 0, 1);
-		double leftBlend = lerp(leftArcadeValue, leftCurvatureValue, lerpT);
-		double rightBlend = lerp(rightArcadeValue, rightCurvatureValue, lerpT);
+		double lerpT = Math.abs(MathUtility.deadband(moveValue, RobotDriveBase.kDefaultDeadband)) / inputThreshold;
+		lerpT = MathUtility.clamp(lerpT, 0, 1);
+		double leftBlend = MathUtility.lerp(leftArcadeValue, leftCurvatureValue, lerpT);
+		double rightBlend = MathUtility.lerp(rightArcadeValue, rightCurvatureValue, lerpT);
 
 		double[] blends = { leftBlend, -rightBlend };
 		return blends;
@@ -99,51 +100,15 @@ public class DrivetrainSubsystem {
 		blendedDrive(xSpeed, zRotation, INPUT_THRESHOLD);
 	}
 
-	// TODO(medium): We should move clamp and lerp to a MathUtils class or something. There are now three different subsystems that each have their own definition of clamp, and Robot has its own definition of deadband.
-
-	/**
-	 * Clamps a double value based on a minimum and a maximum
-	 *
-	 * @param val the value to clamp
-	 * @param min the minimum to clamp on
-	 * @param max the maximum to clamp on
-	 * @return min if val is less than min or max if val is greater than max
-	 */
-	public static double clamp(double val, double min, double max) {
-		return val >= min && val <= max ? val : (val < min ? min : max);
-	}
-
-	/**
-	 * Linearly interpolates between two points based on a t value
-	 *
-	 * @param a the point to interpolate from
-	 * @param b the point to interpolate to
-	 * @param t the value to interpolate on
-	 * @return an output based on the formula lerp(a, b, t) = (1-t)a + tb
-	 */
-	public static double lerp(double a, double b, double t) {
-		return (1 - t) * a + t * b;
-	}
-
-	public static double deadband(double value, double deadband) {
-		if (Math.abs(value) > deadband) {
-			if (value > 0.0) {
-				return (value - deadband) / (1.0 - deadband);
-			} else {
-				return (value + deadband) / (1.0 - deadband);
-			}
-		} else {
-			return 0.0;
-		}
-	}
+	// TODO(medium): We should move clamp and lerp to a MathUtils class or something. (done) There are now three different subsystems that each have their own definition of clamp, and Robot has its own definition of deadband.
 
 	public static double undeadband(double value, double deadband) {
 		if (value < 0) {
 			double t = -value;
-			return DrivetrainSubsystem.lerp(-deadband, -1, t);
+			return MathUtility.lerp(-deadband, -1, t);
 		} else if (value > 0) {
 			double t = value;
-			return DrivetrainSubsystem.lerp(deadband, 1, t);
+			return MathUtility.lerp(deadband, 1, t);
 		} else {
 			return 0;
 		}

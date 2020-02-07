@@ -27,12 +27,8 @@ public class RobotInfo {
             }
             if (!hasComp && hasPractice) { //only be practice mode if there's only the practice file 
                 isComp = false;
-            } else {
-                isComp = true;
             } //TODO: add a lil message in case there's nothing there??
-        } else { //if the whole directory isn't even there then we guess it's comp??????
-            isComp = true;
-        }
+        } 
         ServiceLocator.register(this);
     }
 
