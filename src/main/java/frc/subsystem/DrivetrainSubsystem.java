@@ -4,7 +4,9 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import frc.ServiceLocator;
@@ -21,6 +23,7 @@ public class DrivetrainSubsystem {
     private final BaseMotorController rightFollowerTwo;
 	private final DifferentialDrive robotDrive;
 	public static final double INPUT_THRESHOLD = 0.1; // TODO(low): Constants should move to the top of the class.
+	public final AHRS navx;
 	double lastEncoderDistanceLeft;
 	double lastEncoderDistanceRight;
 	private double zeroEncoderLeft;
@@ -59,6 +62,9 @@ public class DrivetrainSubsystem {
 
 		lastEncoderDistanceLeft = 0;
 		lastEncoderDistanceRight = 0;
+
+		navx = new AHRS(SPI.Port.kMXP);
+		navx.reset();
     }
          
     public void stopAllMotors() {
@@ -163,11 +169,17 @@ public class DrivetrainSubsystem {
 		//in inches
 		return (((rightMaster.getSelectedSensorPosition(0) + leftMaster.getSelectedSensorPosition(0))/2)*TICKS_TO_INCHES);
 	}
+
+	public double getHeading() {
+		return navx.getAngle();
+	}
+	
 	public void resetTracking() {
 		lastEncoderDistanceLeft = 0;
 		lastEncoderDistanceRight = 0;
 		zeroEncoderLeft = leftMaster.getSelectedSensorPosition(0);
 		zeroEncoderRight = rightMaster.getSelectedSensorPosition(0);
+		navx.reset();
 	}
 
 }
