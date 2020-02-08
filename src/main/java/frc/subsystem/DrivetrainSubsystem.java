@@ -3,6 +3,7 @@ package frc.subsystem;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
@@ -40,17 +41,21 @@ public class DrivetrainSubsystem {
 		ServiceLocator.register(this);
 
 		robotInfo = ServiceLocator.get(RobotInfo.class);
-		leftMaster = new WPI_TalonFX(1);
-        leftFollowerOne = new WPI_VictorSPX(2);
-        leftFollowerTwo = new WPI_VictorSPX(3);
-		rightMaster = new WPI_TalonFX(4);
-        rightFollowerOne = new WPI_VictorSPX(5);
-        rightFollowerTwo = new WPI_VictorSPX(6);
+		leftMaster = new WPI_TalonFX(5);
+        leftFollowerOne = new WPI_TalonSRX(3);
+        leftFollowerTwo = new WPI_TalonSRX(4);
+		rightMaster = new WPI_TalonFX(2);
+        rightFollowerOne = new WPI_TalonSRX(0);
+        rightFollowerTwo = new WPI_TalonSRX(1);
 
         leftFollowerOne.follow(leftMaster);
         leftFollowerTwo.follow(leftMaster);
         rightFollowerOne.follow(rightMaster);
-        rightFollowerTwo.follow(rightMaster);
+		rightFollowerTwo.follow(rightMaster);
+		
+		leftMaster.setInverted(true);
+		rightFollowerOne.setInverted(true);
+		rightFollowerTwo.setInverted(true);
 
         robotDrive = new DifferentialDrive(leftMaster, rightMaster);
         
@@ -85,7 +90,7 @@ public class DrivetrainSubsystem {
 		double leftBlend = MathUtility.lerp(leftArcadeValue, leftCurvatureValue, lerpT);
 		double rightBlend = MathUtility.lerp(rightArcadeValue, rightCurvatureValue, lerpT);
 
-		double[] blends = { leftBlend, -rightBlend };
+		double[] blends = { leftBlend, rightBlend };
 		return blends;
 	}
 

@@ -87,8 +87,8 @@ public class Robot extends TimedRobot {
   @Override
   public void robotInit() {
     gamepad = new Joystick(0);
-    leftJoystick = new Joystick(1);
-    rightJoystick = new Joystick(2);
+    leftJoystick = new Joystick(0);
+    rightJoystick = new Joystick(1);
     robotInfo = new RobotInfo();
     intakeSubsystem = new IntakeSubsystem();
     shooterSubsystem = new ShooterSubsystem();
@@ -160,7 +160,7 @@ public class Robot extends TimedRobot {
       controlPanelSubsystem.stopSpinControlPanel();
     }
     //driving stuff I guess.....
-    drivetrainSubsystem.blendedDrive(leftJoystick.getY(), rightJoystick.getX());
+    drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX());
     //end of teleop periodic !!!!!!!!!!
     double hue = ControlPanelSubsystem.getHue(controlPanelSubsystem.getColorSensorRed(), 
       controlPanelSubsystem.getColorSensorGreen(), controlPanelSubsystem.getColorSensorBlue());
