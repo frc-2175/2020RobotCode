@@ -1,6 +1,6 @@
 package frc.subsystem;
 
-import frc.Vector;
+import frc.math.Vector;
 
 public class VisionSubsystem {
     private static final double cameraAngle = Math.toRadians(20);
@@ -18,8 +18,8 @@ public class VisionSubsystem {
 
     public Vector getPixelPositionInCameraSpace(double pixelAngleX, double pixelAngleY, double height) {
         double distance = getDistanceFromTarget(pixelAngleY, height);
-        double yPosition = Math.sin(pixelAngleX) * distance;
-        double xPosition = Math.cos(pixelAngleX) * distance;
+        double yPosition = Math.sin(pixelAngleX) * distance; //forward
+        double xPosition = Math.cos(pixelAngleX) * distance; //left or right
         return new Vector(xPosition, yPosition);
     }
 
