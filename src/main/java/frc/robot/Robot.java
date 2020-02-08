@@ -13,6 +13,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.command.CommandRunner;
 import frc.info.RobotInfo;
 import frc.logging.LogHandler;
 import frc.logging.LogServer;
@@ -47,6 +48,7 @@ public class Robot extends TimedRobot {
   public ShooterSubsystem shooterSubsystem;
   public ControlPanelSubsystem controlPanelSubsystem;
   public DrivetrainSubsystem drivetrainSubsystem;
+  private CommandRunner autonomousCommand;
   
 
   /*
@@ -128,6 +130,8 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
+    
+    autonomousCommand = new commandRunner(); //INSERT COMMAND TO RUN HERE
   }
 
   /**
