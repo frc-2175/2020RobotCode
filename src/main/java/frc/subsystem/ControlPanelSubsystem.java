@@ -1,5 +1,6 @@
 package frc.subsystem;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.ColorSensorV3;
 
@@ -8,7 +9,7 @@ import frc.math.MathUtility;
 
 public class ControlPanelSubsystem {
 
-    private final WPI_TalonSRX controlPanelMotor;
+    public final WPI_TalonSRX controlPanelMotor;
     private final ColorSensorV3 colorSensor; 
     public static double redHue = 0;
     public static double yellowHue = 60;
@@ -19,6 +20,7 @@ public class ControlPanelSubsystem {
     public ControlPanelSubsystem() {
         controlPanelMotor = new WPI_TalonSRX(10);
         colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+        controlPanelMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
     }
 
     public void spinControlPanelForward() {

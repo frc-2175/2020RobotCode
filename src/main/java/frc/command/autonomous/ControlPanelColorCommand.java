@@ -5,7 +5,7 @@ import frc.command.Command;
 import frc.math.MathUtility;
 import frc.subsystem.ControlPanelSubsystem;
 
-public class SpinControlPanelCommand extends Command {
+public class ControlPanelColorCommand extends Command {
 
     private ControlPanelSubsystem controlPanelSubsystem;
     private String goalColor;
@@ -15,7 +15,7 @@ public class SpinControlPanelCommand extends Command {
     private static double[] blueAngles = { 112.5, 292.5 };
     private static double[] yellowAngles = { 157.5, 337.5 };
 
-    public SpinControlPanelCommand(String goalColor) {
+    public ControlPanelColorCommand(String goalColor) {
         controlPanelSubsystem = ServiceLocator.get(ControlPanelSubsystem.class);
         this.goalColor = goalColor;
     }
