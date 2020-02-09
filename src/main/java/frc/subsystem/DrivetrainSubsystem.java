@@ -4,10 +4,10 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import frc.ServiceLocator;
@@ -30,6 +30,7 @@ public class DrivetrainSubsystem {
 	double lastEncoderDistanceRight;
 	private double zeroEncoderLeft; 
 	private double zeroEncoderRight;
+	private Solenoid gearsSolenoid;
 	public static final double TICKS_TO_INCHES = 0.0045933578;
 
 	private static VirtualSpeedController leftVirtualSpeedController = new VirtualSpeedController();
@@ -46,7 +47,8 @@ public class DrivetrainSubsystem {
         leftFollowerTwo = new WPI_TalonSRX(4);
 		rightMaster = new WPI_TalonFX(2);
         rightFollowerOne = new WPI_TalonSRX(0);
-        rightFollowerTwo = new WPI_TalonSRX(1);
+		rightFollowerTwo = new WPI_TalonSRX(1);
+		gearsSolenoid = new Solenoid(0);
 
         leftFollowerOne.follow(leftMaster);
         leftFollowerTwo.follow(leftMaster);
@@ -150,6 +152,10 @@ public class DrivetrainSubsystem {
 		zeroEncoderLeft = leftMaster.getSelectedSensorPosition(0);
 		zeroEncoderRight = rightMaster.getSelectedSensorPosition(0);
 		navx.reset();
+	}
+
+	public void toggleGears() {
+		gearsSolenoid.set(!gearsSolenoid.get());
 	}
 
 }
