@@ -1,7 +1,9 @@
 package command.autonomous;
 
 import static org.junit.Assert.assertEquals;
+
 import org.junit.Test;
+
 import frc.command.autonomous.SpinControlPanelCommand;
 
 public class SpinControlPanelCommandTest {

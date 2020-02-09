@@ -18,7 +18,7 @@ public class ControlPanelRotationsCommand extends Command {
         controlPanelSubsystem.spinControlPanelForward();
         
     }
-    public boolean isfinished() {
+    public boolean isFinished() {
         if(controlPanelSubsystem.controlPanelMotor.getSelectedSensorPosition() - motorRotations > (128*Math.PI/curcumference)*4096 ){
             return true;
         }

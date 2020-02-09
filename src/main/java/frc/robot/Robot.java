@@ -131,7 +131,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     
-    autonomousCommand = new commandRunner(); //INSERT COMMAND TO RUN HERE
+   // autonomousCommand = new CommandRunner(); //INSERT COMMAND TO RUN HERE
   }
 
   /**
