@@ -50,11 +50,15 @@ def process(img):
 
     print("smallest: " + str(smallestX) + ", biggest: " + str(biggestX))
 
-    shapeImage = numpy.zeros((img.shape[0], img.shape[1], 3), dtype=numpy.uint8) 
-    shapeImage = cv2.drawContours(shapeImage, [biggestContour], -1,(160,100,230), cv2.FILLED)
-    shapeImage = cv2.drawMarker(shapeImage, smallestX, (179,242,74))
+    shapeImage = numpy.zeros((img.shape[0], img.shape[1], 3), dtype=numpy.uint8)
+    blue = abs( math.sin(time.time()) * 255 )
+    yellow = abs( math.cos(time.time()) * 255 )
+    red = abs( math.sin(time.time()) * 255 )
+    shapeImage = cv2.drawContours(shapeImage, [biggestContour], -1,(blue,yellow,red), cv2.FILLED)
+    shapeImage = cv2.drawMarker(shapeImage, smallestX, (255,255,255))
+    shapeImage = cv2.drawMarker(shapeImage, biggestX, (255,255,255))
     return shapeImage, {
-        'test1': 3,
+        'test1': 3,``
         'test2': True,
     }
 
