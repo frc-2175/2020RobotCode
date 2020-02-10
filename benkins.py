@@ -28,12 +28,12 @@ try:
 except subprocess.CalledProcessError as e:
     fail("Tests failed. See the logs for more details.")
 
-try:
-    subprocess.run([gradle, "deploy"], check=True)
-except subprocess.CalledProcessError as e:
-    fail("Failed to deploy code to the roboRIO. See the logs for more details.")
+# try:
+#     subprocess.run([gradle, "deploy"], check=True)
+# except subprocess.CalledProcessError as e:
+#     fail("Failed to deploy code to the roboRIO. See the logs for more details.")
 
-try:
-    subprocess.run(["python3", "benkins-deploy-wait.py"], timeout=30, check=True)
-except:
-    fail("Robot did not boot successfully. See the logs for more details.")
+# try:
+#     subprocess.run(["python3", "benkins-deploy-wait.py"], timeout=30, check=True)
+# except:
+#     fail("Robot did not boot successfully. See the logs for more details.")
