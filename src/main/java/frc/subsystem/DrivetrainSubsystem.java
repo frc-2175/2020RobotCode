@@ -48,7 +48,7 @@ public class DrivetrainSubsystem {
 		rightMaster = new WPI_TalonFX(2);
         rightFollowerOne = new WPI_TalonSRX(0);
 		rightFollowerTwo = new WPI_TalonSRX(1);
-		gearsSolenoid = new Solenoid(0);
+		gearsSolenoid = new Solenoid(4);
 
         leftFollowerOne.follow(leftMaster);
         leftFollowerTwo.follow(leftMaster);
