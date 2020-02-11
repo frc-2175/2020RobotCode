@@ -26,6 +26,8 @@ public class RobotInfo {
     public static final String SHOOTER_MOTOR_FOLLOWER = "SHOOTER_MOTOR_FOLLOWER";
     public static final String CONTROL_PANEL_MOTOR = "CONTROL_PANEL_MOTOR";
     public static final String TURRET_MOTOR = "TURRET_MOTOR";
+    public static final String CLIMBER_MOTOR = "CLIMBER_MOTOR";
+    public static final String WINCH_MOTOR = "WINCH_MOTOR";
 
 	public static interface ValueContainer {
 		public Object get();
@@ -79,6 +81,8 @@ public class RobotInfo {
         put(SHOOTER_MOTOR_FOLLOWER, () -> talon(new WPI_TalonSRX(8)));
         put(CONTROL_PANEL_MOTOR, () -> talon(new WPI_TalonSRX(10)));
         put(TURRET_MOTOR, () -> talon(new WPI_TalonSRX(123456789))); //!!!!!!!!!!!!!!!!
+        put(CLIMBER_MOTOR, () -> victor(new WPI_VictorSPX(5555)));
+        put(WINCH_MOTOR, () -> victor(new WPI_VictorSPX(5555)));
 	}
 
 	private MotorWrapper talon(WPI_TalonSRX talon) {
