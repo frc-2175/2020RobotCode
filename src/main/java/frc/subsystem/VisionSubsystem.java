@@ -18,8 +18,8 @@ public class VisionSubsystem {
 
     public Vector getPixelPositionInCameraSpace(double pixelAngleX, double pixelAngleY, double height) {
         double distance = getDistanceFromTarget(pixelAngleY, height);
-        double yPosition = Math.sin(pixelAngleX) * distance; //parallel to target
-        double xPosition = Math.cos(pixelAngleX) * distance; //perpendicular to target 
+        double yPosition = Math.sin(pixelAngleX) * distance; //forward
+        double xPosition = Math.cos(pixelAngleX) * distance; //left or right
         return new Vector(xPosition, yPosition);
     }
 
