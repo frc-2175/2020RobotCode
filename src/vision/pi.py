@@ -35,12 +35,30 @@ def process(img):
                 biggestContour = contour
     if biggestContour is None:
         return img, {}
-    
     biggestContour = cv2.convexHull(biggestContour)
-    shapeImage = numpy.zeros(img.shape)
-    shapeImage = cv2.drawContours(shapeImage, [biggestContour], -1, (255,255,255), cv2.FILLED)
+    smallestX = (100000000, 0)
+    biggestX = (-100000000, 0)
+
+    contourPoints = []
+    for n in biggestContour : 
+        contourPoints.append(n[0])
+    for p in contourPoints :
+        if p[0] < smallestX[0] :
+            smallestX = (p[0], p[1])
+        if p[0] > biggestX[0] :
+            biggestX = (p[0], p[1])
+
+    print("smallest: " + str(smallestX) + ", biggest: " + str(biggestX))
+
+    shapeImage = numpy.zeros((img.shape[0], img.shape[1], 3), dtype=numpy.uint8)
+    blue = abs( math.sin(time.time()) * 255 )
+    yellow = abs( math.cos(time.time()) * 255 )
+    red = abs( math.sin(time.time()) * 255 )
+    shapeImage = cv2.drawContours(shapeImage, [biggestContour], -1,(blue,yellow,red), cv2.FILLED)
+    shapeImage = cv2.drawMarker(shapeImage, smallestX, (255,255,255))
+    shapeImage = cv2.drawMarker(shapeImage, biggestX, (255,255,255))
     return shapeImage, {
-        'test1': 3,
+        'test1': 3,``
         'test2': True,
     }
 
