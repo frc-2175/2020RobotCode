@@ -7,7 +7,7 @@ import frc.subsystem.ControlPanelSubsystem;
 public class ControlPanelRotationsCommand extends Command {
 
     private ControlPanelSubsystem controlPanelSubsystem;
-    double curcumference; // Make this correct
+    double curcumference; // : )
     double motorRotations;
 
     public ControlPanelRotationsCommand() {

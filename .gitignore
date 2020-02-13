@@ -162,3 +162,4 @@ imgui.ini
 
 benkins-notification.txt
 .mypy_cache
+__pycache__
