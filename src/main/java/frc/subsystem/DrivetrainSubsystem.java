@@ -74,10 +74,18 @@ public class DrivetrainSubsystem {
 		navx = new AHRS(SPI.Port.kMXP);
 		navx.reset();
     }
-         
+    
     public void stopAllMotors() {
            tankDrive(0,0); 
-    }
+	}
+	/**
+	 * returns motor values from virtual motor controllers !! Don't use this to drive, this helps blendedDrive!!!
+	 * 
+	 * @param moveValue how much you want to move forward (value from -1 to 1)
+	 * @param turnValue how much you want to turn (value from -1 to 1)
+	 * @param inputThreshold built-in deadband
+	 * @return
+	 */
     public static double[] getBlendedMotorValues(double moveValue, double turnValue, double inputThreshold) {
 		virtualRobotDrive.arcadeDrive(moveValue, turnValue, false);
 		double leftArcadeValue = leftVirtualSpeedController.get() * 0.8;
@@ -109,12 +117,25 @@ public class DrivetrainSubsystem {
 		robotDrive.tankDrive(blendedValues[0], blendedValues[1]);
 	}
 
+	/**
+	 * Drives with a blend between curvature and arcade drive using
+	 * linear interpolation (this version doesn't use an input threshold)
+	 * 
+	 * @param xSpeed the forward/backward speed for the robot
+	 * @param zRotation the curvature to drive/the in-place rotation
+	 */
 	public void blendedDrive(double xSpeed, double zRotation) {
 		blendedDrive(xSpeed, zRotation, INPUT_THRESHOLD);
 	}
 
 	// TODO(medium): We should move clamp and lerp to a MathUtils class or something. (done) There are now three different subsystems that each have their own definition of clamp, and Robot has its own definition of deadband.
-
+	/**
+	 * reverses a deadbanded value
+	 * 
+	 * @param value value that has been deadbanded 
+	 * @param deadband size of deadband
+	 * @return undeadbanded value
+	 */
 	public static double undeadband(double value, double deadband) {
 		if (value < 0) {
 			double t = -value;
@@ -146,6 +167,9 @@ public class DrivetrainSubsystem {
 		return navx.getAngle();
 	}
 	
+	/**
+	 * resets encoder distances & gyro 
+	 */
 	public void resetTracking() {
 		lastEncoderDistanceLeft = 0;
 		lastEncoderDistanceRight = 0;
@@ -154,6 +178,9 @@ public class DrivetrainSubsystem {
 		navx.reset();
 	}
 
+	/**
+	 * changes gears for drive train
+	 */
 	public void toggleGears() {
 		gearsSolenoid.set(!gearsSolenoid.get());
 	}

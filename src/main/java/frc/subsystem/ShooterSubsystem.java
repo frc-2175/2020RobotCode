@@ -12,8 +12,6 @@ public class ShooterSubsystem {
     private final PIDController pidController; 
     double conversionNumber = 4096;
 
-
-
     public ShooterSubsystem() {
         shooterMotorMaster = new CANSparkMax(7, MotorType.kBrushless);
         shooterMotorFollower = new CANSparkMax(8, MotorType.kBrushless);
@@ -34,14 +32,18 @@ public class ShooterSubsystem {
         shooterMotorMaster.set(0);
     }
 
+    /**
+     * gives current speed in revolutions per minute!!
+     * @return current speed in rpm
+     */
     public double convertToRPM() {
-        double originalSpeed = 0; // TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!S
+        double originalSpeed = shooterMotorMaster.get; // TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!S
         double ticksPerSecond = originalSpeed * 10;
         double ticksPerMinute = ticksPerSecond * 60;
         return ticksPerMinute / conversionNumber; //revolutions per minute
     }
 
-    public double pidSpeed() {
+    public double pidSpeed() { //TODO
         return 0;
     }
 }

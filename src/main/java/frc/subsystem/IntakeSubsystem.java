@@ -12,6 +12,9 @@ public class IntakeSubsystem {
         intakeMotor = new WPI_VictorSPX(9);
     }
 
+    /**
+     * rolls intake in at full in
+     */
     public void intakeRollIn() {
         intakeMotor.set(-1);
     }
@@ -20,6 +23,9 @@ public class IntakeSubsystem {
         intakeMotor.set(0);
     }
 
+    /**
+     * rolls intake out at full speed
+     */
     public void intakeRollOut() {
         intakeMotor.set(1);
     }
