@@ -167,9 +167,11 @@ public class Robot extends TimedRobot {
     drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX());
 
     //change gears ...
-    if (leftJoystick.getRawButtonPressed(3)) {
+    /*if (leftJoystick.getRawButtonPressed(3)) {
       drivetrainSubsystem.toggleGears();
-    }
+    }*/
+    drivetrainSubsystem.setGear(leftJoystick.getRawButton(1));
+    
     //end of teleop periodic !!!!!!!!!!
     double hue = ControlPanelSubsystem.getHue(controlPanelSubsystem.getColorSensorRed(), 
       controlPanelSubsystem.getColorSensorGreen(), controlPanelSubsystem.getColorSensorBlue());
