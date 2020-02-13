@@ -8,7 +8,7 @@ public class DriveForwardCommand extends Command {
     double distance;
     DrivetrainSubsystem drivetrainSubsystem;
     
-    public DriveForwardCommand(double distance) {
+    public DriveForwardCommand(double distance, int i) { //TODO : this is in ticks right now i think??? so we should fix that !!!!!
         this.distance = distance;
         drivetrainSubsystem = ServiceLocator.get(DrivetrainSubsystem.class);
     }

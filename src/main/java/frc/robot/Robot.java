@@ -14,6 +14,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.command.CommandRunner;
+import frc.command.Command;
+import frc.command.ParallelCommand;
+import frc.command.SequentialCommand;
+import frc.command.autonomous.DriveForwardCommand;
 import frc.info.RobotInfo;
 import frc.logging.LogHandler;
 import frc.logging.LogServer;
@@ -130,8 +134,10 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    
-   // autonomousCommand = new CommandRunner(); //INSERT COMMAND TO RUN HERE
+  // autonomousCommand = new CommandRunner(); //INSERT COMMAND TO RUN HERE
+    SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
+      new DriveForwardCommand(13,000)
+    });
   }
 
   /**
