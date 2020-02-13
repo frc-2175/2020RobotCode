@@ -163,7 +163,7 @@ public class DrivetrainSubsystem {
 	}
 
 	public void setHighGear() {
-		gearsSolenoid.set(false)
+		gearsSolenoid.set(false);
 	}
 
 	public void setGear(boolean gear) {
