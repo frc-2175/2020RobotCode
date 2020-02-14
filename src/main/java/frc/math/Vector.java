@@ -30,4 +30,8 @@ public class Vector {
     public double getLength() {
         return Math.sqrt(x * x + y * y);
     }
+
+    public String toString() {
+        return x + ", " + y;
+    }
 }

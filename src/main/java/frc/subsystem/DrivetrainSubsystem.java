@@ -10,10 +10,12 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.ServiceLocator;
 import frc.VirtualSpeedController;
 import frc.info.RobotInfo;
 import frc.math.MathUtility;
+import frc.math.Vector; 
 
 public class DrivetrainSubsystem {
     private final RobotInfo robotInfo;
@@ -31,7 +33,8 @@ public class DrivetrainSubsystem {
 	private double zeroEncoderLeft; 
 	private double zeroEncoderRight;
 	private Solenoid gearsSolenoid;
-	public static final double TICKS_TO_INCHES = 0.0045933578;
+	public static final double TICKS_TO_INCHES = 36/121363.5;
+	private Vector position = new Vector(0, 0); 
 
 	private static VirtualSpeedController leftVirtualSpeedController = new VirtualSpeedController();
 	private static VirtualSpeedController rightVirtualSpeedController = new VirtualSpeedController();
@@ -73,7 +76,20 @@ public class DrivetrainSubsystem {
 
 		navx = new AHRS(SPI.Port.kMXP);
 		navx.reset();
-    }
+		
+		leftMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+		rightMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+		leftMaster.setSelectedSensorPosition(0, 0, 0);
+		rightMaster.setSelectedSensorPosition(0, 0, 0);
+	}
+	
+	public void periodic() {
+		trackLocation();
+		System.out.println(position);
+		SmartDashboard.putNumber("x", position.x);
+		SmartDashboard.putNumber("y", position.y);
+		SmartDashboard.putNumber("heading", getHeading());
+	}
     
     public void stopAllMotors() {
            tankDrive(0,0); 
@@ -196,6 +212,39 @@ public class DrivetrainSubsystem {
 	public void setGear(boolean gear) {
 		gearsSolenoid.set(gear);
 	}
+
+	public double getLeftDistance() {
+		SmartDashboard.putNumber("leftEncoderDistance", leftMaster.getSelectedSensorPosition());
+		SmartDashboard.putNumber("leftDistanceInches", leftMaster.getSelectedSensorPosition() * TICKS_TO_INCHES );
+		return leftMaster.getSelectedSensorPosition() * TICKS_TO_INCHES;
+	}
+	public double getRightDistance() {
+		SmartDashboard.putNumber("rightEncoderDistance", rightMaster.getSelectedSensorPosition());
+		SmartDashboard.putNumber("rightDistanceInches", rightMaster.getSelectedSensorPosition() * TICKS_TO_INCHES );
+		return rightMaster.getSelectedSensorPosition() * TICKS_TO_INCHES;
+	}
+
+	public Vector getRobotPosition() {
+		return position; 
+	}
+
+	public void trackLocation() {
+		double distanceLeft = getLeftDistance() - lastEncoderDistanceLeft; 
+		double distanceRight = getRightDistance() - lastEncoderDistanceRight; 
+		double distance = (distanceLeft + distanceRight) / 2; 
+		double angle = Math.toRadians(navx.getAngle()); 
+
+		double x = Math.sin(angle) * distance; 
+		double y = Math.cos(angle) * distance; 
+
+		Vector changeInPosition = new Vector(x, y); 
+		position = position.add(changeInPosition); 
+
+		lastEncoderDistanceLeft = getLeftDistance(); 
+		lastEncoderDistanceRight = getRightDistance();
+
+	}
+
 
 }
 

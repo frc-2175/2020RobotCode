@@ -37,7 +37,7 @@ public class ShooterSubsystem {
      * @return current speed in rpm
      */
     public double convertToRPM() {
-        double originalSpeed = shooterMotorMaster.get; // TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!S
+        double originalSpeed = shooterMotorMaster.get(); // TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!S
         double ticksPerSecond = originalSpeed * 10;
         double ticksPerMinute = ticksPerSecond * 60;
         return ticksPerMinute / conversionNumber; //revolutions per minute

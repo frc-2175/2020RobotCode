@@ -145,6 +145,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
+    drivetrainSubsystem.periodic();
   }
 
   /**
@@ -185,6 +186,8 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("ColorSensorGreen", controlPanelSubsystem.getColorSensorGreen());
     SmartDashboard.putNumber("ColorSensorBlue", controlPanelSubsystem.getColorSensorBlue());
     SmartDashboard.putString("ControlPanelColor", ControlPanelSubsystem.getControlPanelColor(hue));
+
+    drivetrainSubsystem.periodic();
 
   }
 
