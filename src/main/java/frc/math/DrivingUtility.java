@@ -33,4 +33,15 @@ public class DrivingUtility {
             return endSpeed; 
         }
     }
+
+    public static Vector[] makePathLine(Vector startPoint, Vector endPoint) {
+        int numPoints = (int) Math.sqrt(Math.pow(endPoint.x - startPoint.x, 2) + Math.pow(endPoint.y - startPoint.y, 2)) + 2;
+        Vector pathVector = endPoint.subtract(startPoint).normalized();
+        Vector[] path = new Vector[numPoints];
+        for (int i = 0; i < numPoints - 1; i++) {
+            path[i] = startPoint.add(pathVector.multiply(i));
+        }
+        path[path.length - 1] = endPoint; 
+        return path;
+    }
 }

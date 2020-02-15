@@ -17,6 +17,22 @@ public class Vector {
         return new Vector(x - v.x, y - v.y);
     }
 
+    public Vector multiply(double a) {
+        return new Vector (x*a, y*a); 
+    }
+
+    public Vector divide(double a) {
+        return new Vector (x/a, y/a); 
+    }
+
+    public double magnitude() {
+        return Math.sqrt(x*x + y*y);
+    }
+
+    public Vector normalized() {
+        return divide(magnitude());
+    }
+
     public Vector rotate(double theta) {
         double newX = (x * Math.cos(Math.toRadians(theta))) - (y * Math.sin(Math.toRadians(theta)));
         double newY = (x * Math.sin(Math.toRadians(theta))) + (y * Math.cos(Math.toRadians(theta)));
@@ -27,8 +43,14 @@ public class Vector {
         return new Vector(x, y);
     }
 
-    public double getLength() {
-        return Math.sqrt(x * x + y * y);
+    public boolean equals(Object obj) {
+        if (!(obj instanceof Vector)) {
+            return false;
+        }
+
+        Vector other = (Vector) obj;
+
+        return other.x == x && other.y == y;
     }
 
     public String toString() {
