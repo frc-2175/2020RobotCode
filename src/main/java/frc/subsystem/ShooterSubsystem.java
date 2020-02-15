@@ -7,29 +7,29 @@ import frc.PIDController;
 
 public class ShooterSubsystem {
     
-    private final CANSparkMax shooterMotorMaster;
-    private final CANSparkMax shooterMotorFollower;
+    private final CANSparkMax flywheelMotorMaster;
+    private final CANSparkMax flywheelMotorFollower;
     private final PIDController pidController; 
     double conversionNumber = 4096;
-
+ 
     public ShooterSubsystem() {
-        shooterMotorMaster = new CANSparkMax(7, MotorType.kBrushless);
-        shooterMotorFollower = new CANSparkMax(8, MotorType.kBrushless);
+        flywheelMotorMaster = new CANSparkMax(7, MotorType.kBrushless);
+        flywheelMotorFollower = new CANSparkMax(8, MotorType.kBrushless);
         double kp = 1.0 / 36.0;
         double ki = 1.0 / 30.0;
         double kd = 0;
         pidController = new PIDController(kp, ki, kd);
         
-        shooterMotorFollower.follow(shooterMotorMaster);
+        flywheelMotorFollower.follow(flywheelMotorMaster);
 
     }
 
     public void shootOut() {
-        shooterMotorMaster.set(1);
+        flywheelMotorMaster.set(1);
     }
     
     public void stopShootOut() {
-        shooterMotorMaster.set(0);
+        flywheelMotorMaster.set(0);
     }
 
     /**
@@ -37,7 +37,7 @@ public class ShooterSubsystem {
      * @return current speed in rpm
      */
     public double convertToRPM() {
-        return shooterMotorMaster.getEncoder().getVelocity(); // TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!S
+        return flywheelMotorMaster.getEncoder().getVelocity(); // TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!S
         /* double ticksPerSecond = originalSpeed * 10;
         double ticksPerMinute = ticksPerSecond * 60;
         return ticksPerMinute / conversionNumber; //revolutions per minute */

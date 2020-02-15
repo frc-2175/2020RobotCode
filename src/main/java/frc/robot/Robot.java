@@ -13,9 +13,9 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.command.CommandRunner;
+import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.command.Command;
-import frc.command.ParallelCommand;
+import frc.command.CommandRunner;
 import frc.command.SequentialCommand;
 import frc.command.autonomous.DriveForwardCommand;
 import frc.info.RobotInfo;
@@ -23,9 +23,12 @@ import frc.logging.LogHandler;
 import frc.logging.LogServer;
 import frc.logging.Logger;
 import frc.logging.StdoutHandler;
+import frc.math.MathUtility;
 import frc.subsystem.ControlPanelSubsystem;
 import frc.subsystem.DrivetrainSubsystem;
+import frc.subsystem.FeederSubsystem;
 import frc.subsystem.IntakeSubsystem;
+import frc.subsystem.MagazineSubsystem;
 import frc.subsystem.ShooterSubsystem;
 
 /**
@@ -52,6 +55,8 @@ public class Robot extends TimedRobot {
   public ShooterSubsystem shooterSubsystem;
   public ControlPanelSubsystem controlPanelSubsystem;
   public DrivetrainSubsystem drivetrainSubsystem;
+  public FeederSubsystem feederSubsystem;
+  public MagazineSubsystem magazineSubsystem;
   private CommandRunner autonomousCommand;
   
 
@@ -151,35 +156,72 @@ public class Robot extends TimedRobot {
   /**
    * This function is called periodically during operator control.
    */
+  /*
+  ✩ controls (weapons) ✩
+    ✩ face buttons ✩
+      -X : unfeed ball from feeder
+      -Y : feed ball into shooter (with feeder)
+      -A : Toggle intake out and in (one double solenoid)
+      -B : Hood toggle (one double solenoid)
+    ✩ Bumpers / triggers ✩ 
+      -Left bumper : none
+      -Left trigger : spin flywheel
+      -Right bumper : intake spin out
+      -Right trigger : intake spin in
+    ✩ Sticks (on gamepad) ✩
+      -left stick Y : Magazine roll out/in
+      -Right stick X : Manual move turret (side to side)
+      -Right stick Y : Manual move turret angle up/down
+    ✩ Climb controls ✩
+      -Start and Back
+    ✩ D - Pad ✩
+      -nothing lol
+  */
   @Override
   public void teleopPeriodic() {
+    // ✩ intake roll ✩
     if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER)) {
-      intakeSubsystem.intakeRollIn();
-    } else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER)) {
       intakeSubsystem.intakeRollOut();
+    } else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER)) {
+      intakeSubsystem.intakeRollIn();
     } else {
       intakeSubsystem.stopIntake();
     }
-    if (gamepad.getRawButton(GAMEPAD_A)) {
+
+    // ✩ intake piston ✩
+    if(gamepad.getRawButton(GAMEPAD_A)) {
+      intakeSubsystem.toggleIntake();
+    }
+
+    // ✩ feeder roll ✩
+    if(gamepad.getRawButton(GAMEPAD_X)) {
+      feederSubsystem.rollInFeeder();
+    } else if (gamepad.getRawButton(GAMEPAD_Y)) {
+      feederSubsystem.rollOutFeeder();
+    } else {
+      feederSubsystem.stopFeeder();
+    }
+
+    // ✩ magazine roll ✩
+    magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05));
+
+    // ✩ shooter flywheel ✩
+    if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
       shooterSubsystem.shootOut();
     } else {
       shooterSubsystem.stopShootOut();
     }
-    if(gamepad.getRawButton(GAMEPAD_X)) {
-      controlPanelSubsystem.spinControlPanelForward();
-    } else {
-      controlPanelSubsystem.stopSpinControlPanel();
-    }
-    //driving stuff I guess.....
+
+    // ✩ Drive Controls ✩
     drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX());
 
-    //change gears ...
-    /*if (leftJoystick.getRawButtonPressed(3)) {
+    // ✩ changing gears ✩
+    /*if (leftJoystick.getRawButtonPressed(3)) { //toggle code
       drivetrainSubsystem.toggleGears();
     }*/
-    drivetrainSubsystem.setGear(leftJoystick.getRawButton(1));
+    drivetrainSubsystem.setGear(leftJoystick.getRawButton(1)); //press and hold code
     
-    //end of teleop periodic !!!!!!!!!!
+    //you have reached the end of teleop periodic !!!!!!!!!! : )
     double hue = ControlPanelSubsystem.getHue(controlPanelSubsystem.getColorSensorRed(), 
       controlPanelSubsystem.getColorSensorGreen(), controlPanelSubsystem.getColorSensorBlue());
     SmartDashboard.putNumber("ColorSensorRed", controlPanelSubsystem.getColorSensorRed());
