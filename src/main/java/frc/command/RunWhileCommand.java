@@ -45,8 +45,8 @@ public class RunWhileCommand extends Command {
 	@Override
 	public void initSpacetimeEvent(SpacetimeEvent parentEvent) {
 		super.initSpacetimeEvent(parentEvent);
-		primaryCommand.initSpacetimeEvent(event);
-		secondaryCommand.initSpacetimeEvent(event);
+		// primaryCommand.initSpacetimeEvent(event);
+		// secondaryCommand.initSpacetimeEvent(event);
 	}
 
 	private void endSecondaryCommand() {

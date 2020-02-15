@@ -11,8 +11,8 @@ public class CommandRunner {
 
     public CommandRunner(Command command) {
 		this.command = command;
-		Logger robotLogger = ServiceLocator.get(Logger.class);
-		command.initSpacetimeEvent(new SpacetimeEvent("CommandRunner", robotLogger.newWithExtraFields()));
+		// Logger robotLogger = ServiceLocator.get(Logger.class);
+		// command.initSpacetimeEvent(new SpacetimeEvent("CommandRunner", robotLogger.newWithExtraFields()));
         hasRunInit = false;
         hasRunEnd = false;
     }
