@@ -3,6 +3,8 @@ package frc.logging;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import frc.ServiceLocator;
+
 public class Logger {
     public ArrayList<LogField> baseFields;
     public LogHandler[] handlers;
@@ -19,6 +21,7 @@ public class Logger {
      * input into the log methods.
      */
     public Logger(LogHandler[] handlers, LogField... baseFields) {
+        ServiceLocator.register(this);
         this.handlers = handlers;
         this.baseFields = new ArrayList<>(Arrays.asList(baseFields));
     }

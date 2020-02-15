@@ -1,5 +1,6 @@
 package frc.subsystem;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -12,8 +13,10 @@ public class IntakeSubsystem {
     private final DoubleSolenoid intakePiston;
 
     public IntakeSubsystem() {
-        intakeMotor = new WPI_VictorSPX(9);
+        intakeMotor = new WPI_TalonSRX(10);
         intakePiston = new DoubleSolenoid(0, 1);
+        
+        intakeMotor.setInverted(true);
     }
 
     /**

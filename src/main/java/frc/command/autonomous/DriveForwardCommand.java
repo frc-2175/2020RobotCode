@@ -16,10 +16,10 @@ public class DriveForwardCommand extends Command {
         drivetrainSubsystem.resetTracking();
     }
     public void execute() {
-        drivetrainSubsystem.tankDrive( .6, .6);
+        drivetrainSubsystem.tankDrive(-.6, .6);
     }
     public boolean isFinished() {
-        if(drivetrainSubsystem.getAverageEncoderDistance() >= distance) {
+        if(drivetrainSubsystem.getAverageEncoderDistance() <= -distance) {
             return true;
         } else {
             return false;

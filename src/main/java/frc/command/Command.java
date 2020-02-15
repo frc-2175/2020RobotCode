@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import frc.spacetime.SpacetimeEvent;
 
 public abstract class Command {
-	protected SpacetimeEvent event;
+	// protected SpacetimeEvent event;
 	private double startTime;
 
     /**
@@ -28,9 +28,9 @@ public abstract class Command {
 	public abstract void end();
 
 	public void _init() {
-		if(event != null) {
-			event.start();
-		}
+		// if(event != null) {
+		// 	event.start();
+		// }
 		startTime = Timer.getFPGATimestamp();
 		init();
 	}
@@ -44,15 +44,15 @@ public abstract class Command {
 	}
 
 	public void _end() {
-		if(event != null) {
-			event.end();
-		}
+		// if(event != null) {
+		// 	event.end();
+		// }
 
 		end();
 	}
 
 	public void initSpacetimeEvent(SpacetimeEvent parentEvent) {
-		event = parentEvent.makeChild(this.getClass().getName());
+		// event = parentEvent.makeChild(this.getClass().getName());
 	}
 
 	protected double getElapsedTime() {

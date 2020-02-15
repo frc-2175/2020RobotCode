@@ -52,11 +52,11 @@ public class Robot extends TimedRobot {
   Joystick rightJoystick;
   public RobotInfo robotInfo;
   public IntakeSubsystem intakeSubsystem;
-  public ShooterSubsystem shooterSubsystem;
-  public ControlPanelSubsystem controlPanelSubsystem;
+  // public ShooterSubsystem shooterSubsystem;
+  // public ControlPanelSubsystem controlPanelSubsystem;
   public DrivetrainSubsystem drivetrainSubsystem;
-  public FeederSubsystem feederSubsystem;
-  public MagazineSubsystem magazineSubsystem;
+  // public FeederSubsystem feederSubsystem;
+  // public MagazineSubsystem magazineSubsystem;
   private CommandRunner autonomousCommand;
   
 
@@ -97,13 +97,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    gamepad = new Joystick(0);
+    gamepad = new Joystick(2);
     leftJoystick = new Joystick(0);
     rightJoystick = new Joystick(1);
     robotInfo = new RobotInfo();
     intakeSubsystem = new IntakeSubsystem();
-    shooterSubsystem = new ShooterSubsystem();
-    controlPanelSubsystem = new ControlPanelSubsystem();
+    // shooterSubsystem = new ShooterSubsystem();
+    // controlPanelSubsystem = new ControlPanelSubsystem();
     LogServer logServer = new LogServer();
     logServer.startServer();
     drivetrainSubsystem = new DrivetrainSubsystem();
@@ -140,11 +140,11 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
   // autonomousCommand = new CommandRunner(); //INSERT COMMAND TO RUN HERE
-    SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
-      new DriveForwardCommand(20000)
-    });
+    // SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
+    //   new DriveForwardCommand(100000)
+    // });
 
-    autonomousCommand = new CommandRunner(crossAutoLineCommand);
+    autonomousCommand = new CommandRunner(new DriveForwardCommand(36));
   }
 
   /**
@@ -153,6 +153,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousPeriodic() {
     drivetrainSubsystem.periodic();
+    autonomousCommand.runCommand();
   }
 
   /**
@@ -191,28 +192,31 @@ public class Robot extends TimedRobot {
     }
 
     // ✩ intake piston ✩
-    if(gamepad.getRawButton(GAMEPAD_A)) {
+    if(gamepad.getRawButtonPressed(GAMEPAD_A)) {
       intakeSubsystem.toggleIntake();
     }
 
     // ✩ feeder roll ✩
+    /*
     if(gamepad.getRawButton(GAMEPAD_X)) {
       feederSubsystem.rollInFeeder();
     } else if (gamepad.getRawButton(GAMEPAD_Y)) {
       feederSubsystem.rollOutFeeder();
     } else {
       feederSubsystem.stopFeeder();
-    }
+    } */
 
     // ✩ magazine roll ✩
+    /*
     magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05));
+    */
 
     // ✩ shooter flywheel ✩
-    if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
-      shooterSubsystem.shootOut();
-    } else {
-      shooterSubsystem.stopShootOut();
-    }
+    // if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
+    //   shooterSubsystem.shootOut();
+    // } else {
+    //   shooterSubsystem.stopShootOut();
+    // }
 
     // ✩ Drive Controls ✩
     drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX());
@@ -224,12 +228,12 @@ public class Robot extends TimedRobot {
     drivetrainSubsystem.setGear(leftJoystick.getRawButton(1)); //press and hold code
     
     //you have reached the end of teleop periodic !!!!!!!!!! : )
-    double hue = ControlPanelSubsystem.getHue(controlPanelSubsystem.getColorSensorRed(), 
-      controlPanelSubsystem.getColorSensorGreen(), controlPanelSubsystem.getColorSensorBlue());
-    SmartDashboard.putNumber("ColorSensorRed", controlPanelSubsystem.getColorSensorRed());
-    SmartDashboard.putNumber("ColorSensorGreen", controlPanelSubsystem.getColorSensorGreen());
-    SmartDashboard.putNumber("ColorSensorBlue", controlPanelSubsystem.getColorSensorBlue());
-    SmartDashboard.putString("ControlPanelColor", ControlPanelSubsystem.getControlPanelColor(hue));
+    // double hue = ControlPanelSubsystem.getHue(controlPanelSubsystem.getColorSensorRed(), 
+    //   controlPanelSubsystem.getColorSensorGreen(), controlPanelSubsystem.getColorSensorBlue());
+    // SmartDashboard.putNumber("ColorSensorRed", controlPanelSubsystem.getColorSensorRed());
+    // SmartDashboard.putNumber("ColorSensorGreen", controlPanelSubsystem.getColorSensorGreen());
+    // SmartDashboard.putNumber("ColorSensorBlue", controlPanelSubsystem.getColorSensorBlue());
+    // SmartDashboard.putString("ControlPanelColor", ControlPanelSubsystem.getControlPanelColor(hue));
 
     drivetrainSubsystem.periodic();
 
