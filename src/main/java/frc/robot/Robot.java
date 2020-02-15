@@ -141,8 +141,10 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
   // autonomousCommand = new CommandRunner(); //INSERT COMMAND TO RUN HERE
     SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
-      new DriveForwardCommand(13,000)
+      new DriveForwardCommand(20000)
     });
+
+    autonomousCommand = new CommandRunner(crossAutoLineCommand);
   }
 
   /**
