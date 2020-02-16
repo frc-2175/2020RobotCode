@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
@@ -45,12 +46,12 @@ public class DrivetrainSubsystem {
 		ServiceLocator.register(this);
 
 		robotInfo = ServiceLocator.get(RobotInfo.class);
-		leftMaster = new WPI_TalonFX(5);
-        leftFollowerOne = new WPI_TalonSRX(3);
-        leftFollowerTwo = new WPI_TalonSRX(4);
-		rightMaster = new WPI_TalonFX(2);
-        rightFollowerOne = new WPI_TalonSRX(0);
-		rightFollowerTwo = new WPI_TalonSRX(1);
+		leftMaster = robotInfo.pick(() -> new WPI_TalonFX(15), () -> new WPI_TalonFX(5));
+        leftFollowerOne = robotInfo.pick(() -> new WPI_VictorSPX(11), () -> new WPI_TalonSRX(3));
+        leftFollowerTwo = robotInfo.pick(() -> new WPI_VictorSPX(10), () -> new WPI_TalonSRX(4));
+		rightMaster = robotInfo.pick(() -> new WPI_TalonFX(16), () -> new WPI_TalonFX(2));
+        rightFollowerOne = robotInfo.pick(() -> new WPI_VictorSPX(9), () -> new WPI_TalonSRX(0));
+		rightFollowerTwo = robotInfo.pick(() -> new WPI_VictorSPX(8), () -> new WPI_TalonSRX(1));
 		gearsSolenoid = new Solenoid(4);
 
         leftFollowerOne.follow(leftMaster);
