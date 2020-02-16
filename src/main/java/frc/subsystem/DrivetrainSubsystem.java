@@ -242,7 +242,6 @@ public class DrivetrainSubsystem {
 
 		lastEncoderDistanceLeft = getLeftDistance(); 
 		lastEncoderDistanceRight = getRightDistance();
-
 	}
 
 

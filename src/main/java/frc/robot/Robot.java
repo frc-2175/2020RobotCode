@@ -15,7 +15,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import frc.command.Command;
 import frc.command.CommandRunner;
 import frc.command.SequentialCommand;
-import frc.command.autonomous.DriveForwardCommand;
+import frc.command.autonomous.DriveStraightCommand;
 import frc.info.RobotInfo;
 import frc.logging.LogHandler;
 import frc.logging.LogServer;
@@ -137,7 +137,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
-      new DriveForwardCommand(4)
+      new DriveStraightCommand(4)
     });
 
     autonomousCommand = new CommandRunner(crossAutoLineCommand); //INSERT COMMAND TO RUN HERE
