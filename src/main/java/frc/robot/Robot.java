@@ -137,7 +137,7 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
-      new DriveStraightCommand(4)
+      new DriveStraightCommand(4, .6)
     });
 
     autonomousCommand = new CommandRunner(crossAutoLineCommand); //INSERT COMMAND TO RUN HERE
@@ -190,11 +190,11 @@ public class Robot extends TimedRobot {
     // ✩ intake piston ✩
     if(gamepad.getRawButtonPressed(GAMEPAD_A)) {
       intakeSubsystem.toggleIntake();
-    }// else if (gamepad.getRawButtonPressed(GAMEPAD_RIGHT_TRIGGER) || gamepad.getRawButtonPressed(GAMEPAD_RIGHT_BUMPER)) {
-    //   intakeSubsystem.putOut();
-    // } else if (gamepad.getRawButtonReleased(GAMEPAD_RIGHT_TRIGGER) || gamepad.getRawButtonReleased(GAMEPAD_RIGHT_BUMPER)) {
-    //   intakeSubsystem.putIn();
-    // }
+    } else if (gamepad.getRawButtonPressed(GAMEPAD_RIGHT_TRIGGER) || gamepad.getRawButtonPressed(GAMEPAD_RIGHT_BUMPER)) {
+      intakeSubsystem.putOut();
+    } else if (gamepad.getRawButtonReleased(GAMEPAD_RIGHT_TRIGGER) || gamepad.getRawButtonReleased(GAMEPAD_RIGHT_BUMPER)) {
+      intakeSubsystem.putIn();
+    }
 
     // ✩ feeder roll ✩
     if(gamepad.getRawButton(GAMEPAD_X)) {
