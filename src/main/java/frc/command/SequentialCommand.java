@@ -60,7 +60,7 @@ public class SequentialCommand extends Command {
 	public void initSpacetimeEvent(SpacetimeEvent parentEvent) {
 		super.initSpacetimeEvent(parentEvent);
 		for(Command command : commands) {
-			// command.initSpacetimeEvent(event);
+			command.initSpacetimeEvent(event);
 		}
 	}
 }
