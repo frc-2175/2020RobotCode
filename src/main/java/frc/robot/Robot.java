@@ -190,7 +190,11 @@ public class Robot extends TimedRobot {
     // ✩ intake piston ✩
     if(gamepad.getRawButtonPressed(GAMEPAD_A)) {
       intakeSubsystem.toggleIntake();
-    }
+    }// else if (gamepad.getRawButtonPressed(GAMEPAD_RIGHT_TRIGGER) || gamepad.getRawButtonPressed(GAMEPAD_RIGHT_BUMPER)) {
+    //   intakeSubsystem.putOut();
+    // } else if (gamepad.getRawButtonReleased(GAMEPAD_RIGHT_TRIGGER) || gamepad.getRawButtonReleased(GAMEPAD_RIGHT_BUMPER)) {
+    //   intakeSubsystem.putIn();
+    // }
 
     // ✩ feeder roll ✩
     if(gamepad.getRawButton(GAMEPAD_X)) {

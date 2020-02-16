@@ -45,5 +45,12 @@ public class IntakeSubsystem {
         intakeMotor.set(1);
     }
 
+    public void putOut() {
+        intakePiston.set(DoubleSolenoid.Value.kForward);
+    }
+
+    public void putIn() {
+        intakePiston.set(DoubleSolenoid.Value.kReverse);
+    }
     
 }
