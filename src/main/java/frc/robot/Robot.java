@@ -202,7 +202,7 @@ public class Robot extends TimedRobot {
       new ShootCommand(123)
     });
 
-    SequentialCommand middleRendezvousFiveBall = new SequentialCommand(new Command[] {
+    SequentialCommand leftTrench = new SequentialCommand(new Command[] {
        //face two balls in oposite trench
        //change 123
        new ParallelCommand(new Command[] { 
