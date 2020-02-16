@@ -12,8 +12,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpiutil.math.MathUtil;
 import frc.command.Command;
 import frc.command.CommandRunner;
 import frc.command.SequentialCommand;
@@ -41,7 +39,7 @@ import frc.subsystem.ShooterSubsystem;
 public class Robot extends TimedRobot {
   Logger logger = new Logger(new LogHandler[] {
     new StdoutHandler()
-  });
+  }, true);
 
   WPI_VictorSPX leftMotor1;
   WPI_VictorSPX leftMotor2;
@@ -52,14 +50,13 @@ public class Robot extends TimedRobot {
   Joystick rightJoystick;
   public RobotInfo robotInfo;
   public IntakeSubsystem intakeSubsystem;
-  // public ShooterSubsystem shooterSubsystem;
-  // public ControlPanelSubsystem controlPanelSubsystem;
+  public ShooterSubsystem shooterSubsystem;
+  public ControlPanelSubsystem controlPanelSubsystem;
   public DrivetrainSubsystem drivetrainSubsystem;
-  // public FeederSubsystem feederSubsystem;
-  // public MagazineSubsystem magazineSubsystem;
+  public FeederSubsystem feederSubsystem;
+  public MagazineSubsystem magazineSubsystem;
   private CommandRunner autonomousCommand;
   
-
   /*
       (y)
   (x)     (b)
@@ -88,8 +85,6 @@ public class Robot extends TimedRobot {
   public static final int POV_UP_LEFT = 315;
 
   public static final double topSpeed = 1;
-  
-  
 
   /**
    * This function is run when the robot is first started up and should be
@@ -102,11 +97,13 @@ public class Robot extends TimedRobot {
     rightJoystick = new Joystick(1);
     robotInfo = new RobotInfo();
     intakeSubsystem = new IntakeSubsystem();
-    // shooterSubsystem = new ShooterSubsystem();
-    // controlPanelSubsystem = new ControlPanelSubsystem();
+    shooterSubsystem = new ShooterSubsystem();
+    controlPanelSubsystem = new ControlPanelSubsystem();
     LogServer logServer = new LogServer();
     logServer.startServer();
     drivetrainSubsystem = new DrivetrainSubsystem();
+    feederSubsystem = new FeederSubsystem();
+    magazineSubsystem = new MagazineSubsystem();
   }
 
   /**
@@ -139,12 +136,11 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-  // autonomousCommand = new CommandRunner(); //INSERT COMMAND TO RUN HERE
-    // SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
-    //   new DriveForwardCommand(100000)
-    // });
+    SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
+      new DriveForwardCommand(4)
+    });
 
-    autonomousCommand = new CommandRunner(new DriveForwardCommand(36));
+    autonomousCommand = new CommandRunner(crossAutoLineCommand); //INSERT COMMAND TO RUN HERE
   }
 
   /**
@@ -197,46 +193,35 @@ public class Robot extends TimedRobot {
     }
 
     // ✩ feeder roll ✩
-    /*
     if(gamepad.getRawButton(GAMEPAD_X)) {
       feederSubsystem.rollInFeeder();
     } else if (gamepad.getRawButton(GAMEPAD_Y)) {
       feederSubsystem.rollOutFeeder();
     } else {
       feederSubsystem.stopFeeder();
-    } */
+    }
 
     // ✩ magazine roll ✩
-    /*
     magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05));
-    */
 
     // ✩ shooter flywheel ✩
-    // if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
-    //   shooterSubsystem.shootOut();
-    // } else {
-    //   shooterSubsystem.stopShootOut();
-    // }
+    if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
+      shooterSubsystem.shootOut();
+    } else {
+      shooterSubsystem.stopShootOut();
+    }
 
     // ✩ Drive Controls ✩
     drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX());
 
     // ✩ changing gears ✩
-    /*if (leftJoystick.getRawButtonPressed(3)) { //toggle code
-      drivetrainSubsystem.toggleGears();
-    }*/
+    // if (leftJoystick.getRawButtonPressed(3)) { //toggle code
+    //   drivetrainSubsystem.toggleGears();
+    // }
     drivetrainSubsystem.setGear(leftJoystick.getRawButton(1)); //press and hold code
     
     //you have reached the end of teleop periodic !!!!!!!!!! : )
-    // double hue = ControlPanelSubsystem.getHue(controlPanelSubsystem.getColorSensorRed(), 
-    //   controlPanelSubsystem.getColorSensorGreen(), controlPanelSubsystem.getColorSensorBlue());
-    // SmartDashboard.putNumber("ColorSensorRed", controlPanelSubsystem.getColorSensorRed());
-    // SmartDashboard.putNumber("ColorSensorGreen", controlPanelSubsystem.getColorSensorGreen());
-    // SmartDashboard.putNumber("ColorSensorBlue", controlPanelSubsystem.getColorSensorBlue());
-    // SmartDashboard.putString("ControlPanelColor", ControlPanelSubsystem.getControlPanelColor(hue));
-
     drivetrainSubsystem.periodic();
-
   }
 
   /**
@@ -245,5 +230,4 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
   }
-
 }

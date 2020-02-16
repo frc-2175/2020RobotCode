@@ -17,14 +17,30 @@ public class Logger {
      * Constructs a new logger object.
      * @param handlers An array of LogHandlers meant to take each call of the log methods
      * and handle the level, fields, and tags associated with the call.
+     * @param isBaseLogger whether or not this logger should be registered with the service
+     * locator
+     * @param baseFields a variable number of LogFields that will be appended to the fields
+     * input into the log methods.
+     */
+    public Logger(LogHandler[] handlers, boolean isBaseLogger, LogField... baseFields) {
+        if(isBaseLogger) {
+            ServiceLocator.register(this);
+        }
+        this.handlers = handlers;
+        this.baseFields = new ArrayList<>(Arrays.asList(baseFields));
+    }
+
+    /**
+     * Constructs a new logger object.
+     * @param handlers An array of LogHandlers meant to take each call of the log methods
+     * and handle the level, fields, and tags associated with the call.
      * @param baseFields a variable number of LogFields that will be appended to the fields
      * input into the log methods.
      */
     public Logger(LogHandler[] handlers, LogField... baseFields) {
-        ServiceLocator.register(this);
-        this.handlers = handlers;
-        this.baseFields = new ArrayList<>(Arrays.asList(baseFields));
+        this(handlers, false, baseFields);
     }
+
 
     /**
      * Sends a log message and a group of fields (including the base fields)
@@ -90,8 +106,6 @@ public class Logger {
         for(int i = 0; i < baseFields.size(); i++) {
             newBaseFields.add(i, baseFields.get(i));
         }
-
-
 
         return new Logger(handlers, newBaseFields.toArray(new LogField[0]));
     }

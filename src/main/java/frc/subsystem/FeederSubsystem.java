@@ -8,7 +8,7 @@ public class FeederSubsystem {
     private final SpeedController feederMotor;
 
     public FeederSubsystem() {
-        feederMotor = new WPI_TalonSRX(333);
+        feederMotor = new WPI_TalonSRX(9);
     }
 
     /**
