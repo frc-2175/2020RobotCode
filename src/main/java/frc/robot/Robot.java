@@ -14,8 +14,13 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import frc.command.Command;
 import frc.command.CommandRunner;
+import frc.command.ParallelCommand;
 import frc.command.SequentialCommand;
+import frc.command.autonomous.DriveBackwardCommand;
 import frc.command.autonomous.DriveStraightCommand;
+import frc.command.autonomous.IntakeCommand;
+import frc.command.autonomous.ShootCommand;
+import frc.command.autonomous.TurningDegreesCommand;
 import frc.info.RobotInfo;
 import frc.logging.LogHandler;
 import frc.logging.LogServer;
@@ -138,6 +143,77 @@ public class Robot extends TimedRobot {
   public void autonomousInit() {
     SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
       new DriveStraightCommand(4, .6)
+    });
+
+    SequentialCommand rightToTrench = new SequentialCommand(new Command[] {
+      //Change all the "123"
+      //new AimCommand
+      new ShootCommand(123),
+      new TurningDegreesCommand(180), 
+      new ParallelCommand(new Command[] { 
+        new DriveStraightCommand(123, .5), //change later
+        new IntakeCommand(123)
+      }),
+      new TurningDegreesCommand(-180), //could make a turn shooter command
+      //new AimCommand
+      new ShootCommand(123) 
+    });
+
+    SequentialCommand rightToRendezvous = new SequentialCommand(new Command[] {
+      //Change all the "123"
+      //new AimCommand
+      new ShootCommand(123),
+      new TurningDegreesCommand(123),
+      new ParallelCommand(new Command[] { 
+        new DriveStraightCommand(123, .5), //change later
+        new IntakeCommand(123)
+      }),
+      new TurningDegreesCommand(123),
+      new ParallelCommand(new Command[] { 
+        new DriveStraightCommand(123, .5), //change later
+        new IntakeCommand(123)
+      }),
+      //new AimCommand
+      new ShootCommand(123)
+    });
+
+    SequentialCommand middleRendezvousThreeBall = new SequentialCommand(new Command[] {
+      //Change all the "123", and angle robot tworads the three balls
+      //new AimCommand
+      new ShootCommand(123),
+      new ParallelCommand(new Command[] { 
+        new DriveStraightCommand(123, .5), //change later
+        new IntakeCommand(123) //3 balls
+      }),
+      new DriveBackwardCommand(123),
+      //new AimCommand
+      new ShootCommand(123)
+    });
+
+    SequentialCommand middleRendezvousFiveBall = new SequentialCommand(new Command[] {
+      //Change all the "123", and angle robot tworads the three balls
+      //new AimCommand
+      new ShootCommand(123),
+      new ParallelCommand(new Command[] { 
+        new DriveStraightCommand(123, .5), //change later
+        new IntakeCommand(123) //5 balls
+      }),
+      //new AimCommand
+      new ShootCommand(123)
+    });
+
+    SequentialCommand middleRendezvousFiveBall = new SequentialCommand(new Command[] {
+       //face two balls in oposite trench
+       //change 123
+       new ParallelCommand(new Command[] { 
+        new DriveStraightCommand(123, .5),
+        new IntakeCommand(123)
+      }),
+      new DriveBackwardCommand(123), //out of trench
+      new TurningDegreesCommand(123),
+      new DriveStraightCommand(123, .5),
+      //new AimCommand
+      new ShootCommand(123)
     });
 
     autonomousCommand = new CommandRunner(crossAutoLineCommand); //INSERT COMMAND TO RUN HERE
