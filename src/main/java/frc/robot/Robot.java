@@ -145,11 +145,14 @@ public class Robot extends TimedRobot {
       new DriveStraightCommand(4, .6)
     });
 
+    /*
+    Start on the right side, shoot three balls
+    Intake two balls from trench, and shoot
+    */
     SequentialCommand rightToTrench = new SequentialCommand(new Command[] {
-      //Change all the "123"
+      //Change all the "123", make robot in line with the trench
       //new AimCommand
       new ShootCommand(123),
-      new TurningDegreesCommand(180), 
       new ParallelCommand(new Command[] { 
         new DriveStraightCommand(123, .5), //change later
         new IntakeCommand(123)
@@ -159,11 +162,14 @@ public class Robot extends TimedRobot {
       new ShootCommand(123) 
     });
 
+    /*
+    Start on the right side, shoot three balls
+    Intake five balls from rendezvous, and shoot
+    */
     SequentialCommand rightToRendezvous = new SequentialCommand(new Command[] {
-      //Change all the "123"
+      //Change all the "123", make robot face rendezvous area before match
       //new AimCommand
       new ShootCommand(123),
-      new TurningDegreesCommand(123),
       new ParallelCommand(new Command[] { 
         new DriveStraightCommand(123, .5), //change later
         new IntakeCommand(123)
@@ -176,9 +182,13 @@ public class Robot extends TimedRobot {
       //new AimCommand
       new ShootCommand(123)
     });
-
+    
+    /*
+    Start in middle, shoot three balls
+    Intake three balls from rendezvous, and shoot
+    */
     SequentialCommand middleRendezvousThreeBall = new SequentialCommand(new Command[] {
-      //Change all the "123", and angle robot tworads the three balls
+      //Change all the "123", and angle robot towards the three balls
       //new AimCommand
       new ShootCommand(123),
       new ParallelCommand(new Command[] { 
@@ -190,8 +200,12 @@ public class Robot extends TimedRobot {
       new ShootCommand(123)
     });
 
+    /*
+    Start in middle, shoot three balls
+    Intake all five balls from rendezvous point, and shoot
+    */
     SequentialCommand middleRendezvousFiveBall = new SequentialCommand(new Command[] {
-      //Change all the "123", and angle robot tworads the three balls
+      //Change all the "123", and angle robot towards the three balls
       //new AimCommand
       new ShootCommand(123),
       new ParallelCommand(new Command[] { 
@@ -202,6 +216,11 @@ public class Robot extends TimedRobot {
       new ShootCommand(123)
     });
 
+    /*
+    Start on left side w/ three balls
+    Drive into opp. side trench, intake two balls
+    Drive out of trench into middle area, and shoot
+    */
     SequentialCommand leftTrench = new SequentialCommand(new Command[] {
        //face two balls in oposite trench
        //change 123
