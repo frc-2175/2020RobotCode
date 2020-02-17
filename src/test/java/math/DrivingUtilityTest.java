@@ -1,6 +1,5 @@
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
 import static org.hamcrest.Matchers.closeTo;
+import static org.junit.Assert.assertArrayEquals;
 
 import org.junit.Rule;
 import org.junit.Test;

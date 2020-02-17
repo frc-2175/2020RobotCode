@@ -1,5 +1,6 @@
 package frc.subsystem;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
@@ -11,7 +12,7 @@ public class MagazineSubsystem {
     private final SpeedController magazineMotor;
 
     public MagazineSubsystem() {
-        magazineMotor = new WPI_VictorSPX(10);
+        magazineMotor = new WPI_TalonSRX(7);
     }
 
     /**

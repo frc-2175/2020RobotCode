@@ -311,7 +311,10 @@ public class Robot extends TimedRobot {
     }
 
     // ✩ Drive Controls ✩
-    drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX());
+    //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX() * Math.abs(rightJoystick.getX())); //squared
+    // drivetrainSubsystem.blendedDrive(-leftJoystick.getY() , rightJoystick.getX()); //normal
+    //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), (rightJoystick.getX() * Math.abs( rightJoystick.getX() ) )*.5); //squared * .5
+    drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX() * .5); //linear * .5
 
     // ✩ changing gears ✩
     // if (leftJoystick.getRawButtonPressed(3)) { //toggle code
