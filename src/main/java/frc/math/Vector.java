@@ -50,7 +50,7 @@ public class Vector {
 
         Vector other = (Vector) obj;
 
-        return other.x == x && other.y == y;
+        return Math.abs(other.x - x) < 0.01 && Math.abs(other.y - y) < 0.01;
     }
 
     public String toString() {
