@@ -145,7 +145,7 @@ public class Robot extends TimedRobot {
       new DriveStraightCommand(4, .6)
     });
 
-    /*
+     /*
     Start on the right side, shoot three balls
     Intake two balls from trench, and shoot
     */

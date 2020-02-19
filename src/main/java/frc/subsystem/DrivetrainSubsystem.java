@@ -10,6 +10,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
@@ -23,11 +24,11 @@ import frc.math.Vector;
 public class DrivetrainSubsystem {
     private final RobotInfo robotInfo;
 	private final WPI_TalonFX leftMaster;
-    private final BaseMotorController leftFollowerOne;
-    private final BaseMotorController leftFollowerTwo;
+    private final SpeedController leftFollowerOne;
+    private final SpeedController leftFollowerTwo;
 	private final WPI_TalonFX rightMaster;
-    private final BaseMotorController rightFollowerOne;
-    private final BaseMotorController rightFollowerTwo;
+    private final SpeedController rightFollowerOne;
+    private final SpeedController rightFollowerTwo;
 	private final DifferentialDrive robotDrive;
 	public static final double INPUT_THRESHOLD = 0.1; // TODO(low): Constants should move to the top of the class.
 	public final AHRS navx;
@@ -38,6 +39,9 @@ public class DrivetrainSubsystem {
 	private Solenoid gearsSolenoid;
 	public static final double TICKS_TO_INCHES = 36/121363.5;
 	private Vector position = new Vector(0, 0); 
+
+	private SpeedControllerGroup leftMotors;
+	private SpeedControllerGroup rightMotors;
 
 	private static VirtualSpeedController leftVirtualSpeedController = new VirtualSpeedController();
 	private static VirtualSpeedController rightVirtualSpeedController = new VirtualSpeedController();
@@ -56,16 +60,25 @@ public class DrivetrainSubsystem {
 		rightFollowerTwo = robotInfo.pick(() -> new WPI_VictorSPX(8), () -> new WPI_TalonSRX(1));
 		gearsSolenoid = new Solenoid(4);
 
+		/*  THIS DOESN'T WORK!!!
         leftFollowerOne.follow(leftMaster);
         leftFollowerTwo.follow(leftMaster);
         rightFollowerOne.follow(rightMaster);
 		rightFollowerTwo.follow(rightMaster);
-		
+		*/
+
+		leftMotors = new SpeedControllerGroup(leftMaster, leftFollowerOne, leftFollowerTwo);
+		rightMotors = new SpeedControllerGroup(rightMaster, rightFollowerOne, rightFollowerTwo);
+
 		leftMaster.setInverted(true);
+		rightMaster.setInverted(false);
 		rightFollowerOne.setInverted(true);
 		rightFollowerTwo.setInverted(true);
+		leftFollowerOne.setInverted(false);
+		leftFollowerTwo.setInverted(false);
 
-        robotDrive = new DifferentialDrive(leftMaster, rightMaster);
+
+        robotDrive = new DifferentialDrive(leftMotors, rightMotors);
         
         leftVirtualSpeedController = new VirtualSpeedController(); // TODO(low): There is no need to set these here since they are also initialized above.
 		rightVirtualSpeedController = new VirtualSpeedController();
@@ -88,7 +101,6 @@ public class DrivetrainSubsystem {
 	
 	public void periodic() {
 		trackLocation();
-		System.out.println(position);
 		SmartDashboard.putNumber("x", position.x);
 		SmartDashboard.putNumber("y", position.y);
 		SmartDashboard.putNumber("heading", getHeading());
