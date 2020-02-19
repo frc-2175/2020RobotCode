@@ -1,5 +1,7 @@
 package frc.math;
 
+import javax.swing.text.Segment;
+
 public class DrivingUtility {
     
     public static double getTrapezoidSpeed(
@@ -34,6 +36,16 @@ public class DrivingUtility {
         }
     }
 
+    public static class PathSegment {
+        public double angle;
+        public Vector[] path;
+
+        public PathSegment(double angle, Vector[] path) {
+            this.angle = angle;
+            this.path = path;
+        }
+    }
+
     public static Vector[] makePathLine(Vector startPoint, Vector endPoint) {
         int numPoints = (int) Math.sqrt(Math.pow(endPoint.x - startPoint.x, 2) + Math.pow(endPoint.y - startPoint.y, 2)) + 2;
         Vector pathVector = endPoint.subtract(startPoint).normalized();
@@ -45,7 +57,11 @@ public class DrivingUtility {
         return path;
     }
 
-    public static Vector[] makeRightPathArc(double radius, double degrees) {
+    public static PathSegment makeLinePathSegment(double distance) {
+        return new PathSegment(0, makePathLine(new Vector(0, 0), new Vector(0, distance)));
+    }
+
+    public static PathSegment makeRightArcPathSegment(double radius, double degrees) {
         double circumfrence = 2.0 * Math.PI * radius;
         double distanceOfPath = circumfrence * ( degrees / 360 );
         double yEndpoint = radius * Math.sin(Math.toRadians(degrees));
@@ -60,17 +76,16 @@ public class DrivingUtility {
             path[i] = new Vector(xPosition, yPosition);
         }
         path[numpoints - 1] = new Vector(xEndpoint, yEndpoint);
-        return path;
+        return new PathSegment(-degrees, path);
     }
     
 
-    public static Vector[] makeLeftPathArc(double radius, double degrees) {
-        Vector[] rightPath = makeRightPathArc(radius, degrees);
+    public static PathSegment makeLeftArcPathSegment(double radius, double degrees) {
+        Vector[] rightPath = makeRightArcPathSegment(radius, degrees).path;
         Vector[] leftPath = new Vector[rightPath.length];
         for (int i = 0; i < rightPath.length; i++) {
             leftPath[i] = new Vector(-rightPath[i].x, rightPath[i].y);
         }
-        return leftPath;
+        return new PathSegment(degrees, leftPath);
     }
-
 }
