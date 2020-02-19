@@ -2,6 +2,7 @@ package frc.subsystem;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -9,6 +10,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -90,6 +92,13 @@ public class DrivetrainSubsystem {
 		SmartDashboard.putNumber("x", position.x);
 		SmartDashboard.putNumber("y", position.y);
 		SmartDashboard.putNumber("heading", getHeading());
+		SmartDashboard.putNumber("main motor left ", leftMaster.get());
+		SmartDashboard.putNumber("main motor right ", rightMaster.get());
+		SmartDashboard.putNumber(" motor 1 left ", leftFollowerOne.get());
+		SmartDashboard.putNumber("motor 2 left ", leftFollowerTwo.get());
+		SmartDashboard.putNumber("motor 1 right ", rightFollowerOne.get());
+		SmartDashboard.putNumber("motor 2 right ", rightFollowerTwo.get());
+
 	}
     
     public void stopAllMotors() {
@@ -131,6 +140,8 @@ public class DrivetrainSubsystem {
 	 */
 	public void blendedDrive(double xSpeed, double zRotation, double inputThreshold) {
 		double[] blendedValues = getBlendedMotorValues(xSpeed, zRotation, inputThreshold);
+		SmartDashboard.putNumber("blended values 1", blendedValues[0]);
+		SmartDashboard.putNumber("blended values 2", blendedValues[1]);
 		robotDrive.tankDrive(blendedValues[0], blendedValues[1]);
 	}
 

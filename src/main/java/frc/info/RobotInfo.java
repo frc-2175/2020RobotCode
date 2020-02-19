@@ -1,6 +1,8 @@
 package frc.info;
 
 import java.io.File;
+
+import edu.wpi.first.wpilibj.Filesystem;
 import frc.ServiceLocator;
 
 public class RobotInfo {
@@ -12,7 +14,7 @@ public class RobotInfo {
     private boolean isComp = true;
 
     public RobotInfo() {
-        File propertyDirectory = new File("/home/lvuser");
+        File propertyDirectory = Filesystem.getDeployDirectory();
         if(propertyDirectory.exists()) {
             boolean hasComp = false;
             boolean hasPractice = false;
