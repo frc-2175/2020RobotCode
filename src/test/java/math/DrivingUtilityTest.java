@@ -55,7 +55,7 @@ public class DrivingUtilityTest {
     @Test
     public void testMakeRightPathArc() {
         double r = 6 / Math.PI;
-        Vector[] path = DrivingUtility.makeRightPathArc(r, 95);
+        Vector[] path = DrivingUtility.makeRightArcPathSegment(r, 95).path;
         assertEquals(new Vector(0,0), path[0]);
         assertEquals(new Vector(r - r*(Math.sqrt(3) / 2) , r*.5), path[1]);
         assertEquals(new Vector(r - r*.5, r*Math.sqrt(3) / 2), path[2]);
@@ -67,7 +67,7 @@ public class DrivingUtilityTest {
     @Test
     public void testMakeLeftPathArc() {
         double r = 6 / Math.PI;
-        Vector[] path = DrivingUtility.makeLeftPathArc(r, 95);
+        Vector[] path = DrivingUtility.makeLeftArcPathSegment(r, 95).path;
         assertTrue( path[1].x < 0);
         assertTrue( path[2].x < 0);
         assertTrue( path[3].x < 0);
@@ -78,6 +78,41 @@ public class DrivingUtilityTest {
         assertTrue( path[3].y > 0);
         assertTrue( path[4].y > 0);
 
+    }
+
+    @Test
+    public void testMakePath() {
+        Vector[] path = DrivingUtility.makePath(
+            new DrivingUtility.PathSegment(-90, new Vector[] {
+                new Vector(0, 0),
+                new Vector(0, 1),
+                new Vector(0, 2)
+            }), 
+            new DrivingUtility.PathSegment(90, new Vector[] {
+                new Vector(0, 0),
+                new Vector(0, 1),
+                new Vector(0, 2)
+            }),
+            new DrivingUtility.PathSegment(-90, new Vector[] {
+                new Vector(0, 0),
+                new Vector(0, 1),
+                new Vector(0, 2)
+            })
+        );
+
+        assertArrayEquals(
+            new Vector[] {
+                new Vector(0, 0),
+                new Vector(0, 1),
+                new Vector(0, 2),
+                new Vector(0, 2),
+                new Vector(1, 2),
+                new Vector(2, 2),
+                new Vector(2, 2),
+                new Vector(2, 3),
+                new Vector(2, 4),
+            }
+        , path);
     }
 
 }
