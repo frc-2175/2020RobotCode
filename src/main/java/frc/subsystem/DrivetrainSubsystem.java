@@ -112,11 +112,14 @@ public class DrivetrainSubsystem {
 		SmartDashboard.putNumber("heading", getHeading());
 		SmartDashboard.putNumber("main motor left ", leftMaster.get());
 		SmartDashboard.putNumber("main motor right ", rightMaster.get());
-		SmartDashboard.putNumber(" motor 1 left ", leftFollowerOne.get());
+		SmartDashboard.putNumber("motor 1 left ", leftFollowerOne.get());
 		SmartDashboard.putNumber("motor 2 left ", leftFollowerTwo.get());
 		SmartDashboard.putNumber("motor 1 right ", rightFollowerOne.get());
 		SmartDashboard.putNumber("motor 2 right ", rightFollowerTwo.get());
 		purePursuitPID.updateTime(Timer.getFPGATimestamp());
+		SmartDashboard.putNumber("Values/PositionX", position.x);
+		SmartDashboard.putNumber("Values/PositionY", position.y);
+		SmartDashboard.putNumber("Values/Gyro", navx.getAngle());
 
 	}
     
