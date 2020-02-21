@@ -12,12 +12,15 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.PIDController;
 import frc.ServiceLocator;
 import frc.VirtualSpeedController;
 import frc.info.RobotInfo;
+import frc.math.DrivingUtility;
 import frc.math.MathUtility;
 import frc.math.Vector; 
 
@@ -39,6 +42,7 @@ public class DrivetrainSubsystem {
 	private Solenoid gearsSolenoid;
 	public static final double TICKS_TO_INCHES = 36/121363.5;
 	private Vector position = new Vector(0, 0); 
+	private PIDController purePursuitPID; 
 
 	private SpeedControllerGroup leftMotors;
 	private SpeedControllerGroup rightMotors;
@@ -97,6 +101,8 @@ public class DrivetrainSubsystem {
 		rightMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
 		leftMaster.setSelectedSensorPosition(0, 0, 0);
 		rightMaster.setSelectedSensorPosition(0, 0, 0);
+
+		purePursuitPID = new PIDController(0.015, 0, 0);
 	}
 	
 	public void periodic() {
@@ -110,6 +116,7 @@ public class DrivetrainSubsystem {
 		SmartDashboard.putNumber("motor 2 left ", leftFollowerTwo.get());
 		SmartDashboard.putNumber("motor 1 right ", rightFollowerOne.get());
 		SmartDashboard.putNumber("motor 2 right ", rightFollowerTwo.get());
+		purePursuitPID.updateTime(Timer.getFPGATimestamp());
 
 	}
     
@@ -266,6 +273,44 @@ public class DrivetrainSubsystem {
 
 		lastEncoderDistanceLeft = getLeftDistance(); 
 		lastEncoderDistanceRight = getRightDistance();
+	}
+
+	public void purePursuit(Vector[] path) {
+		int indexOfClosestPoint = findClosestPoint(path, position);
+		int indexOfGoalPoint = findGoalPoint(path, position, 12);
+		Vector goalPoint = path[indexOfGoalPoint].subtract(position).rotate(navx.getAngle());
+		double angle = getAngleToPoint(goalPoint);
+		double turnValue = purePursuitPID.pid(-angle, 0);
+		double speed = DrivingUtility.getTrapezoidSpeed(0.5, 0.9, 0.5, path.length, 12, 12, indexOfClosestPoint);
+
+		blendedDrive(speed, turnValue);
+
+	}
+
+	public static int findClosestPoint(Vector[] path, Vector fieldPosition) {
+		int indexOfClosestPoint = 0;
+		double minDistance = path[0].subtract(fieldPosition).magnitude(); 
+		for(int i = 0; i < path.length; i++) {
+			double distanceToPoint = path[i].subtract(fieldPosition).magnitude();
+			if (distanceToPoint < minDistance) {
+				indexOfClosestPoint = i; 
+				minDistance = distanceToPoint; 
+			}
+		}
+		return indexOfClosestPoint;
+	}
+
+	public static int findGoalPoint(Vector[] path, Vector fieldPosition, int lookAhead) {
+		int indexOfClosestPoint = findClosestPoint(path, fieldPosition); 
+		return Math.min(indexOfClosestPoint + lookAhead, path.length - 1);
+	}
+
+	public static double getAngleToPoint(Vector point) {
+		if (point.magnitude() == 0) {
+			return 0;
+		}
+		double angle = Math.acos(point.y / point.magnitude());
+		return Math.signum(point.x) * angle; 
 	}
 
 
