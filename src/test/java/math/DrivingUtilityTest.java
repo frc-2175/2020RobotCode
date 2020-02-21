@@ -15,7 +15,7 @@ public class DrivingUtilityTest {
     public ErrorCollector collector = new ErrorCollector();
 
     @Test
-    public void testGetTrapezoidSpeed(){
+    public void testGetTrapezoidSpeed() {
         collector.checkThat(DrivingUtility.getTrapezoidSpeed(0.2, 0.8, 0.4, 5, 1, 2, -1), closeTo(0.2, 0.01));
         collector.checkThat(DrivingUtility.getTrapezoidSpeed(0.2, 0.8, 0.4, 5, 1, 2, 0), closeTo(0.2, 0.01));
         collector.checkThat(DrivingUtility.getTrapezoidSpeed(0.2, 0.8, 0.4, 5, 1, 2, 0.5), closeTo(0.5, 0.01));

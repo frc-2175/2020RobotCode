@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.ServiceLocator;
 
 public class MagazineSubsystem {
 
@@ -13,6 +14,7 @@ public class MagazineSubsystem {
 
     public MagazineSubsystem() {
         magazineMotor = new WPI_TalonSRX(7);
+        ServiceLocator.register(this);
     }
 
     /**

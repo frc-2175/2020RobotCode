@@ -61,6 +61,11 @@ public class DrivingUtility {
         return path;
     }
 
+    /**
+     * 
+     * @param distance how far you want to drive (in inches)
+     * @return path segment with all points in line and position
+     */
     public static PathSegment makeLinePathSegment(double distance) {
         return new PathSegment(0, makePathLine(new Vector(0, 0), new Vector(0, distance)));
     }
@@ -93,10 +98,10 @@ public class DrivingUtility {
         return new PathSegment(degrees, leftPath);
     }
 
-    public static Vector[] makePath(PathSegment... pathSegments) {
+    public static Vector[] makePath(double startingAngle, Vector startingPosition, PathSegment... pathSegments) {
         ArrayList<Vector> finalPath = new ArrayList<Vector>();
-        double previousAngle = 0;
-        Vector previousPosition = new Vector(0, 0);
+        double previousAngle = startingAngle;
+        Vector previousPosition = startingPosition;
         for (PathSegment aPathSegment : pathSegments) {
             for(Vector vector : aPathSegment.path) {
                 vector = vector.rotate(previousAngle); //turn your path segment to start where the previous segment ended!

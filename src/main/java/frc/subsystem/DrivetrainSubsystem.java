@@ -284,7 +284,7 @@ public class DrivetrainSubsystem {
 		Vector goalPoint = path[indexOfGoalPoint].subtract(position).rotate(navx.getAngle());
 		double angle = getAngleToPoint(goalPoint);
 		double turnValue = purePursuitPID.pid(-angle, 0);
-		double speed = DrivingUtility.getTrapezoidSpeed(0.5, 0.9, 0.5, path.length, 12, 12, indexOfClosestPoint);
+		double speed = DrivingUtility.getTrapezoidSpeed(0.2, 0.5, 0.2, path.length, 12, 12, indexOfClosestPoint);
 
 		blendedDrive(speed, turnValue);
 

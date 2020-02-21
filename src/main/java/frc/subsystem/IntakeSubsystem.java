@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.ServiceLocator;
 
 public class IntakeSubsystem {
 
@@ -17,6 +18,7 @@ public class IntakeSubsystem {
         intakePiston = new DoubleSolenoid(0, 1);
         
         intakeMotor.setInverted(true);
+        ServiceLocator.register(this);
     }
 
     /**

@@ -18,6 +18,7 @@ import frc.command.ParallelCommand;
 import frc.command.SequentialCommand;
 import frc.command.autonomous.DriveBackwardCommand;
 import frc.command.autonomous.DriveStraightCommand;
+import frc.command.autonomous.FollowPathCommand;
 import frc.command.autonomous.IntakeCommand;
 import frc.command.autonomous.ShootCommand;
 import frc.command.autonomous.TurningDegreesCommand;
@@ -26,7 +27,9 @@ import frc.logging.LogHandler;
 import frc.logging.LogServer;
 import frc.logging.Logger;
 import frc.logging.StdoutHandler;
+import frc.math.DrivingUtility;
 import frc.math.MathUtility;
+import frc.math.DrivingUtility.PathSegment;
 import frc.subsystem.ControlPanelSubsystem;
 import frc.subsystem.DrivetrainSubsystem;
 import frc.subsystem.FeederSubsystem;
@@ -61,6 +64,7 @@ public class Robot extends TimedRobot {
   public FeederSubsystem feederSubsystem;
   public MagazineSubsystem magazineSubsystem;
   private CommandRunner autonomousCommand;
+  
   
   /*
       (y)
@@ -235,7 +239,12 @@ public class Robot extends TimedRobot {
       new ShootCommand(123)
     });
 
-    autonomousCommand = new CommandRunner(crossAutoLineCommand); //INSERT COMMAND TO RUN HERE
+    FollowPathCommand purePursuit = new FollowPathCommand(
+      DrivingUtility.makeLinePathSegment(24),
+      DrivingUtility.makeLeftArcPathSegment(24, 90)
+    );
+
+    autonomousCommand = new CommandRunner(purePursuit); //INSERT COMMAND TO RUN HERE!!!!!!!!!!!!!!!!!
   }
 
   /**
