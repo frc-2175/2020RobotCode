@@ -21,6 +21,7 @@ public class IntakeSubsystem {
         intakePiston = new DoubleSolenoid(0, 1);
         
         intakeMotor.setInverted(true);
+        ServiceLocator.register(this);
     }
 
     /**

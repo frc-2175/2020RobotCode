@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import frc.PIDController;
+import frc.ServiceLocator;
 
 public class ShooterSubsystem {
     
@@ -21,6 +22,7 @@ public class ShooterSubsystem {
         pidController = new PIDController(kp, ki, kd);
         
         flywheelMotorFollower.follow(flywheelMotorMaster);
+        ServiceLocator.register(this);
 
     }
 

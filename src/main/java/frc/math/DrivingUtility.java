@@ -1,6 +1,6 @@
 package frc.math;
 
-import javax.swing.text.Segment;
+import java.util.ArrayList;
 
 public class DrivingUtility {
     
@@ -37,12 +37,16 @@ public class DrivingUtility {
     }
 
     public static class PathSegment {
-        public double angle;
+        public double endingAngle;
         public Vector[] path;
 
         public PathSegment(double angle, Vector[] path) {
-            this.angle = angle;
+            this.endingAngle = angle;
             this.path = path;
+        }
+
+        public Vector getEndPoint() {
+            return path[path.length - 1];
         }
     }
 
@@ -57,6 +61,11 @@ public class DrivingUtility {
         return path;
     }
 
+    /**
+     * 
+     * @param distance how far you want to drive (in inches)
+     * @return path segment with all points in line and position
+     */
     public static PathSegment makeLinePathSegment(double distance) {
         return new PathSegment(0, makePathLine(new Vector(0, 0), new Vector(0, distance)));
     }
@@ -87,5 +96,22 @@ public class DrivingUtility {
             leftPath[i] = new Vector(-rightPath[i].x, rightPath[i].y);
         }
         return new PathSegment(degrees, leftPath);
+    }
+
+    public static Vector[] makePath(double startingAngle, Vector startingPosition, PathSegment... pathSegments) {
+        ArrayList<Vector> finalPath = new ArrayList<Vector>();
+        double previousAngle = startingAngle;
+        Vector previousPosition = startingPosition;
+        for (PathSegment aPathSegment : pathSegments) {
+            for(Vector vector : aPathSegment.path) {
+                vector = vector.rotate(previousAngle); //turn your path segment to start where the previous segment ended!
+                vector = vector.add(previousPosition); 
+                finalPath.add(vector); //(different add)
+            }
+            previousPosition = previousPosition.add(aPathSegment.getEndPoint().rotate(previousAngle));
+            previousAngle = previousAngle + aPathSegment.endingAngle;
+        }
+
+        return finalPath.toArray(new Vector[finalPath.size()]);
     }
 }
