@@ -21,7 +21,7 @@ public class ShootCommand extends Command {
     }
 
     public void execute() {
-        shooterSubsystem.shootOut();
+        //shooterSubsystem.shootOut();
     }
 
     public boolean isFinished() {
@@ -33,6 +33,6 @@ public class ShootCommand extends Command {
     }
 
     public void end() {
-        shooterSubsystem.stopShootOut();
+        //shooterSubsystem.stopShootOut();
     }
 }

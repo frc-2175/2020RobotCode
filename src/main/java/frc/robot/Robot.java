@@ -262,8 +262,9 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousPeriodic() {
-    drivetrainSubsystem.periodic();
     autonomousCommand.runCommand();
+    drivetrainSubsystem.periodic();
+    shooterSubsystem.periodic();
   }
 
   /**
@@ -324,9 +325,9 @@ public class Robot extends TimedRobot {
 
     // ✩ shooter flywheel ✩
     if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
-      shooterSubsystem.shootOut();
+      //shooterSubsystem.shootOut();
     } else {
-      shooterSubsystem.stopShootOut();
+      //shooterSubsystem.stopShootOut();
     }
 
     // ✩ Drive Controls ✩
@@ -343,6 +344,7 @@ public class Robot extends TimedRobot {
     
     //you have reached the end of teleop periodic !!!!!!!!!! : )
     drivetrainSubsystem.periodic();
+    shooterSubsystem.periodic();
   }
 
   /**
