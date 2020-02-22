@@ -283,8 +283,19 @@ public class DrivetrainSubsystem {
 		lastEncoderDistanceLeft = getLeftDistance(); 
 		lastEncoderDistanceRight = getRightDistance();
 	}
+	public static class PurePursuitResult {
+		public int indexOfClosestPoint; 
+		public int indexOfGoalPoint;
+		public Vector goalPoint; 
 
-	public void purePursuit(Vector[] path) {
+		public PurePursuitResult(int indexOfClosestPoint, int indexOfGoalPoint, Vector goalPoint) {
+			this.indexOfClosestPoint = indexOfClosestPoint; 
+			this.indexOfGoalPoint = indexOfGoalPoint;
+			this.goalPoint = goalPoint;
+		}
+	}
+
+	public PurePursuitResult purePursuit(Vector[] path) {
 		int indexOfClosestPoint = findClosestPoint(path, position);
 		int indexOfGoalPoint = findGoalPoint(path, position, 12);
 		Vector goalPoint = path[indexOfGoalPoint].subtract(position).rotate(navx.getAngle());
@@ -301,6 +312,8 @@ public class DrivetrainSubsystem {
 			new LogField("turn value!", turnValue, Logger.SMART_DASHBOARD_TAG),
 			new LogField("closestPoint", indexOfClosestPoint, Logger.SMART_DASHBOARD_TAG)
 		);
+
+		return new PurePursuitResult(indexOfClosestPoint, indexOfGoalPoint, goalPoint);
 	}
 
 	public static int findClosestPoint(Vector[] path, Vector fieldPosition) {

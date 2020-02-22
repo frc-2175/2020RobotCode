@@ -40,6 +40,7 @@ public class ShooterSubsystem {
         turretPidController = new PIDController(tp, ti, td);
         
         shooterMotorFollower.follow(shooterMotorMaster);
+        ServiceLocator.register(this);
     }
 
     public void periodic() {

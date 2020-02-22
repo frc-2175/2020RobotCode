@@ -11,6 +11,7 @@ import frc.subsystem.DrivetrainSubsystem;
 public class FollowPathCommand extends Command {
     DrivetrainSubsystem drivetrainSubsystem = ServiceLocator.get(DrivetrainSubsystem.class);
     Vector[] path;
+    DrivetrainSubsystem.PurePursuitResult purePursuitResult; 
 
     PathSegment[] pathSegments;
     public FollowPathCommand(PathSegment... pathSegments) {
@@ -18,6 +19,7 @@ public class FollowPathCommand extends Command {
     }
 
     public void init() {
+        purePursuitResult = null; 
         path = DrivingUtility.makePath(-drivetrainSubsystem.getHeading(), drivetrainSubsystem.getRobotPosition(), pathSegments);
         double[] xCoords = new double[path.length];
         double[] yCoords = new double[path.length];
@@ -30,14 +32,20 @@ public class FollowPathCommand extends Command {
     }
 
     public void execute() {
-        drivetrainSubsystem.purePursuit(path);
+        purePursuitResult = drivetrainSubsystem.purePursuit(path);
     }
 
     public boolean isFinished() {
-        return false;
+        if (purePursuitResult == null) {
+            return false; 
+        }
+        return purePursuitResult.indexOfClosestPoint == path.length - 1
+            && purePursuitResult.goalPoint.y <= 0;
     }
 
     public void end() {
 
+
+        drivetrainSubsystem.stopAllMotors();
     }
 }
