@@ -1,7 +1,5 @@
 package frc.logging;
 
-import java.util.Arrays;
-
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class SmartDashboardHandler implements LogHandler {

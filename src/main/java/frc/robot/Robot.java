@@ -23,10 +23,12 @@ import frc.command.autonomous.IntakeCommand;
 import frc.command.autonomous.ShootCommand;
 import frc.command.autonomous.TurningDegreesCommand;
 import frc.info.RobotInfo;
+import frc.logging.JSONHandler;
 import frc.logging.LogField;
 import frc.logging.LogHandler;
 import frc.logging.LogServer;
 import frc.logging.Logger;
+import frc.logging.SmartDashboardHandler;
 import frc.logging.StdoutHandler;
 import frc.math.DrivingUtility;
 import frc.math.MathUtility;
@@ -46,7 +48,9 @@ import frc.subsystem.ShooterSubsystem;
  */
 public class Robot extends TimedRobot {
   Logger logger = new Logger(new LogHandler[] {
-    new StdoutHandler()
+    new StdoutHandler(),
+    new JSONHandler("/home/lvusr/logs/test.log"),
+    new SmartDashboardHandler()
   }, true);
 
   WPI_VictorSPX leftMotor1;
