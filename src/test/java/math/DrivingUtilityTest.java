@@ -82,7 +82,7 @@ public class DrivingUtilityTest {
 
     @Test
     public void testMakePath() {
-        Vector[] path = DrivingUtility.makePath(
+        Vector[] path = DrivingUtility.makePath( 0, new Vector(0, 0), 
             new DrivingUtility.PathSegment(-90, new Vector[] {
                 new Vector(0, 0),
                 new Vector(0, 1),
