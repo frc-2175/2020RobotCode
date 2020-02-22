@@ -18,15 +18,15 @@ public class FollowPathCommand extends Command {
     }
 
     public void init() {
-        path = DrivingUtility.makePath(drivetrainSubsystem.getHeading(), drivetrainSubsystem.getRobotPosition(), pathSegments);
+        path = DrivingUtility.makePath(-drivetrainSubsystem.getHeading(), drivetrainSubsystem.getRobotPosition(), pathSegments);
         double[] xCoords = new double[path.length];
         double[] yCoords = new double[path.length];
         for(int i = 0 ; i < path.length; i++) {
             xCoords[i] = path[i].x;
             yCoords[i] = path[i].y;
         }
-        SmartDashboard.putNumberArray("X coordinates", xCoords);
-        SmartDashboard.putNumberArray("Y coordinates", yCoords);
+        SmartDashboard.putNumberArray("Values/PathXCoords", xCoords);
+        SmartDashboard.putNumberArray("Values/PathYCoords", yCoords);
     }
 
     public void execute() {

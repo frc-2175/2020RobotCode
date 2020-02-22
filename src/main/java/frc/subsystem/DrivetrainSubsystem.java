@@ -225,6 +225,7 @@ public class DrivetrainSubsystem {
 		lastEncoderDistanceRight = 0;
 		zeroEncoderLeft = leftMaster.getSelectedSensorPosition(0);
 		zeroEncoderRight = rightMaster.getSelectedSensorPosition(0);
+		position = new Vector(0, 0);
 		navx.reset();
 	}
 
@@ -285,7 +286,7 @@ public class DrivetrainSubsystem {
 		double angle = getAngleToPoint(goalPoint);
 		double turnValue = purePursuitPID.pid(-angle, 0);
 		double speed = DrivingUtility.getTrapezoidSpeed(0.2, 0.5, 0.2, path.length, 12, 12, indexOfClosestPoint);
-
+		
 		blendedDrive(speed, turnValue);
 
 	}
