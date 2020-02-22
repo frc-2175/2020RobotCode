@@ -23,13 +23,15 @@ import frc.command.autonomous.IntakeCommand;
 import frc.command.autonomous.ShootCommand;
 import frc.command.autonomous.TurningDegreesCommand;
 import frc.info.RobotInfo;
+import frc.logging.JSONHandler;
+import frc.logging.LogField;
 import frc.logging.LogHandler;
 import frc.logging.LogServer;
 import frc.logging.Logger;
+import frc.logging.SmartDashboardHandler;
 import frc.logging.StdoutHandler;
 import frc.math.DrivingUtility;
 import frc.math.MathUtility;
-import frc.math.DrivingUtility.PathSegment;
 import frc.subsystem.ControlPanelSubsystem;
 import frc.subsystem.DrivetrainSubsystem;
 import frc.subsystem.FeederSubsystem;
@@ -46,7 +48,9 @@ import frc.subsystem.ShooterSubsystem;
  */
 public class Robot extends TimedRobot {
   Logger logger = new Logger(new LogHandler[] {
-    new StdoutHandler()
+    new StdoutHandler(),
+    new JSONHandler("/home/lvusr/logs/test.log"),
+    new SmartDashboardHandler()
   }, true);
 
   WPI_VictorSPX leftMotor1;
@@ -113,6 +117,10 @@ public class Robot extends TimedRobot {
     drivetrainSubsystem = new DrivetrainSubsystem();
     feederSubsystem = new FeederSubsystem();
     magazineSubsystem = new MagazineSubsystem();
+
+    // Example use of robot logging with SmartDashboard
+    logger.log(Logger.INFO, "This is a smart dashboard test!", 
+      new LogField("ExampleSmartDashboard", 2175, Logger.SMART_DASHBOARD_TAG));
   }
 
   /**

@@ -12,6 +12,7 @@ public class Logger {
     public static final int INFO = 1;
     public static final int WARNING = 2;
     public static final int ERROR = 3;
+    public static final String SMART_DASHBOARD_TAG = "SmartDashboard";
 
     /**
      * Constructs a new logger object.
