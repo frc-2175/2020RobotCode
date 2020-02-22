@@ -1,5 +1,7 @@
 package frc.subsystem;
 
+import frc.logging.LogField;
+import frc.logging.Logger;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -25,6 +27,8 @@ import frc.math.MathUtility;
 import frc.math.Vector; 
 
 public class DrivetrainSubsystem {
+	Logger logger;
+
     private final RobotInfo robotInfo;
 	private final WPI_TalonFX leftMaster;
     private final SpeedController leftFollowerOne;
@@ -40,7 +44,7 @@ public class DrivetrainSubsystem {
 	private double zeroEncoderLeft; 
 	private double zeroEncoderRight;
 	private Solenoid gearsSolenoid;
-	public static final double TICKS_TO_INCHES = 36/121363.5;
+	public static final double TICKS_TO_INCHES = 112.0/182931.0;
 	private Vector position = new Vector(0, 0); 
 	private PIDController purePursuitPID; 
 
@@ -54,6 +58,7 @@ public class DrivetrainSubsystem {
 	
     public DrivetrainSubsystem() {
 		ServiceLocator.register(this);
+		logger = ServiceLocator.get(Logger.class).newWithExtraFields(new LogField("subsystem", "DrivetrainSubsystem"));
 
 		robotInfo = ServiceLocator.get(RobotInfo.class);
 		leftMaster = robotInfo.pick(() -> new WPI_TalonFX(15), () -> new WPI_TalonFX(5));
@@ -285,10 +290,17 @@ public class DrivetrainSubsystem {
 		Vector goalPoint = path[indexOfGoalPoint].subtract(position).rotate(navx.getAngle());
 		double angle = getAngleToPoint(goalPoint);
 		double turnValue = purePursuitPID.pid(-angle, 0);
-		double speed = DrivingUtility.getTrapezoidSpeed(0.2, 0.5, 0.2, path.length, 12, 12, indexOfClosestPoint);
+		double speed = DrivingUtility.getTrapezoidSpeed(0.3, 0.5, 0.2, path.length, 12, 12, indexOfClosestPoint);
 		
 		blendedDrive(speed, turnValue);
 
+		logger.info("pure pursiuit intfo",
+			new LogField("angle", angle, Logger.SMART_DASHBOARD_TAG),
+			new LogField("goalPoint", goalPoint, Logger.SMART_DASHBOARD_TAG),
+			new LogField("speed", speed, Logger.SMART_DASHBOARD_TAG),
+			new LogField("turn value!", turnValue, Logger.SMART_DASHBOARD_TAG),
+			new LogField("closestPoint", indexOfClosestPoint, Logger.SMART_DASHBOARD_TAG)
+		);
 	}
 
 	public static int findClosestPoint(Vector[] path, Vector fieldPosition) {
@@ -314,7 +326,7 @@ public class DrivetrainSubsystem {
 			return 0;
 		}
 		double angle = Math.acos(point.y / point.magnitude());
-		return Math.signum(point.x) * angle; 
+		return Math.signum(point.x) * Math.toDegrees(angle); 
 	}
 
 

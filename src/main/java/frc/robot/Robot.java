@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.ServiceLocator;
 import frc.command.Command;
 import frc.command.CommandRunner;
 import frc.command.ParallelCommand;
@@ -117,6 +118,7 @@ public class Robot extends TimedRobot {
     drivetrainSubsystem = new DrivetrainSubsystem();
     feederSubsystem = new FeederSubsystem();
     magazineSubsystem = new MagazineSubsystem();
+    
 
     // Example use of robot logging with SmartDashboard
     logger.log(Logger.INFO, "This is a smart dashboard test!", 

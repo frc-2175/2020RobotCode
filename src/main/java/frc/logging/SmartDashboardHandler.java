@@ -14,8 +14,8 @@ public class SmartDashboardHandler implements LogHandler {
 
             if(isSmartDashboardField) {
                 Object value = field.value;
-                if(value instanceof Integer || value instanceof Double || value instanceof Float) {
-                    SmartDashboard.putNumber(field.name, (double) field.value);
+                if(value instanceof Number) {
+                    SmartDashboard.putNumber(field.name, ((Number) field.value).doubleValue());
                 } else if(value instanceof Boolean) {
                     SmartDashboard.putBoolean(field.name, (boolean) field.value);
                 } else {

@@ -24,6 +24,10 @@ public class JSONHandler implements LogHandler {
     }
 
     public void handleLogMessage(LogMessage logMessage) {
+        if (bufferedWriter == null) {
+            return;
+        }
+        
         String line = gson.toJson(logMessage);
         try {
             bufferedWriter.write(line);
