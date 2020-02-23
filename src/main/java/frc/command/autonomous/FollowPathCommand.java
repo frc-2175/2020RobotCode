@@ -12,15 +12,17 @@ public class FollowPathCommand extends Command {
     DrivetrainSubsystem drivetrainSubsystem = ServiceLocator.get(DrivetrainSubsystem.class);
     Vector[] path;
     DrivetrainSubsystem.PurePursuitResult purePursuitResult; 
+    boolean isBackwards;
 
     PathSegment[] pathSegments;
-    public FollowPathCommand(PathSegment... pathSegments) {
+    public FollowPathCommand(boolean isBackwards, PathSegment... pathSegments) {
         this.pathSegments = pathSegments;
+        this.isBackwards = isBackwards;
     }
 
     public void init() {
         purePursuitResult = null; 
-        path = DrivingUtility.makePath(-drivetrainSubsystem.getHeading(), drivetrainSubsystem.getRobotPosition(), pathSegments);
+        path = DrivingUtility.makePath(isBackwards, -drivetrainSubsystem.getHeading(), drivetrainSubsystem.getRobotPosition(), pathSegments);
         double[] xCoords = new double[path.length];
         double[] yCoords = new double[path.length];
         for(int i = 0 ; i < path.length; i++) {
@@ -32,20 +34,23 @@ public class FollowPathCommand extends Command {
     }
 
     public void execute() {
-        purePursuitResult = drivetrainSubsystem.purePursuit(path);
+        purePursuitResult = drivetrainSubsystem.purePursuit(path, isBackwards);
     }
 
     public boolean isFinished() {
         if (purePursuitResult == null) {
             return false; 
         }
-        return purePursuitResult.indexOfClosestPoint == path.length - 1
+        if(isBackwards) {
+            return purePursuitResult.indexOfClosestPoint == path.length - 1 //closest point is last point
+            && purePursuitResult.goalPoint.y >= 0; //goal point us behind us
+        } else {
+            return purePursuitResult.indexOfClosestPoint == path.length - 1
             && purePursuitResult.goalPoint.y <= 0;
+        }
     }
 
     public void end() {
-
-
         drivetrainSubsystem.stopAllMotors();
     }
 }

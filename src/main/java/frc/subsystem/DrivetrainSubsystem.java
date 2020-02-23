@@ -295,22 +295,34 @@ public class DrivetrainSubsystem {
 		}
 	}
 
-	public PurePursuitResult purePursuit(Vector[] path) {
+	public PurePursuitResult purePursuit(Vector[] path, boolean isBackwards) {
 		int indexOfClosestPoint = findClosestPoint(path, position);
-		int indexOfGoalPoint = findGoalPoint(path, position, 12);
+		int indexOfGoalPoint = findGoalPoint(path, position, 25);
 		Vector goalPoint = path[indexOfGoalPoint].subtract(position).rotate(navx.getAngle());
-		double angle = getAngleToPoint(goalPoint);
+		double angle;
+		if(isBackwards) {
+			angle = -getAngleToPoint(goalPoint.multiply(-1));
+		} else {
+			angle = getAngleToPoint(goalPoint);
+		}
 		double turnValue = purePursuitPID.pid(-angle, 0);
-		double speed = DrivingUtility.getTrapezoidSpeed(0.3, 0.5, 0.2, path.length, 12, 12, indexOfClosestPoint);
+		double speed = DrivingUtility.getTrapezoidSpeed(0.3, 0.75, 0.2, path.length, 6, 10, indexOfClosestPoint);
+
+		if(isBackwards) {
+			blendedDrive(-speed, -turnValue);
+		} else {
+
+			blendedDrive(speed, turnValue);
+		}
 		
-		blendedDrive(speed, turnValue);
 
 		logger.info("pure pursiuit intfo",
 			new LogField("angle", angle, Logger.SMART_DASHBOARD_TAG),
 			new LogField("goalPoint", goalPoint, Logger.SMART_DASHBOARD_TAG),
 			new LogField("speed", speed, Logger.SMART_DASHBOARD_TAG),
 			new LogField("turn value!", turnValue, Logger.SMART_DASHBOARD_TAG),
-			new LogField("closestPoint", indexOfClosestPoint, Logger.SMART_DASHBOARD_TAG)
+			new LogField("closestPoint", indexOfClosestPoint, Logger.SMART_DASHBOARD_TAG),
+			new LogField("length of path", path.length, Logger.SMART_DASHBOARD_TAG)
 		);
 
 		return new PurePursuitResult(indexOfClosestPoint, indexOfGoalPoint, goalPoint);
@@ -321,7 +333,7 @@ public class DrivetrainSubsystem {
 		double minDistance = path[0].subtract(fieldPosition).magnitude(); 
 		for(int i = 0; i < path.length; i++) {
 			double distanceToPoint = path[i].subtract(fieldPosition).magnitude();
-			if (distanceToPoint < minDistance) {
+			if (distanceToPoint <= minDistance) {
 				indexOfClosestPoint = i; 
 				minDistance = distanceToPoint; 
 			}

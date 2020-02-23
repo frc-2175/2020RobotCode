@@ -98,10 +98,10 @@ public class DrivingUtility {
         return new PathSegment(degrees, leftPath);
     }
 
-    public static Vector[] makePath(double startingAngle, Vector startingPosition, PathSegment... pathSegments) {
+    public static Vector[] makePath(boolean isBackwards, double startingAngle, Vector startingPosition, PathSegment... pathSegments) {
         ArrayList<Vector> finalPath = new ArrayList<Vector>();
-        double previousAngle = startingAngle;
-        Vector previousPosition = startingPosition;
+        double previousAngle = 0;
+        Vector previousPosition = new Vector(0, 0);
         for (PathSegment aPathSegment : pathSegments) {
             for(Vector vector : aPathSegment.path) {
                 vector = vector.rotate(previousAngle); //turn your path segment to start where the previous segment ended!
@@ -111,7 +111,17 @@ public class DrivingUtility {
             previousPosition = previousPosition.add(aPathSegment.getEndPoint().rotate(previousAngle));
             previousAngle = previousAngle + aPathSegment.endingAngle;
         }
+        Vector[] almostFinalPath = finalPath.toArray(new Vector[finalPath.size()]);
+        if(isBackwards) {
+            for(int i = 0; i < almostFinalPath.length ; i++) {
+                almostFinalPath[i] = almostFinalPath[i].multiply(-1);
+            }
+        }
+        for(int i = 0; i < almostFinalPath.length ; i++) {
+            almostFinalPath[i] = almostFinalPath[i].rotate(startingAngle).add(startingPosition);
+        }
 
-        return finalPath.toArray(new Vector[finalPath.size()]);
+        return almostFinalPath;
+
     }
 }

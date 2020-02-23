@@ -249,13 +249,21 @@ public class Robot extends TimedRobot {
       new ShootCommand(123)
     });
 
-    FollowPathCommand purePursuit = new FollowPathCommand(
-      DrivingUtility.makeLinePathSegment(24),
-      DrivingUtility.makeLeftArcPathSegment(24, 90)
+    FollowPathCommand purePursuit = new FollowPathCommand( false, 
+      DrivingUtility.makeLinePathSegment(29), //2 feet ish
+      DrivingUtility.makeLeftArcPathSegment(33, 90), //33 r
+      DrivingUtility.makeRightArcPathSegment(33, 90), //33 r
+      DrivingUtility.makeLinePathSegment(222) //252
+    );
+    FollowPathCommand purePursuit2 = new FollowPathCommand( true, 
+    DrivingUtility.makeLinePathSegment(29), //2 feet ish
+    DrivingUtility.makeLeftArcPathSegment(33, 90), //33 r
+    DrivingUtility.makeRightArcPathSegment(33, 90), //33 r
+    DrivingUtility.makeLinePathSegment(20) //252
     );
 
-    autonomousCommand = new CommandRunner(purePursuit); //INSERT COMMAND TO RUN HERE!!!!!!!!!!!!!!!!!
-  }
+    autonomousCommand = new CommandRunner(purePursuit2); //INSERT COMMAND TO RUN HERE!!!!!!!!!!!!!!!!!
+  } //29 + 66 / 2 + 252
 
   /**
    * This function is called periodically during autonomous.
