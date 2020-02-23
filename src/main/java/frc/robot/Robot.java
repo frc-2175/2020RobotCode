@@ -12,20 +12,26 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import frc.ServiceLocator;
 import frc.command.Command;
 import frc.command.CommandRunner;
 import frc.command.ParallelCommand;
 import frc.command.SequentialCommand;
 import frc.command.autonomous.DriveBackwardCommand;
 import frc.command.autonomous.DriveStraightCommand;
+import frc.command.autonomous.FollowPathCommand;
 import frc.command.autonomous.IntakeCommand;
 import frc.command.autonomous.ShootCommand;
 import frc.command.autonomous.TurningDegreesCommand;
 import frc.info.RobotInfo;
+import frc.logging.JSONHandler;
+import frc.logging.LogField;
 import frc.logging.LogHandler;
 import frc.logging.LogServer;
 import frc.logging.Logger;
+import frc.logging.SmartDashboardHandler;
 import frc.logging.StdoutHandler;
+import frc.math.DrivingUtility;
 import frc.math.MathUtility;
 import frc.subsystem.ControlPanelSubsystem;
 import frc.subsystem.DrivetrainSubsystem;
@@ -43,7 +49,9 @@ import frc.subsystem.ShooterSubsystem;
  */
 public class Robot extends TimedRobot {
   Logger logger = new Logger(new LogHandler[] {
-    new StdoutHandler()
+    new StdoutHandler(),
+    new JSONHandler("/home/lvusr/logs/test.log"),
+    new SmartDashboardHandler()
   }, true);
 
   WPI_VictorSPX leftMotor1;
@@ -61,6 +69,7 @@ public class Robot extends TimedRobot {
   public FeederSubsystem feederSubsystem;
   public MagazineSubsystem magazineSubsystem;
   private CommandRunner autonomousCommand;
+  
   
   /*
       (y)
@@ -109,6 +118,11 @@ public class Robot extends TimedRobot {
     drivetrainSubsystem = new DrivetrainSubsystem();
     feederSubsystem = new FeederSubsystem();
     magazineSubsystem = new MagazineSubsystem();
+    
+
+    // Example use of robot logging with SmartDashboard
+    logger.log(Logger.INFO, "This is a smart dashboard test!", 
+      new LogField("ExampleSmartDashboard", 2175, Logger.SMART_DASHBOARD_TAG));
   }
 
   /**
@@ -145,11 +159,14 @@ public class Robot extends TimedRobot {
       new DriveStraightCommand(4, .6)
     });
 
+     /*
+    Start on the right side, shoot three balls
+    Intake two balls from trench, and shoot
+    */
     SequentialCommand rightToTrench = new SequentialCommand(new Command[] {
-      //Change all the "123"
+      //Change all the "123", make robot in line with the trench
       //new AimCommand
       new ShootCommand(123),
-      new TurningDegreesCommand(180), 
       new ParallelCommand(new Command[] { 
         new DriveStraightCommand(123, .5), //change later
         new IntakeCommand(123)
@@ -159,11 +176,14 @@ public class Robot extends TimedRobot {
       new ShootCommand(123) 
     });
 
+    /*
+    Start on the right side, shoot three balls
+    Intake five balls from rendezvous, and shoot
+    */
     SequentialCommand rightToRendezvous = new SequentialCommand(new Command[] {
-      //Change all the "123"
+      //Change all the "123", make robot face rendezvous area before match
       //new AimCommand
       new ShootCommand(123),
-      new TurningDegreesCommand(123),
       new ParallelCommand(new Command[] { 
         new DriveStraightCommand(123, .5), //change later
         new IntakeCommand(123)
@@ -176,9 +196,13 @@ public class Robot extends TimedRobot {
       //new AimCommand
       new ShootCommand(123)
     });
-
+    
+    /*
+    Start in middle, shoot three balls
+    Intake three balls from rendezvous, and shoot
+    */
     SequentialCommand middleRendezvousThreeBall = new SequentialCommand(new Command[] {
-      //Change all the "123", and angle robot tworads the three balls
+      //Change all the "123", and angle robot towards the three balls
       //new AimCommand
       new ShootCommand(123),
       new ParallelCommand(new Command[] { 
@@ -190,8 +214,12 @@ public class Robot extends TimedRobot {
       new ShootCommand(123)
     });
 
+    /*
+    Start in middle, shoot three balls
+    Intake all five balls from rendezvous point, and shoot
+    */
     SequentialCommand middleRendezvousFiveBall = new SequentialCommand(new Command[] {
-      //Change all the "123", and angle robot tworads the three balls
+      //Change all the "123", and angle robot towards the three balls
       //new AimCommand
       new ShootCommand(123),
       new ParallelCommand(new Command[] { 
@@ -202,7 +230,12 @@ public class Robot extends TimedRobot {
       new ShootCommand(123)
     });
 
-    SequentialCommand leftToOpponentsTrench = new SequentialCommand(new Command[] {
+    /*
+    Start on left side w/ three balls
+    Drive into opp. side trench, intake two balls
+    Drive out of trench into middle area, and shoot
+    */
+    SequentialCommand leftTrench = new SequentialCommand(new Command[] {
        //face two balls in oposite trench
        //change 123
        new ParallelCommand(new Command[] { 
@@ -216,16 +249,30 @@ public class Robot extends TimedRobot {
       new ShootCommand(123)
     });
 
-    autonomousCommand = new CommandRunner(crossAutoLineCommand); //INSERT COMMAND TO RUN HERE
-  }
+    FollowPathCommand purePursuit = new FollowPathCommand( false, 
+      DrivingUtility.makeLinePathSegment(29), //2 feet ish
+      DrivingUtility.makeLeftArcPathSegment(33, 90), //33 r
+      DrivingUtility.makeRightArcPathSegment(33, 90), //33 r
+      DrivingUtility.makeLinePathSegment(222) //252
+    );
+    FollowPathCommand purePursuit2 = new FollowPathCommand( true, 
+    DrivingUtility.makeLinePathSegment(29), //2 feet ish
+    DrivingUtility.makeLeftArcPathSegment(33, 90), //33 r
+    DrivingUtility.makeRightArcPathSegment(33, 90), //33 r
+    DrivingUtility.makeLinePathSegment(20) //252
+    );
+
+    autonomousCommand = new CommandRunner(purePursuit2); //INSERT COMMAND TO RUN HERE!!!!!!!!!!!!!!!!!
+  } //29 + 66 / 2 + 252
 
   /**
    * This function is called periodically during autonomous.
    */
   @Override
   public void autonomousPeriodic() {
-    drivetrainSubsystem.periodic();
     autonomousCommand.runCommand();
+    drivetrainSubsystem.periodic();
+    shooterSubsystem.periodic();
   }
 
   /**
@@ -286,13 +333,16 @@ public class Robot extends TimedRobot {
 
     // ✩ shooter flywheel ✩
     if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
-      shooterSubsystem.shootOut();
+      //shooterSubsystem.shootOut();
     } else {
-      shooterSubsystem.stopShootOut();
+      //shooterSubsystem.stopShootOut();
     }
 
     // ✩ Drive Controls ✩
-    drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX());
+    //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX() * Math.abs(rightJoystick.getX())); //squared
+    // drivetrainSubsystem.blendedDrive(-leftJoystick.getY() , rightJoystick.getX()); //normal
+    //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), (rightJoystick.getX() * Math.abs( rightJoystick.getX() ) )*.5); //squared * .5
+    drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX() * .5); //linear * .5
 
     // ✩ changing gears ✩
     // if (leftJoystick.getRawButtonPressed(3)) { //toggle code
@@ -302,6 +352,7 @@ public class Robot extends TimedRobot {
     
     //you have reached the end of teleop periodic !!!!!!!!!! : )
     drivetrainSubsystem.periodic();
+    shooterSubsystem.periodic();
   }
 
   /**
@@ -309,5 +360,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void testPeriodic() {
+    drivetrainSubsystem.resetTracking();
   }
 }

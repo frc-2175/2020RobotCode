@@ -1,6 +1,8 @@
 package frc.info;
 
 import java.io.File;
+
+import edu.wpi.first.wpilibj.Filesystem;
 import frc.ServiceLocator;
 
 public class RobotInfo {
@@ -12,7 +14,7 @@ public class RobotInfo {
     private boolean isComp = true;
 
     public RobotInfo() {
-        File propertyDirectory = new File("/home/lvuser");
+        File propertyDirectory = Filesystem.getDeployDirectory();
         if(propertyDirectory.exists()) {
             boolean hasComp = false;
             boolean hasPractice = false;
@@ -20,9 +22,11 @@ public class RobotInfo {
             for (File file : lvuserFiles) { //look through every file in here!! and check what they have
                 if ( file.getName().equals("practice")) { //seeing if it has practice file
                     hasPractice = true;
+                    System.out.println("hey this is practice!!");
                 }
                 if (file.getName().equals("comp")) { //seeing if it has comp file
                     hasComp = true; 
+                    System.out.println("hey this is comp!!");
                 }
             }
             if (!hasComp && hasPractice) { //only be practice mode if there's only the practice file 

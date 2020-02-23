@@ -1,30 +1,41 @@
 package frc.subsystem;
 
+import frc.logging.LogField;
+import frc.logging.Logger;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.SpeedControllerGroup;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.drive.RobotDriveBase;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.PIDController;
 import frc.ServiceLocator;
 import frc.VirtualSpeedController;
 import frc.info.RobotInfo;
+import frc.math.DrivingUtility;
 import frc.math.MathUtility;
 import frc.math.Vector; 
 
 public class DrivetrainSubsystem {
+	Logger logger;
+
     private final RobotInfo robotInfo;
 	private final WPI_TalonFX leftMaster;
-    private final BaseMotorController leftFollowerOne;
-    private final BaseMotorController leftFollowerTwo;
+    private final SpeedController leftFollowerOne;
+    private final SpeedController leftFollowerTwo;
 	private final WPI_TalonFX rightMaster;
-    private final BaseMotorController rightFollowerOne;
-    private final BaseMotorController rightFollowerTwo;
+    private final SpeedController rightFollowerOne;
+    private final SpeedController rightFollowerTwo;
 	private final DifferentialDrive robotDrive;
 	public static final double INPUT_THRESHOLD = 0.1; // TODO(low): Constants should move to the top of the class.
 	public final AHRS navx;
@@ -33,8 +44,12 @@ public class DrivetrainSubsystem {
 	private double zeroEncoderLeft; 
 	private double zeroEncoderRight;
 	private Solenoid gearsSolenoid;
-	public static final double TICKS_TO_INCHES = 36/121363.5;
+	public static final double TICKS_TO_INCHES = 112.0/182931.0;
 	private Vector position = new Vector(0, 0); 
+	private PIDController purePursuitPID; 
+
+	private SpeedControllerGroup leftMotors;
+	private SpeedControllerGroup rightMotors;
 
 	private static VirtualSpeedController leftVirtualSpeedController = new VirtualSpeedController();
 	private static VirtualSpeedController rightVirtualSpeedController = new VirtualSpeedController();
@@ -43,26 +58,36 @@ public class DrivetrainSubsystem {
 	
     public DrivetrainSubsystem() {
 		ServiceLocator.register(this);
+		logger = ServiceLocator.get(Logger.class).newWithExtraFields(new LogField("subsystem", "DrivetrainSubsystem"));
 
 		robotInfo = ServiceLocator.get(RobotInfo.class);
-		leftMaster = new WPI_TalonFX(5);
-        leftFollowerOne = new WPI_TalonSRX(3);
-        leftFollowerTwo = new WPI_TalonSRX(4);
-		rightMaster = new WPI_TalonFX(2);
-        rightFollowerOne = new WPI_TalonSRX(0);
-		rightFollowerTwo = new WPI_TalonSRX(1);
+		leftMaster = robotInfo.pick(() -> new WPI_TalonFX(15), () -> new WPI_TalonFX(5));
+        leftFollowerOne = robotInfo.pick(() -> new WPI_VictorSPX(11), () -> new WPI_TalonSRX(3));
+        leftFollowerTwo = robotInfo.pick(() -> new WPI_VictorSPX(10), () -> new WPI_TalonSRX(4));
+		rightMaster = robotInfo.pick(() -> new WPI_TalonFX(16), () -> new WPI_TalonFX(2));
+        rightFollowerOne = robotInfo.pick(() -> new WPI_VictorSPX(9), () -> new WPI_TalonSRX(0));
+		rightFollowerTwo = robotInfo.pick(() -> new WPI_VictorSPX(8), () -> new WPI_TalonSRX(1));
 		gearsSolenoid = new Solenoid(4);
 
+		/*  THIS DOESN'T WORK!!!
         leftFollowerOne.follow(leftMaster);
         leftFollowerTwo.follow(leftMaster);
         rightFollowerOne.follow(rightMaster);
 		rightFollowerTwo.follow(rightMaster);
-		
+		*/
+
+		leftMotors = new SpeedControllerGroup(leftMaster, leftFollowerOne, leftFollowerTwo);
+		rightMotors = new SpeedControllerGroup(rightMaster, rightFollowerOne, rightFollowerTwo);
+
 		leftMaster.setInverted(true);
+		rightMaster.setInverted(false);
 		rightFollowerOne.setInverted(true);
 		rightFollowerTwo.setInverted(true);
+		leftFollowerOne.setInverted(false);
+		leftFollowerTwo.setInverted(false);
 
-        robotDrive = new DifferentialDrive(leftMaster, rightMaster);
+
+        robotDrive = new DifferentialDrive(leftMotors, rightMotors);
         
         leftVirtualSpeedController = new VirtualSpeedController(); // TODO(low): There is no need to set these here since they are also initialized above.
 		rightVirtualSpeedController = new VirtualSpeedController();
@@ -81,14 +106,26 @@ public class DrivetrainSubsystem {
 		rightMaster.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
 		leftMaster.setSelectedSensorPosition(0, 0, 0);
 		rightMaster.setSelectedSensorPosition(0, 0, 0);
+
+		purePursuitPID = new PIDController(0.015, 0, 0);
 	}
 	
 	public void periodic() {
 		trackLocation();
-		System.out.println(position);
 		SmartDashboard.putNumber("x", position.x);
 		SmartDashboard.putNumber("y", position.y);
 		SmartDashboard.putNumber("heading", getHeading());
+		SmartDashboard.putNumber("main motor left ", leftMaster.get());
+		SmartDashboard.putNumber("main motor right ", rightMaster.get());
+		SmartDashboard.putNumber("motor 1 left ", leftFollowerOne.get());
+		SmartDashboard.putNumber("motor 2 left ", leftFollowerTwo.get());
+		SmartDashboard.putNumber("motor 1 right ", rightFollowerOne.get());
+		SmartDashboard.putNumber("motor 2 right ", rightFollowerTwo.get());
+		purePursuitPID.updateTime(Timer.getFPGATimestamp());
+		SmartDashboard.putNumber("Values/PositionX", position.x);
+		SmartDashboard.putNumber("Values/PositionY", position.y);
+		SmartDashboard.putNumber("Values/Gyro", navx.getAngle());
+
 	}
     
     public void stopAllMotors() {
@@ -130,6 +167,8 @@ public class DrivetrainSubsystem {
 	 */
 	public void blendedDrive(double xSpeed, double zRotation, double inputThreshold) {
 		double[] blendedValues = getBlendedMotorValues(xSpeed, zRotation, inputThreshold);
+		SmartDashboard.putNumber("blended values 1", blendedValues[0]);
+		SmartDashboard.putNumber("blended values 2", blendedValues[1]);
 		robotDrive.tankDrive(blendedValues[0], blendedValues[1]);
 	}
 
@@ -191,6 +230,7 @@ public class DrivetrainSubsystem {
 		lastEncoderDistanceRight = 0;
 		zeroEncoderLeft = leftMaster.getSelectedSensorPosition(0);
 		zeroEncoderRight = rightMaster.getSelectedSensorPosition(0);
+		position = new Vector(0, 0);
 		navx.reset();
 	}
 
@@ -242,6 +282,76 @@ public class DrivetrainSubsystem {
 
 		lastEncoderDistanceLeft = getLeftDistance(); 
 		lastEncoderDistanceRight = getRightDistance();
+	}
+	public static class PurePursuitResult {
+		public int indexOfClosestPoint; 
+		public int indexOfGoalPoint;
+		public Vector goalPoint; 
+
+		public PurePursuitResult(int indexOfClosestPoint, int indexOfGoalPoint, Vector goalPoint) {
+			this.indexOfClosestPoint = indexOfClosestPoint; 
+			this.indexOfGoalPoint = indexOfGoalPoint;
+			this.goalPoint = goalPoint;
+		}
+	}
+
+	public PurePursuitResult purePursuit(Vector[] path, boolean isBackwards) {
+		int indexOfClosestPoint = findClosestPoint(path, position);
+		int indexOfGoalPoint = findGoalPoint(path, position, 25);
+		Vector goalPoint = path[indexOfGoalPoint].subtract(position).rotate(navx.getAngle());
+		double angle;
+		if(isBackwards) {
+			angle = -getAngleToPoint(goalPoint.multiply(-1));
+		} else {
+			angle = getAngleToPoint(goalPoint);
+		}
+		double turnValue = purePursuitPID.pid(-angle, 0);
+		double speed = DrivingUtility.getTrapezoidSpeed(0.3, 0.75, 0.2, path.length, 6, 10, indexOfClosestPoint);
+
+		if(isBackwards) {
+			blendedDrive(-speed, -turnValue);
+		} else {
+
+			blendedDrive(speed, turnValue);
+		}
+		
+
+		logger.info("pure pursiuit intfo",
+			new LogField("angle", angle, Logger.SMART_DASHBOARD_TAG),
+			new LogField("goalPoint", goalPoint, Logger.SMART_DASHBOARD_TAG),
+			new LogField("speed", speed, Logger.SMART_DASHBOARD_TAG),
+			new LogField("turn value!", turnValue, Logger.SMART_DASHBOARD_TAG),
+			new LogField("closestPoint", indexOfClosestPoint, Logger.SMART_DASHBOARD_TAG),
+			new LogField("length of path", path.length, Logger.SMART_DASHBOARD_TAG)
+		);
+
+		return new PurePursuitResult(indexOfClosestPoint, indexOfGoalPoint, goalPoint);
+	}
+
+	public static int findClosestPoint(Vector[] path, Vector fieldPosition) {
+		int indexOfClosestPoint = 0;
+		double minDistance = path[0].subtract(fieldPosition).magnitude(); 
+		for(int i = 0; i < path.length; i++) {
+			double distanceToPoint = path[i].subtract(fieldPosition).magnitude();
+			if (distanceToPoint <= minDistance) {
+				indexOfClosestPoint = i; 
+				minDistance = distanceToPoint; 
+			}
+		}
+		return indexOfClosestPoint;
+	}
+
+	public static int findGoalPoint(Vector[] path, Vector fieldPosition, int lookAhead) {
+		int indexOfClosestPoint = findClosestPoint(path, fieldPosition); 
+		return Math.min(indexOfClosestPoint + lookAhead, path.length - 1);
+	}
+
+	public static double getAngleToPoint(Vector point) {
+		if (point.magnitude() == 0) {
+			return 0;
+		}
+		double angle = Math.acos(point.y / point.magnitude());
+		return Math.signum(point.x) * Math.toDegrees(angle); 
 	}
 
 

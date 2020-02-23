@@ -6,6 +6,8 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.ServiceLocator;
+import frc.info.RobotInfo;
 
 public class IntakeSubsystem {
 
@@ -13,17 +15,20 @@ public class IntakeSubsystem {
     private final DoubleSolenoid intakePiston;
 
     public IntakeSubsystem() {
-        intakeMotor = new WPI_TalonSRX(10);
+        RobotInfo robotInfo = ServiceLocator.get(RobotInfo.class);
+
+        intakeMotor = robotInfo.pick(() -> new WPI_VictorSPX(1), () -> new WPI_TalonSRX(10));
         intakePiston = new DoubleSolenoid(0, 1);
         
         intakeMotor.setInverted(true);
+        ServiceLocator.register(this);
     }
 
     /**
      * rolls intake in at full in
      */
     public void intakeRollIn() {
-        intakeMotor.set(-1);
+        intakeMotor.set(-.5);
     }
 
     public void stopIntake() {
@@ -42,7 +47,7 @@ public class IntakeSubsystem {
      * rolls intake out at full speed
      */
     public void intakeRollOut() {
-        intakeMotor.set(1);
+        intakeMotor.set(.5);
     }
 
     public void putOut() {

@@ -2,6 +2,7 @@ package frc.subsystem;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.SpeedController;
+import frc.ServiceLocator;
 
 public class FeederSubsystem {
 
@@ -9,6 +10,7 @@ public class FeederSubsystem {
 
     public FeederSubsystem() {
         feederMotor = new WPI_TalonSRX(9);
+        ServiceLocator.register(this);
     }
 
     /**
