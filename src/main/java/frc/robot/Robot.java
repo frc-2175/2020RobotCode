@@ -7,12 +7,14 @@
 
 package frc.robot;
 
+import java.io.File;
+
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import frc.ServiceLocator;
 import frc.command.Command;
 import frc.command.CommandRunner;
 import frc.command.ParallelCommand;
@@ -99,6 +101,8 @@ public class Robot extends TimedRobot {
   public static final int POV_UP_LEFT = 315;
 
   public static final double topSpeed = 1;
+  File propertyDirectory;
+  String finalThingy;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -123,6 +127,8 @@ public class Robot extends TimedRobot {
     // Example use of robot logging with SmartDashboard
     logger.log(Logger.INFO, "This is a smart dashboard test!", 
       new LogField("ExampleSmartDashboard", 2175, Logger.SMART_DASHBOARD_TAG));
+      propertyDirectory = Filesystem.getDeployDirectory();
+      finalThingy = propertyDirectory.getAbsolutePath();
   }
 
   /**
@@ -361,5 +367,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     drivetrainSubsystem.resetTracking();
+    drivetrainSubsystem.orchestra.loadMusic("careless-whisper.chrp");
+    drivetrainSubsystem.orchestra.play();
   }
 }

@@ -1,10 +1,8 @@
 package frc.subsystem;
 
-import frc.logging.LogField;
-import frc.logging.Logger;
+import java.util.ArrayList;
+
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
@@ -22,9 +20,12 @@ import frc.PIDController;
 import frc.ServiceLocator;
 import frc.VirtualSpeedController;
 import frc.info.RobotInfo;
+import frc.logging.LogField;
+import frc.logging.Logger;
 import frc.math.DrivingUtility;
 import frc.math.MathUtility;
-import frc.math.Vector; 
+import frc.math.Vector;
+import com.ctre.phoenix.music.Orchestra;
 
 public class DrivetrainSubsystem {
 	Logger logger;
@@ -54,11 +55,15 @@ public class DrivetrainSubsystem {
 	private static VirtualSpeedController leftVirtualSpeedController = new VirtualSpeedController();
 	private static VirtualSpeedController rightVirtualSpeedController = new VirtualSpeedController();
 	private static DifferentialDrive virtualRobotDrive;
+	private ArrayList<WPI_TalonFX> motorsCollection;
+	
+	public Orchestra orchestra;
 	
 	
     public DrivetrainSubsystem() {
 		ServiceLocator.register(this);
 		logger = ServiceLocator.get(Logger.class).newWithExtraFields(new LogField("subsystem", "DrivetrainSubsystem"));
+
 
 		robotInfo = ServiceLocator.get(RobotInfo.class);
 		leftMaster = robotInfo.pick(() -> new WPI_TalonFX(15), () -> new WPI_TalonFX(5));
@@ -108,6 +113,11 @@ public class DrivetrainSubsystem {
 		rightMaster.setSelectedSensorPosition(0, 0, 0);
 
 		purePursuitPID = new PIDController(0.015, 0, 0);
+
+		orchestra = new Orchestra();
+		orchestra.addInstrument(rightMaster);
+		orchestra.addInstrument(leftMaster);
+
 	}
 	
 	public void periodic() {

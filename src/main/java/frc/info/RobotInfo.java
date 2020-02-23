@@ -19,6 +19,7 @@ public class RobotInfo {
             boolean hasComp = false;
             boolean hasPractice = false;
             File[] lvuserFiles = propertyDirectory.listFiles();
+            
             for (File file : lvuserFiles) { //look through every file in here!! and check what they have
                 if ( file.getName().equals("practice")) { //seeing if it has practice file
                     hasPractice = true;
