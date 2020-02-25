@@ -1,5 +1,6 @@
 package frc.subsystem;
 
+import frc.ServiceLocator;
 import frc.math.Vector;
 
 public class VisionSubsystem {
@@ -12,6 +13,7 @@ public class VisionSubsystem {
 
 
     public double getDistanceFromTarget(double pixelAngleY, double height) {
+        ServiceLocator.register(this);
         double angle = pixelAngleY + cameraAngle;
         return (height - cameraHeight) / Math.tan(angle);
     }

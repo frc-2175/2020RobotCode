@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.I2C;
+import frc.ServiceLocator;
 import frc.math.MathUtility;
 
 public class ControlPanelSubsystem {
@@ -18,6 +19,7 @@ public class ControlPanelSubsystem {
 
 
     public ControlPanelSubsystem() {
+        ServiceLocator.register(this);
         controlPanelMotor = new WPI_TalonSRX(10);
         colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
         controlPanelMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
