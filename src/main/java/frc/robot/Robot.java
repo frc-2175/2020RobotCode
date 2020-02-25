@@ -41,6 +41,7 @@ import frc.subsystem.FeederSubsystem;
 import frc.subsystem.IntakeSubsystem;
 import frc.subsystem.MagazineSubsystem;
 import frc.subsystem.ShooterSubsystem;
+import frc.subsystem.ClimberSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -71,6 +72,7 @@ public class Robot extends TimedRobot {
   public FeederSubsystem feederSubsystem;
   public MagazineSubsystem magazineSubsystem;
   private CommandRunner autonomousCommand;
+  public ClimberSubsystem climberSubsystem;
   
   
   /*
@@ -89,7 +91,7 @@ public class Robot extends TimedRobot {
 	public static final int GAMEPAD_BACK = 9;
 	public static final int GAMEPAD_START = 10;
 	public static final int GAMEPAD_LEFT_STICK_PRESS = 11;
-	public static final int GAMEPAD_RIGHT_STICK_PRESS = 12;
+  public static final int GAMEPAD_RIGHT_STICK_PRESS = 12;
 
 	public static final int POV_UP = 0;
 	public static final int POV_UP_RIGHT = 45;
@@ -342,6 +344,21 @@ public class Robot extends TimedRobot {
       //shooterSubsystem.shootOut();
     } else {
       //shooterSubsystem.stopShootOut();
+    }
+
+    //deploying hook
+    if (gamepad.getRawButton(GAMEPAD_LEFT_STICK_PRESS)) {
+      climberSubsystem.deployUp();
+    } else {
+      climberSubsystem.stopDeploy();
+    }
+    //climbing subsystem
+    if (gamepad.getRawButton(GAMEPAD_RIGHT_STICK_PRESS)) {
+      climberSubsystem.climbUp();
+    } else {
+      climberSubsystem.stopClimbing();
+    }
+      
     }
 
     // ✩ Drive Controls ✩

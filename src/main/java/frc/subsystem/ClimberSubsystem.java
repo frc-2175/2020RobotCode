@@ -20,7 +20,7 @@ public class ClimberSubsystem {
         climbMotor = new WPI_VictorSPX(2);
     }
 
-    public void delployUp() {
+    public void deployUp() {
         deployMotor.set(1);
     } 
 
