@@ -10,47 +10,46 @@ import frc.info.RobotInfo;
 public class ClimberSubsystem {
 
     private final RobotInfo robotInfo;
-    private final WPI_VictorSPX climberMotor;
-    private final WPI_VictorSPX winchMotor;
-    private double climbingSpeed;
-    private double winchSpeed;
+    private final WPI_VictorSPX deployMotor;
+    private final WPI_VictorSPX climbMotor;
 
     public ClimberSubsystem() {
+        ServiceLocator.register(this);
         robotInfo = ServiceLocator.get(RobotInfo.class);
-        climberMotor = new WPI_VictorSPX(1);
-        winchMotor = new WPI_VictorSPX(2);
+        deployMotor = new WPI_VictorSPX(1);
+        climbMotor = new WPI_VictorSPX(2);
+    }
+
+    public void delployUp() {
+        deployMotor.set(1);
+    } 
+
+    public void deployDown() {
+        deployMotor.set(-1);
+    }
+
+    public void stopDeploy() {
+        deployMotor.set(0);
     }
 
     public void climbUp() {
-        climberMotor.set(1);
-    } 
+        climbMotor.set(1);
+    }
 
     public void climbDown() {
-        climberMotor.set(-1);
+        climbMotor.set(-1);
     }
 
     public void stopClimbing() {
-        climberMotor.set(0);
+        climbMotor.set(0);
     }
 
-    public void winchIn() {
-        winchMotor.set(1);
+    public void deploySpeed(double speed) {
+        deployMotor.set(speed);
     }
 
-    public void winchOut() {
-        winchMotor.set(-1);
-    }
-
-    public void stopWinching() {
-        winchMotor.set(0);
-    }
-
-    public void climbingSpeed(double speed) {
-        climberMotor.set(speed);
-    }
-
-    public void winchSpeed(double speeed) {
-        winchMotor.set(speeed);
+    public void climbSpeed(double speeeed) {
+        climbMotor.set(speeeed);
     }
 
 } 
