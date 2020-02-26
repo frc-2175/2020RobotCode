@@ -359,7 +359,6 @@ public class Robot extends TimedRobot {
       climberSubsystem.stopClimbing();
     }
       
-    }
 
     // ✩ Drive Controls ✩
     //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX() * Math.abs(rightJoystick.getX())); //squared
