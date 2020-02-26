@@ -12,7 +12,6 @@ import java.io.File;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-import apple.laf.JRSUIConstants.AlignmentHorizontal;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -337,7 +336,7 @@ public class Robot extends TimedRobot {
       feederSubsystem.stopFeeder();
     }
 
-    // ✩ magazine roll ✩ 🐸
+    // ✩ magazine roll ✩ 
     magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05));
 
     // ✩ shooter flywheel ✩
