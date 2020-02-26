@@ -12,6 +12,7 @@ import java.io.File;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import apple.laf.JRSUIConstants.AlignmentHorizontal;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -336,7 +337,7 @@ public class Robot extends TimedRobot {
       feederSubsystem.stopFeeder();
     }
 
-    // ✩ magazine roll ✩
+    // ✩ magazine roll ✩ 🐸
     magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05));
 
     // ✩ shooter flywheel ✩
@@ -346,17 +347,22 @@ public class Robot extends TimedRobot {
       //shooterSubsystem.stopShootOut();
     }
 
-    //deploying hook
-    if (gamepad.getRawButton(GAMEPAD_LEFT_STICK_PRESS)) {
-      climberSubsystem.deployUp();
-    } else {
-      climberSubsystem.stopDeploy();
-    }
     //climbing subsystem
-    if (gamepad.getRawButton(GAMEPAD_RIGHT_STICK_PRESS)) {
+    if (gamepad.getRawButton(GAMEPAD_START)) {
       climberSubsystem.climbUp();
+    } else if (gamepad.getRawButton(GAMEPAD_BACK)) { 
+      climberSubsystem.climbDown();
     } else {
       climberSubsystem.stopClimbing();
+    }
+
+    //deploying hook
+    if (gamepad.getPOV() == POV_UP) {
+      climberSubsystem.deployUp();
+    } else if (gamepad.getPOV() == POV_DOWN) {
+      climberSubsystem.deployDown();
+    } else {
+      climberSubsystem.stopDeploy();
     }
       
 
