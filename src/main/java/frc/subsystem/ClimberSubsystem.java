@@ -16,8 +16,8 @@ public class ClimberSubsystem {
     public ClimberSubsystem() {
         ServiceLocator.register(this);
         robotInfo = ServiceLocator.get(RobotInfo.class);
-        deployMotor = new WPI_VictorSPX(1);
-        climbMotor = new WPI_VictorSPX(2);
+        deployMotor = new WPI_VictorSPX(444);
+        climbMotor = new WPI_VictorSPX(888888);
     }
 
     public void deployUp() {

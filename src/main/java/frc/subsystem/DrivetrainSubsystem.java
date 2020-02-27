@@ -3,9 +3,12 @@ package frc.subsystem;
 import java.util.ArrayList;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import com.ctre.phoenix.music.Orchestra;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
@@ -25,7 +28,6 @@ import frc.logging.Logger;
 import frc.math.DrivingUtility;
 import frc.math.MathUtility;
 import frc.math.Vector;
-import com.ctre.phoenix.music.Orchestra;
 
 public class DrivetrainSubsystem {
 	Logger logger;
@@ -44,7 +46,7 @@ public class DrivetrainSubsystem {
 	double lastEncoderDistanceRight;
 	private double zeroEncoderLeft; 
 	private double zeroEncoderRight;
-	private Solenoid gearsSolenoid;
+	public Solenoid gearsSolenoid;
 	public static final double TICKS_TO_INCHES = 112.0/182931.0;
 	private Vector position = new Vector(0, 0); 
 	private PIDController purePursuitPID; 
@@ -90,6 +92,15 @@ public class DrivetrainSubsystem {
 		rightFollowerTwo.setInverted(true);
 		leftFollowerOne.setInverted(false);
 		leftFollowerTwo.setInverted(false);
+
+		leftMaster.setNeutralMode(NeutralMode.Brake);
+		rightMaster.setNeutralMode(NeutralMode.Brake);
+		((BaseMotorController) leftFollowerOne).setNeutralMode(NeutralMode.Brake);
+		((BaseMotorController) leftFollowerTwo).setNeutralMode(NeutralMode.Brake);
+		((BaseMotorController) rightFollowerOne).setNeutralMode(NeutralMode.Brake);
+		((BaseMotorController) rightFollowerTwo).setNeutralMode(NeutralMode.Brake);
+
+		
 
 
         robotDrive = new DifferentialDrive(leftMotors, rightMotors);
@@ -363,7 +374,6 @@ public class DrivetrainSubsystem {
 		double angle = Math.acos(point.y / point.magnitude());
 		return Math.signum(point.x) * Math.toDegrees(angle); 
 	}
-
 
 }
 

@@ -15,13 +15,14 @@ public class MagazineSubsystem {
     public MagazineSubsystem() {
         magazineMotor = new WPI_TalonSRX(7);
         ServiceLocator.register(this);
+        
     }
 
     /**
      * rolls intake in at full in
      */
     public void magazineRollIn() {
-        magazineMotor.set(-1);   
+        magazineMotor.set(1);   
     }
     
     public void stopmagazine() {
@@ -40,7 +41,7 @@ public class MagazineSubsystem {
      * rolls intake out at full speed
      */
     public void magazineRollOut() {
-        magazineMotor.set(1);
+        magazineMotor.set(-1);
     }
 
     

@@ -124,6 +124,7 @@ public class Robot extends TimedRobot {
     drivetrainSubsystem = new DrivetrainSubsystem();
     feederSubsystem = new FeederSubsystem();
     magazineSubsystem = new MagazineSubsystem();
+    climberSubsystem = new ClimberSubsystem();
     
 
     // Example use of robot logging with SmartDashboard
@@ -310,9 +311,9 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // ✩ intake roll ✩
-    if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER)) {
+    if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER) || leftJoystick.getRawButton(2)) {
       intakeSubsystem.intakeRollOut();
-    } else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER)) {
+    } else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER) || rightJoystick.getRawButton(2)) {
       intakeSubsystem.intakeRollIn();
     } else {
       intakeSubsystem.stopIntake();
@@ -337,7 +338,12 @@ public class Robot extends TimedRobot {
     }
 
     // ✩ magazine roll ✩ 
-    magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05));
+    if(rightJoystick.getRawButton(3)) {
+      magazineSubsystem.magazineRollIn();
+    } else {
+      magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05));      
+    }
+
 
     // ✩ shooter flywheel ✩
     if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
@@ -369,7 +375,14 @@ public class Robot extends TimedRobot {
     //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX() * Math.abs(rightJoystick.getX())); //squared
     // drivetrainSubsystem.blendedDrive(-leftJoystick.getY() , rightJoystick.getX()); //normal
     //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), (rightJoystick.getX() * Math.abs( rightJoystick.getX() ) )*.5); //squared * .5
-    drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX() * .5); //linear * .5
+    //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX() * .5); //linear * .5
+    if(drivetrainSubsystem.gearsSolenoid.get()) {
+      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX()*.5); //ok actual linear but turning * .5
+    } else {
+      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX()); //ok actual linear
+    }
+    
+    
 
     // ✩ changing gears ✩
     // if (leftJoystick.getRawButtonPressed(3)) { //toggle code
@@ -388,7 +401,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     drivetrainSubsystem.resetTracking();
-    drivetrainSubsystem.orchestra.loadMusic("careless-whisper.chrp");
-    drivetrainSubsystem.orchestra.play();
+    //drivetrainSubsystem.orchestra.loadMusic("careless-whisper.chrp");
+    //drivetrainSubsystem.orchestra.play();
   }
 }
