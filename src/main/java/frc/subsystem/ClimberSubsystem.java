@@ -1,5 +1,6 @@
 package frc.subsystem;
 
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
@@ -11,13 +12,13 @@ public class ClimberSubsystem {
 
     private final RobotInfo robotInfo;
     private final WPI_VictorSPX deployMotor;
-    private final WPI_VictorSPX climbMotor;
+    private final WPI_TalonSRX climbMotor;
 
     public ClimberSubsystem() {
         ServiceLocator.register(this);
         robotInfo = ServiceLocator.get(RobotInfo.class);
         deployMotor = new WPI_VictorSPX(444);
-        climbMotor = new WPI_VictorSPX(888888);
+        climbMotor = new WPI_TalonSRX(6);
     }
 
     public void deployUp() {

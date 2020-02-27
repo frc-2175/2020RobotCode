@@ -341,7 +341,9 @@ public class Robot extends TimedRobot {
     if(rightJoystick.getRawButton(3)) {
       magazineSubsystem.magazineRollIn();
     } else {
-      magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05));      
+      // magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05)); 
+      climberSubsystem.climbSpeed(MathUtility.deadband(gamepad.getRawAxis(1), .05)); 
+
     }
 
 
@@ -353,13 +355,13 @@ public class Robot extends TimedRobot {
     }
 
     //climbing subsystem
-    if (gamepad.getRawButton(GAMEPAD_START)) {
-      climberSubsystem.climbUp();
-    } else if (gamepad.getRawButton(GAMEPAD_BACK)) { 
-      climberSubsystem.climbDown();
-    } else {
-      climberSubsystem.stopClimbing();
-    }
+    // if (gamepad.getRawButton(GAMEPAD_START)) {
+    //   climberSubsystem.climbUp();
+    // } else if (gamepad.getRawButton(GAMEPAD_BACK)) { 
+    //   climberSubsystem.climbDown();
+    // } else {
+    //   climberSubsystem.stopClimbing();
+    // }
 
     //deploying hook
     if (gamepad.getPOV() == POV_UP) {
