@@ -18,7 +18,7 @@ public class IntakeSubsystem {
         RobotInfo robotInfo = ServiceLocator.get(RobotInfo.class);
 
         intakeMotor = robotInfo.pick(() -> new WPI_VictorSPX(1), () -> new WPI_TalonSRX(10));
-        intakePiston = new DoubleSolenoid(0, 1);
+        intakePiston = new DoubleSolenoid(7, 1);
         
         intakeMotor.setInverted(true);
         ServiceLocator.register(this);
