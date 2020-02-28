@@ -41,6 +41,7 @@ import frc.subsystem.FeederSubsystem;
 import frc.subsystem.IntakeSubsystem;
 import frc.subsystem.MagazineSubsystem;
 import frc.subsystem.ShooterSubsystem;
+import frc.subsystem.ShooterSubsystem.Mode;
 import frc.subsystem.ClimberSubsystem;
 
 /**
@@ -349,9 +350,15 @@ public class Robot extends TimedRobot {
 
     // ✩ shooter flywheel ✩
     if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
-      //shooterSubsystem.shootOut();
+      shooterSubsystem.setMode(Mode.Manual);
+      shooterSubsystem.setManualSpeed(1);
+    } else if (gamepad.getPOV() == POV_UP) {
+      shooterSubsystem.setMode(Mode.PID);
+    } else if (gamepad.getPOV() == POV_DOWN) {
+      shooterSubsystem.setMode(Mode.BangBang);
     } else {
-      //shooterSubsystem.stopShootOut();
+      shooterSubsystem.setMode(Mode.Manual);
+      shooterSubsystem.setManualSpeed(0);
     }
 
     //climbing subsystem
