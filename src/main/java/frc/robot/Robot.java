@@ -367,16 +367,6 @@ public class Robot extends TimedRobot {
     }
     shooterSubsystem.setHoodMotor(MathUtility.deadband(gamepad.getRawAxis(3), .05));
 
-<<<<<<< Updated upstream
-    //✩ climbing subsystem ✩
-    // if (gamepad.getRawButton(GAMEPAD_START)) {
-    //   climberSubsystem.climbUp();
-    // } else if (gamepad.getRawButton(GAMEPAD_BACK)) { 
-    //   climberSubsystem.climbDown();
-    // } else {
-    //   climberSubsystem.stopClimbing();
-    // }
-=======
     //climbing subsystem
     if (gamepad.getRawButton(GAMEPAD_START)) {
       climberSubsystem.climbUp();
@@ -385,7 +375,6 @@ public class Robot extends TimedRobot {
     } else {
       climberSubsystem.stopClimbing();
     }
->>>>>>> Stashed changes
 
     //✩ deploying hook ✩
     if (gamepad.getPOV() == POV_UP) {
