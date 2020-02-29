@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import frc.command.AutoShootCommand;
 import frc.command.Command;
 import frc.command.CommandRunner;
 import frc.command.ParallelCommand;
@@ -36,6 +37,7 @@ import frc.logging.SmartDashboardHandler;
 import frc.logging.StdoutHandler;
 import frc.math.DrivingUtility;
 import frc.math.MathUtility;
+import frc.subsystem.ClimberSubsystem;
 import frc.subsystem.ControlPanelSubsystem;
 import frc.subsystem.DrivetrainSubsystem;
 import frc.subsystem.FeederSubsystem;
@@ -43,7 +45,6 @@ import frc.subsystem.IntakeSubsystem;
 import frc.subsystem.MagazineSubsystem;
 import frc.subsystem.ShooterSubsystem;
 import frc.subsystem.ShooterSubsystem.Mode;
-import frc.subsystem.ClimberSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -74,6 +75,7 @@ public class Robot extends TimedRobot {
   public FeederSubsystem feederSubsystem;
   public MagazineSubsystem magazineSubsystem;
   private CommandRunner autonomousCommand;
+  private CommandRunner teleopAutoShootCommand;
   public ClimberSubsystem climberSubsystem;
   
   
@@ -288,6 +290,12 @@ public class Robot extends TimedRobot {
     shooterSubsystem.periodic();
   }
 
+  @Override
+  public void teleopInit() {
+    teleopAutoShootCommand = new CommandRunner(new AutoShootCommand());
+  }
+
+
   /**
    * This function is called periodically during operator control.
    */
@@ -336,13 +344,25 @@ public class Robot extends TimedRobot {
     }
 
     // ✩ feeder roll ✩
-    if(gamepad.getRawButton(GAMEPAD_X)) {
-      feederSubsystem.rollOutFeeder();
-    } else if (gamepad.getRawButton(GAMEPAD_Y)) {
+    // if(gamepad.getRawButton(GAMEPAD_X)) {
+    //   feederSubsystem.rollOutFeeder();
+    // } else 
+    if (gamepad.getRawButton(GAMEPAD_Y)) {
       feederSubsystem.rollInFeeder();
     } else {
       feederSubsystem.stopFeeder();
     }
+
+    // ✩ auto shooting command ✩
+    if( gamepad.getRawButton(GAMEPAD_X)) {
+      if(gamepad.getRawButtonPressed(GAMEPAD_X)) {
+        teleopAutoShootCommand.resetCommand();
+      }
+      teleopAutoShootCommand.runCommand();
+    } else {
+      teleopAutoShootCommand.endCommand();
+    }
+    
 
     // ✩ magazine roll ✩ 
     if(rightJoystick.getRawButton(3)) {

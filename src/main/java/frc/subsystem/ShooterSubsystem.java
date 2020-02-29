@@ -31,6 +31,7 @@ public class ShooterSubsystem {
     private double goalAngle;
     private static final double OVERSHOOTNESS = 100; //the amount to add to the target speed in bbspeed calculations!!!!!
     private static final double MAX_RPM = 5620;
+    private static final double BUFFER_ZONE = 100;
 
 
 
@@ -105,6 +106,18 @@ public class ShooterSubsystem {
 
     public void setTurretSpeed(double speed) {
         turretMotor.set(speed);
+    }
+
+    public double getTargetSpeed() {
+        return speedThreshold;
+    }
+
+    public void setTargetSpeed(double speed) {
+        speedThreshold = speed;
+    }
+
+    public boolean nearTargetSpeed() {
+        return getSpeedInRPM() >= speedThreshold + BUFFER_ZONE && getSpeedInRPM() <= speedThreshold - BUFFER_ZONE;
     }
     
 }
