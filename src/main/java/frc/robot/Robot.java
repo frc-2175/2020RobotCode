@@ -316,11 +316,14 @@ public class Robot extends TimedRobot {
   public void teleopPeriodic() {
     // ✩ intake roll ✩
     if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER) || leftJoystick.getRawButton(2)) {
+      magazineSubsystem.magazineRollOut();
       intakeSubsystem.intakeRollOut();
     } else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER) || rightJoystick.getRawButton(2)) {
       intakeSubsystem.intakeRollIn();
+      magazineSubsystem.magazineRollIn();
     } else {
       intakeSubsystem.stopIntake();
+      magazineSubsystem.stopmagazine();
     }
 
     // ✩ intake piston ✩

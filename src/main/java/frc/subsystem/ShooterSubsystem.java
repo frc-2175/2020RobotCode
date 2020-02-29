@@ -27,9 +27,11 @@ public class ShooterSubsystem {
     private Mode currentMode = Mode.Manual;
     private double goalSpeedRPM;
     private double manualSpeed = 0;
-    private double speedThreshold = 5;
-    private double speedRange = 5;
+    private double speedThreshold;
     private double goalAngle;
+    private static final double OVERSHOOTNESS = 100; //the amount to add to the target speed in bbspeed calculations!!!!!
+    private static final double MAX_RPM = 5620;
+
 
 
     public ShooterSubsystem() {
@@ -44,6 +46,9 @@ public class ShooterSubsystem {
         double td = 1;
         
 
+        SmartDashboard.putNumber("speed threshold??", 0);
+        SmartDashboard.putNumber("overshootness", OVERSHOOTNESS);
+
         turretPidController = new PIDController(tp, ti, td);
         shooterMotorMaster.setIdleMode(IdleMode.kCoast);
         shooterMotorFollower.setIdleMode(IdleMode.kCoast);
@@ -54,6 +59,8 @@ public class ShooterSubsystem {
     }
 
     public void periodic() {
+        SmartDashboard.putNumber("flywheel speed (rpm)", getSpeedInRPM());
+        speedThreshold = SmartDashboard.getNumber("speed threshold??" , speedThreshold);
         if (currentMode == Mode.PID) { //PID!!
             CANPIDController noah2 = shooterMotorMaster.getPIDController();
             noah2.setP(.000006);
@@ -62,10 +69,10 @@ public class ShooterSubsystem {
             noah2.setIZone(0);
             noah2.setReference(SmartDashboard.getNumber("shooter rpm", 60), ControlType.kVelocity);
         } else if (currentMode == Mode.BangBang) { //Bang bang !!!!!
-            if ( getSpeedInRPM() >  (speedThreshold + speedRange)) {
+            if ( getSpeedInRPM() >  (speedThreshold)) {
                 shooterMotorMaster.set(0);
-            } else if ( getSpeedInRPM() < (speedThreshold - speedRange)) {
-                shooterMotorMaster.set(1);
+            } else if ( getSpeedInRPM() < (speedThreshold)) {
+                shooterMotorMaster.set((speedThreshold + OVERSHOOTNESS) / MAX_RPM);
             } 
         } else { //do manual stuff!!!!!!!!
             shooterMotorMaster.set(manualSpeed);
