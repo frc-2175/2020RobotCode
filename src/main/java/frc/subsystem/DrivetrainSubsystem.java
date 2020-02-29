@@ -74,7 +74,7 @@ public class DrivetrainSubsystem {
 		rightMaster = robotInfo.pick(() -> new WPI_TalonFX(16), () -> new WPI_TalonFX(2));
         rightFollowerOne = robotInfo.pick(() -> new WPI_VictorSPX(9), () -> new WPI_TalonSRX(0));
 		rightFollowerTwo = robotInfo.pick(() -> new WPI_VictorSPX(8), () -> new WPI_TalonSRX(1));
-		gearsSolenoid = new Solenoid(4);
+		gearsSolenoid = robotInfo.pick(()-> new Solenoid(2), () -> new Solenoid(4));
 
 		/*  THIS DOESN'T WORK!!!
         leftFollowerOne.follow(leftMaster);

@@ -1,15 +1,20 @@
 package frc.subsystem;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+
 import edu.wpi.first.wpilibj.SpeedController;
 import frc.ServiceLocator;
+import frc.info.RobotInfo;
 
 public class FeederSubsystem {
 
     private final SpeedController feederMotor;
+    RobotInfo robotInfo;
 
     public FeederSubsystem() {
-        feederMotor = new WPI_TalonSRX(9);
+        robotInfo = ServiceLocator.get(RobotInfo.class);
+        feederMotor = robotInfo.pick(() -> new WPI_VictorSPX(3), () -> new WPI_TalonSRX(9));
         ServiceLocator.register(this);
     }
 

@@ -331,9 +331,9 @@ public class Robot extends TimedRobot {
 
     // ✩ feeder roll ✩
     if(gamepad.getRawButton(GAMEPAD_X)) {
-      feederSubsystem.rollInFeeder();
-    } else if (gamepad.getRawButton(GAMEPAD_Y)) {
       feederSubsystem.rollOutFeeder();
+    } else if (gamepad.getRawButton(GAMEPAD_Y)) {
+      feederSubsystem.rollInFeeder();
     } else {
       feederSubsystem.stopFeeder();
     }
@@ -342,8 +342,8 @@ public class Robot extends TimedRobot {
     if(rightJoystick.getRawButton(3)) {
       magazineSubsystem.magazineRollIn();
     } else {
-      // magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05)); 
-      climberSubsystem.climbSpeed(MathUtility.deadband(gamepad.getRawAxis(1), .05)); 
+      magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05)); 
+      // climberSubsystem.climbSpeed(MathUtility.deadband(gamepad.getRawAxis(1), .05)); 
 
     }
 
@@ -367,6 +367,7 @@ public class Robot extends TimedRobot {
     }
     shooterSubsystem.setHoodMotor(MathUtility.deadband(gamepad.getRawAxis(3), .05));
 
+<<<<<<< Updated upstream
     //✩ climbing subsystem ✩
     // if (gamepad.getRawButton(GAMEPAD_START)) {
     //   climberSubsystem.climbUp();
@@ -375,6 +376,16 @@ public class Robot extends TimedRobot {
     // } else {
     //   climberSubsystem.stopClimbing();
     // }
+=======
+    //climbing subsystem
+    if (gamepad.getRawButton(GAMEPAD_START)) {
+      climberSubsystem.climbUp();
+    } else if (gamepad.getRawButton(GAMEPAD_BACK)) { 
+      climberSubsystem.climbDown();
+    } else {
+      climberSubsystem.stopClimbing();
+    }
+>>>>>>> Stashed changes
 
     //✩ deploying hook ✩
     if (gamepad.getPOV() == POV_UP) {
