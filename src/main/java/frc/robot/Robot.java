@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.command.Command;
 import frc.command.CommandRunner;
 import frc.command.ParallelCommand;
@@ -126,6 +127,8 @@ public class Robot extends TimedRobot {
     feederSubsystem = new FeederSubsystem();
     magazineSubsystem = new MagazineSubsystem();
     climberSubsystem = new ClimberSubsystem();
+
+    SmartDashboard.putNumber("shooter flywheel manual speed", .5);
     
 
     // Example use of robot logging with SmartDashboard
@@ -347,11 +350,10 @@ public class Robot extends TimedRobot {
 
     }
 
-
     // ✩ shooter flywheel ✩
     if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
       shooterSubsystem.setMode(Mode.Manual);
-      shooterSubsystem.setManualSpeed(1);
+      shooterSubsystem.setManualSpeed(SmartDashboard.getNumber("shooter flywheel manual speed", .5)); //manual speed here!!!!!!!
     } else if (gamepad.getPOV() == POV_UP) {
       shooterSubsystem.setMode(Mode.PID);
     } else if (gamepad.getPOV() == POV_DOWN) {
@@ -367,7 +369,10 @@ public class Robot extends TimedRobot {
     }
     shooterSubsystem.setHoodMotor(MathUtility.deadband(gamepad.getRawAxis(3), .05));
 
-    //climbing subsystem
+    // ✩ shooter turret ✩
+    shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(gamepad.getRawAxis(2), .05));
+
+    // ✩ climbing subsystem ✩
     if (gamepad.getRawButton(GAMEPAD_START)) {
       climberSubsystem.climbUp();
     } else if (gamepad.getRawButton(GAMEPAD_BACK)) { 

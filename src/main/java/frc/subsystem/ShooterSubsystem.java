@@ -6,6 +6,7 @@ import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -32,11 +33,11 @@ public class ShooterSubsystem {
 
 
     public ShooterSubsystem() {
-        shooterMotorMaster = new CANSparkMax(7, MotorType.kBrushless);
-        shooterMotorFollower = new CANSparkMax(8, MotorType.kBrushless);
-        turretMotor = new WPI_TalonSRX(10); //not accurate
-        hoodMotor = new WPI_VictorSPX(9999999);
-        hoodPiston = new Solenoid(888);
+        shooterMotorMaster = new CANSparkMax(1, MotorType.kBrushless);
+        shooterMotorFollower = new CANSparkMax(2, MotorType.kBrushless);
+        turretMotor = new WPI_TalonSRX(2); //not accurate
+        hoodMotor = new WPI_VictorSPX(99); // get value!!
+        hoodPiston = new Solenoid(3); 
 
         double ti = 1;
         double tp = 1;
@@ -44,8 +45,11 @@ public class ShooterSubsystem {
         
 
         turretPidController = new PIDController(tp, ti, td);
-        shooterMotorFollower.follow(shooterMotorMaster);
-        shooterMotorFollower.follow(shooterMotorMaster);
+        shooterMotorMaster.setIdleMode(IdleMode.kCoast);
+        shooterMotorFollower.setIdleMode(IdleMode.kCoast);
+        shooterMotorMaster.setInverted(true);
+        // shooterMotorFollower.setInverted(false);
+        shooterMotorFollower.follow(shooterMotorMaster, true);
         ServiceLocator.register(this);
     }
 
@@ -90,6 +94,10 @@ public class ShooterSubsystem {
 
     public void setManualSpeed(double jacob) {
         manualSpeed = jacob;
+    }
+
+    public void setTurretSpeed(double speed) {
+        turretMotor.set(speed);
     }
     
 }
