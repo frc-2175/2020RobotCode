@@ -1,16 +1,17 @@
 package frc.subsystem;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.ControlType;
 
+import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.SpeedController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.PIDController;
 import frc.ServiceLocator;
-import frc.info.RobotInfo;
 
 public class ShooterSubsystem {
     
@@ -18,6 +19,9 @@ public class ShooterSubsystem {
     private final CANSparkMax shooterMotorFollower;
     private final WPI_TalonSRX turretMotor;
     private final PIDController turretPidController;
+    private Solenoid hoodPiston;
+
+    private SpeedController hoodMotor;
     public enum Mode {Manual, PID, BangBang};
     private Mode currentMode = Mode.Manual;
     private double goalSpeedRPM;
@@ -31,6 +35,8 @@ public class ShooterSubsystem {
         shooterMotorMaster = new CANSparkMax(7, MotorType.kBrushless);
         shooterMotorFollower = new CANSparkMax(8, MotorType.kBrushless);
         turretMotor = new WPI_TalonSRX(10); //not accurate
+        hoodMotor = new WPI_VictorSPX(9999999);
+        hoodPiston = new Solenoid(888);
 
         double ti = 1;
         double tp = 1;
@@ -68,6 +74,18 @@ public class ShooterSubsystem {
 
     public void setMode(Mode noah) {
         currentMode = noah;
+    }
+
+    public void setHoodMotor(double speed) {
+        hoodMotor.set(speed);
+    }
+
+    public void toggleHoodAngle() {
+        if(hoodPiston.get()) {
+            hoodPiston.set(false);
+        } else {
+            hoodPiston.set(true);
+        }
     }
 
     public void setManualSpeed(double jacob) {

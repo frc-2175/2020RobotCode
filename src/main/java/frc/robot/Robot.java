@@ -361,7 +361,13 @@ public class Robot extends TimedRobot {
       shooterSubsystem.setManualSpeed(0);
     }
 
-    //climbing subsystem
+    // ✩ shooter hood ✩
+    if(gamepad.getRawButtonPressed(GAMEPAD_B)) {
+      shooterSubsystem.toggleHoodAngle();
+    }
+    shooterSubsystem.setHoodMotor(MathUtility.deadband(gamepad.getRawAxis(3), .05));
+
+    //✩ climbing subsystem ✩
     // if (gamepad.getRawButton(GAMEPAD_START)) {
     //   climberSubsystem.climbUp();
     // } else if (gamepad.getRawButton(GAMEPAD_BACK)) { 
@@ -370,7 +376,7 @@ public class Robot extends TimedRobot {
     //   climberSubsystem.stopClimbing();
     // }
 
-    //deploying hook
+    //✩ deploying hook ✩
     if (gamepad.getPOV() == POV_UP) {
       climberSubsystem.deployUp();
     } else if (gamepad.getPOV() == POV_DOWN) {
@@ -399,7 +405,7 @@ public class Robot extends TimedRobot {
     // }
     drivetrainSubsystem.setGear(leftJoystick.getRawButton(1)); //press and hold code
     
-    //you have reached the end of teleop periodic !!!!!!!!!! : )
+    //✩✩✩you have reached the end of teleop periodic !!!!!!!!!! : ) ✩✩✩
     drivetrainSubsystem.periodic();
     shooterSubsystem.periodic();
   }
