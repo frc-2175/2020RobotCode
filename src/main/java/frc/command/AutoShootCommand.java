@@ -1,6 +1,7 @@
 package frc.command;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.ServiceLocator;
 import frc.subsystem.FeederSubsystem;
 import frc.subsystem.MagazineSubsystem;
@@ -14,7 +15,11 @@ public class AutoShootCommand extends Command {
     double startTime;
     boolean upToSpeed;
     boolean waiting = true;
-    
+
+    public AutoShootCommand() {
+        SmartDashboard.putNumber("magazine time", .10);
+        SmartDashboard.putNumber("feeder time", .50);
+    }
 
 	@Override
 	public void init() {
@@ -23,18 +28,23 @@ public class AutoShootCommand extends Command {
 
 	@Override
 	public void execute() {
+        double magazineTime = SmartDashboard.getNumber("magazine time", .07);
+        double feederTime = SmartDashboard.getNumber("feeder time", .25);
         if ( waiting ) {
             if ( shooterSubsystem.nearTargetSpeed() ) {
                 waiting = false;
                 startTime = Timer.getFPGATimestamp();
             }
         } else {
-            if(Timer.getFPGATimestamp() - startTime < .5) {
+            if(Timer.getFPGATimestamp() - startTime < feederTime) {
                 feederSubsystem.rollInFeeder();
-            } else if(Timer.getFPGATimestamp() - startTime < 1) {
-                magazineSubsystem.magazineRollIn();
+            } else if(Timer.getFPGATimestamp() - startTime < feederTime + magazineTime) {
+                feederSubsystem.stopFeeder();
+                magazineSubsystem.setMagazineMotor(.87);
             } else {
-                 waiting = true;
+                magazineSubsystem.stopmagazine();
+                feederSubsystem.stopFeeder();
+                waiting = true;
             }
         }
 

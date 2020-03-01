@@ -189,14 +189,14 @@ public class Robot extends TimedRobot {
     SequentialCommand rightToTrench = new SequentialCommand(new Command[] {
       //Change all the "123", make robot in line with the trench
       //new AimCommand
-      new ShootCommand(123),
+      new ShootCommand(123, 4000),
       new ParallelCommand(new Command[] { 
         new DriveStraightCommand(123, .5), //change later
         new IntakeCommand(123)
       }),
       new TurningDegreesCommand(-180), //could make a turn shooter command
       //new AimCommand
-      new ShootCommand(123) 
+      new ShootCommand(123, 1) 
     });
 
     /*
@@ -206,7 +206,7 @@ public class Robot extends TimedRobot {
     SequentialCommand rightToRendezvous = new SequentialCommand(new Command[] {
       //Change all the "123", make robot face rendezvous area before match
       //new AimCommand
-      new ShootCommand(123),
+      new ShootCommand(123, 1),
       new ParallelCommand(new Command[] { 
         new DriveStraightCommand(123, .5), //change later
         new IntakeCommand(123)
@@ -217,7 +217,7 @@ public class Robot extends TimedRobot {
         new IntakeCommand(123)
       }),
       //new AimCommand
-      new ShootCommand(123)
+      new ShootCommand(123, 1)
     });
     
     /*
@@ -227,14 +227,14 @@ public class Robot extends TimedRobot {
     SequentialCommand middleRendezvousThreeBall = new SequentialCommand(new Command[] {
       //Change all the "123", and angle robot towards the three balls
       //new AimCommand
-      new ShootCommand(123),
+      new ShootCommand(123, 1),
       new ParallelCommand(new Command[] { 
         new DriveStraightCommand(123, .5), //change later
         new IntakeCommand(123) //3 balls
       }),
       new DriveBackwardCommand(123),
       //new AimCommand
-      new ShootCommand(123)
+      new ShootCommand(123, 1)
     });
 
     /*
@@ -244,13 +244,13 @@ public class Robot extends TimedRobot {
     SequentialCommand middleRendezvousFiveBall = new SequentialCommand(new Command[] {
       //Change all the "123", and angle robot towards the three balls
       //new AimCommand
-      new ShootCommand(123),
+      new ShootCommand(123, 4000),
       new ParallelCommand(new Command[] { 
         new DriveStraightCommand(123, .5), //change later
         new IntakeCommand(123) //5 balls
       }),
       //new AimCommand
-      new ShootCommand(123)
+      new ShootCommand(123, 4000)
     });
 
     /*
@@ -291,12 +291,17 @@ public class Robot extends TimedRobot {
 
     //drives forward and shoots
     SequentialCommand closeShotAuto = new SequentialCommand(new Command[] {
-      new FollowPathCommand(true),
-      new ShootCommand(123)
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115)),
+      new RunWhileCommand(new ShootCommand(10, 2900), new AutoShootCommand())
+    });
+
+    SequentialCommand farShotAuto = new SequentialCommand(new Command[] {
+      new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(10)),
+      new RunWhileCommand(new ShootCommand(10, 3500), new AutoShootCommand())
     });
 
 
-    autonomousCommand = new CommandRunner(purePursuit2); //INSERT COMMAND TO RUN HERE!!!!!!!!!!!!!!!!!
+    autonomousCommand = new CommandRunner(closeShotAuto); //INSERT COMMAND TO RUN HERE!!!!!!!!!!!!!!!!!
   } //29 + 66 / 2 + 252
 
   /**
@@ -405,6 +410,7 @@ public class Robot extends TimedRobot {
     } else if (gamepad.getPOV() == POV_UP) {
       shooterSubsystem.setMode(Mode.PID);
     } else if (gamepad.getPOV() == POV_DOWN) {
+      shooterSubsystem.setTargetSpeed(SmartDashboard.getNumber("speed goal()rpm??" , 4500));
       shooterSubsystem.setMode(Mode.BangBang);
     } else {
       shooterSubsystem.setMode(Mode.Manual);

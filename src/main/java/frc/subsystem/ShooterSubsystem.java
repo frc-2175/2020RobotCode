@@ -29,7 +29,7 @@ public class ShooterSubsystem {
     private Mode currentMode = Mode.Manual;
     private double goalSpeedRPM;
     private double manualSpeed = 0;
-    private double speedThreshold;
+    private double targetSpeed;
     private double goalAngle;
     private static final double OVERSHOOTNESS = 100; //the amount to add to the target speed in bbspeed calculations!!!!!
     private static final double MAX_RPM = 5620;
@@ -59,7 +59,7 @@ public class ShooterSubsystem {
         SmartDashboard.putNumber("turretpid d", td);
 
         
-        SmartDashboard.putNumber("speed goal()rpm??", 0);
+        SmartDashboard.putNumber("speed goal()rpm??", 4500);
         SmartDashboard.putNumber("overshootness", OVERSHOOTNESS);
         SmartDashboard.putNumber("turret encoder", turretMotor.getSelectedSensorPosition());
 
@@ -82,7 +82,6 @@ public class ShooterSubsystem {
 
     public void periodic() {
         SmartDashboard.putNumber("flywheel speed (rpm)", getSpeedInRPM());
-        speedThreshold = SmartDashboard.getNumber("speed goal()rpm??" , speedThreshold);
         turretPidController.updateTime(Timer.getFPGATimestamp());
         if (currentMode == Mode.PID) { //PID!!
             CANPIDController noah2 = shooterMotorMaster.getPIDController();
@@ -92,10 +91,10 @@ public class ShooterSubsystem {
             noah2.setIZone(0);
             noah2.setReference(SmartDashboard.getNumber("shooter rpm", 60), ControlType.kVelocity);
         } else if (currentMode == Mode.BangBang) { //Bang bang !!!!!
-            if ( getSpeedInRPM() >  (speedThreshold)) {
+            if ( getSpeedInRPM() >  (targetSpeed)) {
                 shooterMotorMaster.set(0);
-            } else if ( getSpeedInRPM() < (speedThreshold)) {
-                shooterMotorMaster.set((speedThreshold + OVERSHOOTNESS) / MAX_RPM);
+            } else if ( getSpeedInRPM() < (targetSpeed)) {
+                shooterMotorMaster.set((targetSpeed + OVERSHOOTNESS) / MAX_RPM);
             } 
         } else { //do manual stuff!!!!!!!!
             shooterMotorMaster.set(manualSpeed);
@@ -164,11 +163,11 @@ public class ShooterSubsystem {
     }
 
     public double getTargetSpeed() {
-        return speedThreshold;
+        return targetSpeed;
     }
 
     public void setTargetSpeed(double speed) {
-        speedThreshold = speed;
+        targetSpeed = speed;
     }
 
     /**
@@ -176,7 +175,7 @@ public class ShooterSubsystem {
      * @return are we within a certain range of our goal speed
      */
     public boolean nearTargetSpeed() {
-        return speedThreshold - BUFFER_ZONE <= getSpeedInRPM() && getSpeedInRPM() <= speedThreshold + BUFFER_ZONE;
+        return targetSpeed - BUFFER_ZONE <= getSpeedInRPM() && getSpeedInRPM() <= targetSpeed + BUFFER_ZONE;
     }
     
     public static double turretTicksToDegrees(double ticks) {

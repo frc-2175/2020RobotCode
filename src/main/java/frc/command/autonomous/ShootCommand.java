@@ -1,38 +1,40 @@
 package frc.command.autonomous;
 
-import edu.wpi.first.wpilibj.Timer;
 import frc.ServiceLocator;
 import frc.command.Command;
 import frc.subsystem.ShooterSubsystem;
+import frc.subsystem.ShooterSubsystem.Mode;
 
 public class ShootCommand extends Command {
 
     private double shootingTime;
     private ShooterSubsystem shooterSubsystem;
-    double startTime;
+    private double targetSpeed;
 
-    public ShootCommand(double shootingTime) {
+    public ShootCommand(double shootingTime, double targetSpeed) {
         this.shootingTime = shootingTime;
+        this.targetSpeed = targetSpeed;
         shooterSubsystem = ServiceLocator.get(ShooterSubsystem.class);
     }
 
     public void init() {
-        startTime = Timer.getFPGATimestamp();
+        shooterSubsystem.setMode(Mode.BangBang);
     }
 
     public void execute() {
-        //shooterSubsystem.shootOut();
+        shooterSubsystem.setTargetSpeed(targetSpeed);
     }
 
     public boolean isFinished() {
-        if (Timer.getFPGATimestamp() - startTime > shootingTime) {
+        if (getElapsedTime() > shootingTime) {
             return true;
         } else {
             return false;
         }
     }
 
+    @Override
     public void end() {
-        //shooterSubsystem.stopShootOut();
+        shooterSubsystem.setTargetSpeed(0);
     }
 }
