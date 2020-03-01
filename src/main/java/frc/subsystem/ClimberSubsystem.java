@@ -1,9 +1,9 @@
 package frc.subsystem;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-import edu.wpi.first.wpilibj.drive.RobotDriveBase.MotorType;
 import frc.ServiceLocator;
 import frc.info.RobotInfo;
 
@@ -11,18 +11,22 @@ import frc.info.RobotInfo;
 public class ClimberSubsystem {
 
     private final RobotInfo robotInfo;
-    private final WPI_VictorSPX deployMotor;
-    private final WPI_TalonSRX climbMotor;
+    private final WPI_TalonSRX deployMotor;
+    private final WPI_VictorSPX climbMotor;
+    public static final double CLIMBER_MAX_EXTENSION_ROTATIONS = 7.6595744;
 
     public ClimberSubsystem() {
         ServiceLocator.register(this);
         robotInfo = ServiceLocator.get(RobotInfo.class);
-        deployMotor = new WPI_VictorSPX(5);
-        climbMotor = new WPI_TalonSRX(6);
+        deployMotor = new WPI_TalonSRX(6);
+        deployMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 0);
+        climbMotor = new WPI_VictorSPX(5);
     }
 
     public void deployUp() {
-        deployMotor.set(.4);
+        if(deployMotor.getSelectedSensorPosition() / 4096.0 < CLIMBER_MAX_EXTENSION_ROTATIONS) {
+            deployMotor.set(1);
+        }
     } 
 
     public void deployDown() {
@@ -44,13 +48,4 @@ public class ClimberSubsystem {
     public void stopClimbing() {
         climbMotor.set(0);
     }
-
-    public void deploySpeed(double speed) {
-        deployMotor.set(speed);
-    }
-
-    public void climbSpeed(double speeeed) {
-        climbMotor.set(speeeed);
-    }
-
 } 

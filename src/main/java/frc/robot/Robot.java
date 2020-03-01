@@ -105,6 +105,7 @@ public class Robot extends TimedRobot {
 	public static final int POV_DOWN_LEFT = 225;
 	public static final int POV_LEFT = 270;
   public static final int POV_UP_LEFT = 315;
+  
 
   public static final double topSpeed = 1;
   File propertyDirectory;
@@ -136,8 +137,8 @@ public class Robot extends TimedRobot {
     // Example use of robot logging with SmartDashboard
     logger.log(Logger.INFO, "This is a smart dashboard test!", 
       new LogField("ExampleSmartDashboard", 2175, Logger.SMART_DASHBOARD_TAG));
-      propertyDirectory = Filesystem.getDeployDirectory();
-      finalThingy = propertyDirectory.getAbsolutePath();
+    propertyDirectory = Filesystem.getDeployDirectory();
+    finalThingy = propertyDirectory.getAbsolutePath();
   }
 
   /**
@@ -416,8 +417,15 @@ public class Robot extends TimedRobot {
     } else {
       climberSubsystem.stopDeploy();
     }
-      
 
+    // if(gamepad.getPOV() == POV_UP && gamepad.getPOV() != povLastFrame) {
+    //   teleopClimbDeployCommand.resetCommand();
+    // } else if(gamepad.getPOV() == POV_UP && gamepad.getPOV() == povLastFrame) {
+    //   teleopClimbDeployCommand.runCommand();
+    // } else if(gamepad.getPOV() != POV_UP && povLastFrame == POV_UP) {
+    //   teleopClimbDeployCommand.endCommand();
+    // }
+      
     // ✩ Drive Controls ✩
     //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX() * Math.abs(rightJoystick.getX())); //squared
     // drivetrainSubsystem.blendedDrive(-leftJoystick.getY() , rightJoystick.getX()); //normal
