@@ -38,8 +38,10 @@ public class CommandRunner {
     }
 
     public void endCommand() {
-        command._end();
-        hasRunEnd = true;
+        if (!hasRunEnd) {
+            command._end();
+            hasRunEnd = true;
+        }
     }
 
     public void resetCommand() {

@@ -1,12 +1,13 @@
 package frc.subsystem;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ControlType;
-import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -47,21 +48,24 @@ public class ShooterSubsystem {
         double td = 1;
         
 
-        SmartDashboard.putNumber("speed threshold??", 0);
+        SmartDashboard.putNumber("speed goal()rpm??", 0);
         SmartDashboard.putNumber("overshootness", OVERSHOOTNESS);
+        SmartDashboard.putNumber("turret encoder", turretMotor.getSelectedSensorPosition());
 
         turretPidController = new PIDController(tp, ti, td);
         shooterMotorMaster.setIdleMode(IdleMode.kCoast);
         shooterMotorFollower.setIdleMode(IdleMode.kCoast);
         shooterMotorMaster.setInverted(true);
+        turretMotor.setInverted(true);
         // shooterMotorFollower.setInverted(false);
         shooterMotorFollower.follow(shooterMotorMaster, true);
+        turretMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Absolute, 0, 0);
         ServiceLocator.register(this);
     }
 
     public void periodic() {
         SmartDashboard.putNumber("flywheel speed (rpm)", getSpeedInRPM());
-        speedThreshold = SmartDashboard.getNumber("speed threshold??" , speedThreshold);
+        speedThreshold = SmartDashboard.getNumber("speed goal()rpm??" , speedThreshold);
         if (currentMode == Mode.PID) { //PID!!
             CANPIDController noah2 = shooterMotorMaster.getPIDController();
             noah2.setP(.000006);
@@ -84,8 +88,8 @@ public class ShooterSubsystem {
         return shooterMotorMaster.getEncoder().getVelocity();
     }
 
-    public void setMode(Mode noah) {
-        currentMode = noah;
+    public void setMode(Mode sesh) {
+        currentMode = sesh;
     }
 
     public void setHoodMotor(double speed) {
@@ -100,6 +104,10 @@ public class ShooterSubsystem {
         }
     }
 
+    /**
+     * set manual mode speed for shooter flywheel
+     * @param jacob speed
+     */
     public void setManualSpeed(double jacob) {
         manualSpeed = jacob;
     }
@@ -116,8 +124,12 @@ public class ShooterSubsystem {
         speedThreshold = speed;
     }
 
+    /**
+     * 
+     * @return are we within a certain range of our goal speed
+     */
     public boolean nearTargetSpeed() {
-        return getSpeedInRPM() >= speedThreshold + BUFFER_ZONE && getSpeedInRPM() <= speedThreshold - BUFFER_ZONE;
+        return speedThreshold - BUFFER_ZONE <= getSpeedInRPM() && getSpeedInRPM() <= speedThreshold + BUFFER_ZONE;
     }
     
 }

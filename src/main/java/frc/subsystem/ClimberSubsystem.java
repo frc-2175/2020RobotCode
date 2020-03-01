@@ -17,16 +17,16 @@ public class ClimberSubsystem {
     public ClimberSubsystem() {
         ServiceLocator.register(this);
         robotInfo = ServiceLocator.get(RobotInfo.class);
-        deployMotor = new WPI_VictorSPX(444);
+        deployMotor = new WPI_VictorSPX(5);
         climbMotor = new WPI_TalonSRX(6);
     }
 
     public void deployUp() {
-        deployMotor.set(1);
+        deployMotor.set(.4);
     } 
 
     public void deployDown() {
-        deployMotor.set(-1);
+        deployMotor.set(-.4);
     }
 
     public void stopDeploy() {

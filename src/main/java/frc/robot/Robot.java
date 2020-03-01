@@ -343,15 +343,7 @@ public class Robot extends TimedRobot {
       intakeSubsystem.putIn();
     }
 
-    // ✩ feeder roll ✩
-    // if(gamepad.getRawButton(GAMEPAD_X)) {
-    //   feederSubsystem.rollOutFeeder();
-    // } else 
-    if (gamepad.getRawButton(GAMEPAD_Y)) {
-      feederSubsystem.rollInFeeder();
-    } else {
-      feederSubsystem.stopFeeder();
-    }
+
 
     // ✩ auto shooting command ✩
     if( gamepad.getRawButton(GAMEPAD_X)) {
@@ -361,17 +353,29 @@ public class Robot extends TimedRobot {
       teleopAutoShootCommand.runCommand();
     } else {
       teleopAutoShootCommand.endCommand();
+
+      // ✩ feeder roll ✩
+      // if(gamepad.getRawButton(GAMEPAD_X)) {
+      //   feederSubsystem.rollOutFeeder();
+      // } else 
+      if (gamepad.getRawButton(GAMEPAD_Y)) {
+        feederSubsystem.rollInFeeder();
+      } else {
+        feederSubsystem.stopFeeder();
+      }
+      
+      // ✩ magazine roll ✩ 
+      if(rightJoystick.getRawButton(3)) {
+        magazineSubsystem.magazineRollIn();
+      } else {
+        magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05)); 
+        // climberSubsystem.climbSpeed(MathUtility.deadband(gamepad.getRawAxis(1), .05)); 
+      }
+
     }
     
 
-    // ✩ magazine roll ✩ 
-    if(rightJoystick.getRawButton(3)) {
-      magazineSubsystem.magazineRollIn();
-    } else {
-      magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05)); 
-      // climberSubsystem.climbSpeed(MathUtility.deadband(gamepad.getRawAxis(1), .05)); 
 
-    }
 
     // ✩ shooter flywheel ✩
     if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
@@ -405,9 +409,9 @@ public class Robot extends TimedRobot {
     }
 
     //✩ deploying hook ✩
-    if (gamepad.getPOV() == POV_UP) {
+    if (gamepad.getPOV() == POV_RIGHT) {
       climberSubsystem.deployUp();
-    } else if (gamepad.getPOV() == POV_DOWN) {
+    } else if (gamepad.getPOV() == POV_LEFT) {
       climberSubsystem.deployDown();
     } else {
       climberSubsystem.stopDeploy();
