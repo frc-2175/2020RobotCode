@@ -23,37 +23,6 @@ public class AutoShootCommand extends Command {
 
 	@Override
 	public void execute() {
-        // double howLongHasItBeen = Timer.getFPGATimestamp() - startTime;
-        // if(shooterSubsystem.nearTargetSpeed()) { //is it up to speed??
-        //     // if(howLongHasItBeen < 2.5) {
-        //     //     feederSubsystem.rollInFeeder();
-        //     // } else if (howLongHasItBeen < 5) {
-        //     //     magazineSubsystem.magazineRollIn();
-        //     // } else {
-        //     //     startTime = Timer.getFPGATimestamp();
-        //     // }
-
-        //     feederSubsystem.rollInFeeder();
-        //     magazineSubsystem.stopmagazine();
-        // } else {
-        //     feederSubsystem.stopFeeder();
-        //     // magazineSubsystem.stopmagazine();
-        //     magazineSubsystem.magazineRollIn();
-        // }
-        // upToSpeed = shooterSubsystem.nearTargetSpeed();
-
-        // if(upToSpeed) {
-        //     upToSpeed = true;
-        //     if(Timer.getFPGATimestamp() - startTime > 100000000) {
-        //         feederSubsystem.rollInFeeder();
-        //     } else if(Timer.getFPGATimestamp() - startTime > 2000000) {
-        //         magazineSubsystem.magazineRollIn();
-        //     } else {
-        //         upToSpeed = false;
-        //         startTime = Timer.getFPGATimestamp();
-        //     }
-        // }
-
         if ( waiting ) {
             if ( shooterSubsystem.nearTargetSpeed() ) {
                 waiting = false;

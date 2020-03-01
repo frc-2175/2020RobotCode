@@ -20,12 +20,14 @@ import frc.command.AutoShootCommand;
 import frc.command.Command;
 import frc.command.CommandRunner;
 import frc.command.ParallelCommand;
+import frc.command.RunWhileCommand;
 import frc.command.SequentialCommand;
 import frc.command.autonomous.DriveBackwardCommand;
 import frc.command.autonomous.DriveStraightCommand;
 import frc.command.autonomous.FollowPathCommand;
 import frc.command.autonomous.IntakeCommand;
 import frc.command.autonomous.ShootCommand;
+import frc.command.autonomous.TimerCommand;
 import frc.command.autonomous.TurningDegreesCommand;
 import frc.info.RobotInfo;
 import frc.logging.JSONHandler;
@@ -260,14 +262,18 @@ public class Robot extends TimedRobot {
        //face two balls in oposite trench
        //change 123
        new ParallelCommand(new Command[] { 
-        new DriveStraightCommand(123, .5),
+        new FollowPathCommand(false, 
+        DrivingUtility.makeLinePathSegment(123)
+        ),  
         new IntakeCommand(123)
       }),
-      new DriveBackwardCommand(123), //out of trench
-      new TurningDegreesCommand(123),
-      new DriveStraightCommand(123, .5),
-      //new AimCommand
-      new ShootCommand(123)
+        new FollowPathCommand(true, 
+        DrivingUtility.makeLinePathSegment(123), 
+        DrivingUtility.makeLeftArcPathSegment(123, 135),
+        DrivingUtility.makeRightArcPathSegment(123, 135)
+      ), //out of trench
+      //new AimCommand TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      new RunWhileCommand(new TimerCommand(123), new AutoShootCommand())
     });
 
     FollowPathCommand purePursuit = new FollowPathCommand( false, 
