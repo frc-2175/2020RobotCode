@@ -189,14 +189,14 @@ public class Robot extends TimedRobot {
     SequentialCommand rightToTrench = new SequentialCommand(new Command[] {
       //Change all the "123", make robot in line with the trench
       //new AimCommand
-      new ShootCommand(123, 4000),
+      new ShootCommand(4, 4000),
       new ParallelCommand(new Command[] { 
-        new DriveStraightCommand(123, .5), //change later
-        new IntakeCommand(123)
+        new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(60.0)), //change later
+        new IntakeCommand(5)
       }),
-      new TurningDegreesCommand(-180), //could make a turn shooter command
+      //new TurretCommand
       //new AimCommand
-      new ShootCommand(123, 1) 
+      new ShootCommand(12, 4000)
     });
 
     /*
@@ -227,14 +227,16 @@ public class Robot extends TimedRobot {
     SequentialCommand middleRendezvousThreeBall = new SequentialCommand(new Command[] {
       //Change all the "123", and angle robot towards the three balls
       //new AimCommand
-      new ShootCommand(123, 1),
+      new ShootCommand(4, 4000),
       new ParallelCommand(new Command[] { 
-        new DriveStraightCommand(123, .5), //change later
-        new IntakeCommand(123) //3 balls
+        //new DriveStraightCommand(123, .5)
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(36)), 
+      new IntakeCommand(4) //3 balls
       }),
-      new DriveBackwardCommand(123),
+        //new DriveBackwardCommand(123)
+      new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(36)), 
       //new AimCommand
-      new ShootCommand(123, 1)
+      new ShootCommand(9, 4000)
     });
 
     /*
@@ -263,14 +265,14 @@ public class Robot extends TimedRobot {
        //change 123
        new ParallelCommand(new Command[] { 
         new FollowPathCommand(false, 
-        DrivingUtility.makeLinePathSegment(123)
+        DrivingUtility.makeLinePathSegment(36)
         ),  
-        new IntakeCommand(123)
+        new IntakeCommand(4)
       }),
         new FollowPathCommand(true, 
-        DrivingUtility.makeLinePathSegment(123), 
-        DrivingUtility.makeLeftArcPathSegment(123, 135),
-        DrivingUtility.makeRightArcPathSegment(123, 135)
+        DrivingUtility.makeLinePathSegment(24), 
+        DrivingUtility.makeLeftArcPathSegment(24, 80),
+        DrivingUtility.makeLinePathSegment(60)
       ), //out of trench
       //new AimCommand TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       new RunWhileCommand(new TimerCommand(123), new AutoShootCommand())
