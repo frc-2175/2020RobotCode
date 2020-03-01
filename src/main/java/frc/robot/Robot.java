@@ -289,6 +289,7 @@ public class Robot extends TimedRobot {
     autonomousCommand.runCommand();
     drivetrainSubsystem.periodic();
     shooterSubsystem.periodic();
+    climberSubsystem.periodic();
   }
 
   @Override
@@ -448,6 +449,7 @@ public class Robot extends TimedRobot {
     //✩✩✩you have reached the end of teleop periodic !!!!!!!!!! : ) ✩✩✩
     drivetrainSubsystem.periodic();
     shooterSubsystem.periodic();
+    climberSubsystem.periodic();
   }
 
   /**
