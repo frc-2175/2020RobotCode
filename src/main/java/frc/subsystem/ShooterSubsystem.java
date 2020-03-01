@@ -125,9 +125,9 @@ public class ShooterSubsystem {
 
     public void toggleHoodAngle() {
         if(hoodPiston.get()) {
-            desiredHoodPosition = HoodPosition.Forward;
-        } else {
             desiredHoodPosition = HoodPosition.Backward;
+        } else {
+            desiredHoodPosition = HoodPosition.Forward;
         }
     }
 
