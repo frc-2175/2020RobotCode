@@ -289,6 +289,13 @@ public class Robot extends TimedRobot {
     DrivingUtility.makeLinePathSegment(20) //252
     );
 
+    //drives forward and shoots
+    SequentialCommand closeShotAuto = new SequentialCommand(new Command[] {
+      new FollowPathCommand(true),
+      new ShootCommand(123)
+    });
+
+
     autonomousCommand = new CommandRunner(purePursuit2); //INSERT COMMAND TO RUN HERE!!!!!!!!!!!!!!!!!
   } //29 + 66 / 2 + 252
 
