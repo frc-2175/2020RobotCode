@@ -263,14 +263,14 @@ public class Robot extends TimedRobot {
        //change 123
        new ParallelCommand(new Command[] { 
         new FollowPathCommand(false, 
-        DrivingUtility.makeLinePathSegment(123)
+        DrivingUtility.makeLinePathSegment(36)
         ),  
-        new IntakeCommand(123)
+        new IntakeCommand(4)
       }),
         new FollowPathCommand(true, 
-        DrivingUtility.makeLinePathSegment(123), 
-        DrivingUtility.makeLeftArcPathSegment(123, 135),
-        DrivingUtility.makeRightArcPathSegment(123, 135)
+        DrivingUtility.makeLinePathSegment(24), 
+        DrivingUtility.makeLeftArcPathSegment(24, 80),
+        DrivingUtility.makeLinePathSegment(60)
       ), //out of trench
       //new AimCommand TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
       new RunWhileCommand(new TimerCommand(123), new AutoShootCommand())
