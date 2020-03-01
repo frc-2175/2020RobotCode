@@ -55,14 +55,14 @@ public class AutoShootCommand extends Command {
         // }
 
         if ( waiting ) {
-            if ( upToSpeed ) {
+            if ( shooterSubsystem.nearTargetSpeed() ) {
                 waiting = false;
                 startTime = Timer.getFPGATimestamp();
             }
         } else {
-            if(Timer.getFPGATimestamp() - startTime < 100000000) {
+            if(Timer.getFPGATimestamp() - startTime < .5) {
                 feederSubsystem.rollInFeeder();
-            } else if(Timer.getFPGATimestamp() - startTime < 2000000) {
+            } else if(Timer.getFPGATimestamp() - startTime < 1) {
                 magazineSubsystem.magazineRollIn();
             } else {
                  waiting = true;
