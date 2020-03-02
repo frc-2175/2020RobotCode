@@ -22,6 +22,7 @@ import frc.command.CommandRunner;
 import frc.command.ParallelCommand;
 import frc.command.RunWhileCommand;
 import frc.command.SequentialCommand;
+import frc.command.autonomous.AimTurretWithVisionCommand;
 import frc.command.autonomous.DriveStraightCommand;
 import frc.command.autonomous.FollowPathCommand;
 import frc.command.autonomous.IntakeCommand;
@@ -80,6 +81,7 @@ public class Robot extends TimedRobot {
   private CommandRunner teleopAutoShootCommand;
   public ClimberSubsystem climberSubsystem;
   public VisionSubsystem visionSubsystem;
+  public CommandRunner aimTurretWithVisionCommand; 
   
   
   /*
@@ -319,6 +321,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     teleopAutoShootCommand = new CommandRunner(new AutoFeedCommand());
+    aimTurretWithVisionCommand = new CommandRunner(new AimTurretWithVisionCommand());
     shooterSubsystem.updateTurretPIDConstants();
   }
 
@@ -428,12 +431,23 @@ public class Robot extends TimedRobot {
     shooterSubsystem.setHoodMotor(MathUtility.deadband(gamepad.getRawAxis(3), .05));
 
     // ✩ shooter turret ✩
-    if (rightJoystick.getRawButtonPressed(1)) {
-      shooterSubsystem.setGoalAngle(visionSubsystem.getLimelightHorizontalOffset());
-    } else if (rightJoystick.getRawButton(1)) {
-      shooterSubsystem.turretPIDToGoalAngle();
+    // if (rightJoystick.getRawButtonPressed(1)) {
+    //   shooterSubsystem.setGoalAngle(visionSubsystem.getLimelightHorizontalOffset());
+    // } else if (rightJoystick.getRawButton(1)) {
+    //   shooterSubsystem.turretPIDToGoalAngle();
+    // } else {
+    //   shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(Math.pow(gamepad.getRawAxis(2), 2), .05)); // squared inputs babey!!!
+    // }
+
+    if (rightJoystick.getRawButton(1)) {
+      if (rightJoystick.getRawButtonPressed(1)) {
+        aimTurretWithVisionCommand.resetCommand();
+      }
+      aimTurretWithVisionCommand.runCommand();
+    } else if (rightJoystick.getRawButtonReleased(1)) {
+      aimTurretWithVisionCommand.endCommand();
     } else {
-      shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(Math.pow(gamepad.getRawAxis(2), 2), .05)); // squared inputs babey!!!
+      shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(Math.pow(gamepad.getRawAxis(2), 2), .05));
     }
 
     // ✩ climbing subsystem ✩
