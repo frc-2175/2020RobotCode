@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.command.AutoShootCommand;
+import frc.command.AutoFeedCommand;
 import frc.command.Command;
 import frc.command.CommandRunner;
 import frc.command.ParallelCommand;
@@ -275,7 +275,7 @@ public class Robot extends TimedRobot {
         DrivingUtility.makeLinePathSegment(60)
       ), //out of trench
       //new AimCommand TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      new RunWhileCommand(new TimerCommand(123), new AutoShootCommand())
+      new RunWhileCommand(new TimerCommand(123), new AutoFeedCommand())
     });
 
     FollowPathCommand purePursuit = new FollowPathCommand( false, 
@@ -294,12 +294,12 @@ public class Robot extends TimedRobot {
     //drives forward and shoots
     SequentialCommand closeShotAuto = new SequentialCommand(new Command[] {
       new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115)),
-      new RunWhileCommand(new ShootCommand(10, 2900), new AutoShootCommand())
+      new RunWhileCommand(new ShootCommand(10, 2900), new AutoFeedCommand())
     });
 
     SequentialCommand farShotAuto = new SequentialCommand(new Command[] {
       new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(10)),
-      new RunWhileCommand(new ShootCommand(10, 3500), new AutoShootCommand())
+      new RunWhileCommand(new ShootCommand(10, 3500), new AutoFeedCommand())
     });
 
 
@@ -319,7 +319,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
-    teleopAutoShootCommand = new CommandRunner(new AutoShootCommand());
+    teleopAutoShootCommand = new CommandRunner(new AutoFeedCommand());
     shooterSubsystem.updateTurretPIDConstants();
   }
 
@@ -351,10 +351,10 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // ✩ intake roll ✩
-    if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER) || leftJoystick.getRawButton(2)) {
-      magazineSubsystem.magazineRollOut();
-      intakeSubsystem.intakeRollOut();
-    } else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER) || rightJoystick.getRawButton(2)) {
+    // if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER) || leftJoystick.getRawButton(2)) {
+    //   magazineSubsystem.magazineRollOut();
+    //   intakeSubsystem.intakeRollOut();
+    if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER) || rightJoystick.getRawButton(2)) {
       intakeSubsystem.intakeRollIn();
       magazineSubsystem.magazineRollIn();
     } else {
@@ -365,8 +365,8 @@ public class Robot extends TimedRobot {
     // ✩ intake piston ✩
     if(gamepad.getRawButtonPressed(GAMEPAD_A)) {
       intakeSubsystem.toggleIntake();
-    } else if (gamepad.getRawButtonPressed(GAMEPAD_RIGHT_TRIGGER) || gamepad.getRawButtonPressed(GAMEPAD_RIGHT_BUMPER)) {
-      intakeSubsystem.putOut();
+    // } else if (gamepad.getRawButtonPressed(GAMEPAD_RIGHT_TRIGGER) || gamepad.getRawButtonPressed(GAMEPAD_RIGHT_BUMPER)) {
+    //   intakeSubsystem.putOut();
     } else if (gamepad.getRawButtonReleased(GAMEPAD_RIGHT_TRIGGER) || gamepad.getRawButtonReleased(GAMEPAD_RIGHT_BUMPER)) {
       intakeSubsystem.putIn();
     }
@@ -375,10 +375,12 @@ public class Robot extends TimedRobot {
 
     // ✩ auto shooting command ✩
     if( gamepad.getRawButton(GAMEPAD_X)) {
-      if(gamepad.getRawButtonPressed(GAMEPAD_X)) {
-        teleopAutoShootCommand.resetCommand();
-      }
-      teleopAutoShootCommand.runCommand();
+      // if(gamepad.getRawButtonPressed(GAMEPAD_X)) {
+      //   teleopAutoShootCommand.resetCommand();
+      // }
+      // teleopAutoShootCommand.runCommand();
+      feederSubsystem.rollUp();
+      magazineSubsystem.magazineRollIn();
     } else {
       teleopAutoShootCommand.endCommand();
 
@@ -386,8 +388,8 @@ public class Robot extends TimedRobot {
       // if(gamepad.getRawButton(GAMEPAD_X)) {
       //   feederSubsystem.rollOutFeeder();
       // } else 
-      if (gamepad.getRawButton(GAMEPAD_Y)) {
-        feederSubsystem.rollInFeeder();
+      if (gamepad.getRawButton(GAMEPAD_Y) || gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER)) {
+        feederSubsystem.rollUp();
       } else {
         feederSubsystem.stopFeeder();
       }
@@ -396,7 +398,7 @@ public class Robot extends TimedRobot {
       if(rightJoystick.getRawButton(3)) {
         magazineSubsystem.magazineRollIn();
       } else {
-        magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05)); 
+        magazineSubsystem.setMagazineMotor(MathUtility.deadband(gamepad.getRawAxis(1), .05) * 0.5); 
         // climberSubsystem.climbSpeed(MathUtility.deadband(gamepad.getRawAxis(1), .05)); 
       }
 
@@ -407,13 +409,14 @@ public class Robot extends TimedRobot {
 
     // ✩ shooter flywheel ✩
     if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
-      shooterSubsystem.setMode(Mode.Manual);
-      shooterSubsystem.setManualSpeed(SmartDashboard.getNumber("shooter flywheel manual speed", .5)); //manual speed here!!!!!!!
-    } else if (gamepad.getPOV() == POV_UP) {
-      shooterSubsystem.setMode(Mode.PID);
-    } else if (gamepad.getPOV() == POV_DOWN) {
+      shooterSubsystem.setTargetSpeed(3000);
+      shooterSubsystem.setMode(Mode.BangBang);
+    } else if (gamepad.getRawButton(GAMEPAD_LEFT_BUMPER)) {
       shooterSubsystem.setTargetSpeed(SmartDashboard.getNumber("speed goal()rpm??" , 4500));
       shooterSubsystem.setMode(Mode.BangBang);
+    } else if (gamepad.getPOV() == POV_DOWN) {
+      shooterSubsystem.setMode(Mode.Manual);
+      shooterSubsystem.setManualSpeed(SmartDashboard.getNumber("shooter flywheel manual speed", .5)); //manual speed here!!!!!!!
     } else {
       shooterSubsystem.setMode(Mode.Manual);
       shooterSubsystem.setManualSpeed(0);
@@ -437,7 +440,7 @@ public class Robot extends TimedRobot {
     // ✩ climbing subsystem ✩
     if (gamepad.getRawButton(GAMEPAD_START)) {
       climberSubsystem.climbUp();
-    } else if (gamepad.getRawButton(GAMEPAD_BACK)) { 
+    } else if (leftJoystick.getRawButton(6)) { 
       climberSubsystem.climbDown();
     } else {
       climberSubsystem.stopClimbing();
@@ -446,8 +449,8 @@ public class Robot extends TimedRobot {
     //✩ deploying hook ✩
     if (gamepad.getPOV() == POV_RIGHT) {
       climberSubsystem.deployUp();
-    } else if (gamepad.getPOV() == POV_LEFT) {
-      climberSubsystem.deployDown();
+    // } else if (gamepad.getPOV() == POV_LEFT) {
+    //   climberSubsystem.deployDown();
     } else {
       climberSubsystem.stopDeploy();
     }

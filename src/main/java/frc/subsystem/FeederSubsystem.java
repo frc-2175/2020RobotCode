@@ -21,14 +21,14 @@ public class FeederSubsystem {
     /**
      * ✩ roll in feeder at speed -1 ✩
      */
-    public void rollInFeeder() {
+    public void rollUp() {
         feederMotor.set(-1);
     }
 
     /**
      * ✩ roll out feeder at speed 1 ✩
      */
-    public void rollOutFeeder() {
+    public void rollDown() {
         feederMotor.set(1);
     }
 

@@ -7,7 +7,7 @@ import frc.subsystem.FeederSubsystem;
 import frc.subsystem.MagazineSubsystem;
 import frc.subsystem.ShooterSubsystem;
 
-public class AutoShootCommand extends Command {
+public class AutoFeedCommand extends Command {
 
     ShooterSubsystem shooterSubsystem = ServiceLocator.get(ShooterSubsystem.class);
     FeederSubsystem feederSubsystem = ServiceLocator.get(FeederSubsystem.class);
@@ -16,7 +16,7 @@ public class AutoShootCommand extends Command {
     boolean upToSpeed;
     boolean waiting = true;
 
-    public AutoShootCommand() {
+    public AutoFeedCommand() {
         SmartDashboard.putNumber("magazine time", .10);
         SmartDashboard.putNumber("feeder time", .50);
     }
@@ -37,7 +37,7 @@ public class AutoShootCommand extends Command {
             }
         } else {
             if(Timer.getFPGATimestamp() - startTime < feederTime) {
-                feederSubsystem.rollInFeeder();
+                feederSubsystem.rollUp();
             } else if(Timer.getFPGATimestamp() - startTime < feederTime + magazineTime) {
                 feederSubsystem.stopFeeder();
                 magazineSubsystem.setMagazineMotor(.87);

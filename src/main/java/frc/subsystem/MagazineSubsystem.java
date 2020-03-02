@@ -22,7 +22,7 @@ public class MagazineSubsystem {
      * rolls intake in at full in
      */
     public void magazineRollIn() {
-        magazineMotor.set(1);   
+        magazineMotor.set(0.87);   
     }
     
     public void stopmagazine() {
