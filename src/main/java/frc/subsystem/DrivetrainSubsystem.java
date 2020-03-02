@@ -26,6 +26,7 @@ import frc.info.RobotInfo;
 import frc.logging.LogField;
 import frc.logging.Logger;
 import frc.math.DrivingUtility;
+import frc.math.DrivingUtility.Path;
 import frc.math.MathUtility;
 import frc.math.Vector;
 
@@ -316,10 +317,10 @@ public class DrivetrainSubsystem {
 		}
 	}
 
-	public PurePursuitResult purePursuit(Vector[] path, boolean isBackwards) {
-		int indexOfClosestPoint = findClosestPoint(path, position);
-		int indexOfGoalPoint = findGoalPoint(path, position, 25);
-		Vector goalPoint = path[indexOfGoalPoint].subtract(position).rotate(navx.getAngle());
+	public PurePursuitResult purePursuit(Path pathResult, boolean isBackwards) {
+		int indexOfClosestPoint = findClosestPoint(pathResult, position);
+		int indexOfGoalPoint = findGoalPoint(pathResult, position, 25);
+		Vector goalPoint = pathResult.path[indexOfGoalPoint].subtract(position).rotate(navx.getAngle());
 		double angle;
 		if(isBackwards) {
 			angle = -getAngleToPoint(goalPoint.multiply(-1));
@@ -327,7 +328,7 @@ public class DrivetrainSubsystem {
 			angle = getAngleToPoint(goalPoint);
 		}
 		double turnValue = purePursuitPID.pid(-angle, 0);
-		double speed = DrivingUtility.getTrapezoidSpeed(0.3, 0.75, 0.2, path.length, 6, 10, indexOfClosestPoint);
+		double speed = DrivingUtility.getTrapezoidSpeed(0.3, 0.75, 0.2, pathResult.path.length, 6, 10, indexOfClosestPoint);
 
 		if(isBackwards) {
 			blendedDrive(-speed, -turnValue);
@@ -343,17 +344,18 @@ public class DrivetrainSubsystem {
 			new LogField("speed", speed, Logger.SMART_DASHBOARD_TAG),
 			new LogField("turn value!", turnValue, Logger.SMART_DASHBOARD_TAG),
 			new LogField("closestPoint", indexOfClosestPoint, Logger.SMART_DASHBOARD_TAG),
-			new LogField("length of path", path.length, Logger.SMART_DASHBOARD_TAG)
+			new LogField("length of path", pathResult.path.length, Logger.SMART_DASHBOARD_TAG),
+			new LogField("actual number of points", pathResult.numberOfActualPoints, Logger.SMART_DASHBOARD_TAG)
 		);
 
 		return new PurePursuitResult(indexOfClosestPoint, indexOfGoalPoint, goalPoint);
 	}
 
-	public static int findClosestPoint(Vector[] path, Vector fieldPosition) {
+	public static int findClosestPoint(Path pathResult, Vector fieldPosition) {
 		int indexOfClosestPoint = 0;
-		double minDistance = path[0].subtract(fieldPosition).magnitude(); 
-		for(int i = 0; i < path.length; i++) {
-			double distanceToPoint = path[i].subtract(fieldPosition).magnitude();
+		double minDistance = pathResult.path[0].subtract(fieldPosition).magnitude(); 
+		for(int i = 0; i < pathResult.numberOfActualPoints; i++) {
+			double distanceToPoint = pathResult.path[i].subtract(fieldPosition).magnitude();
 			if (distanceToPoint <= minDistance) {
 				indexOfClosestPoint = i; 
 				minDistance = distanceToPoint; 
@@ -362,9 +364,9 @@ public class DrivetrainSubsystem {
 		return indexOfClosestPoint;
 	}
 
-	public static int findGoalPoint(Vector[] path, Vector fieldPosition, int lookAhead) {
-		int indexOfClosestPoint = findClosestPoint(path, fieldPosition); 
-		return Math.min(indexOfClosestPoint + lookAhead, path.length - 1);
+	public static int findGoalPoint(Path pathResult, Vector fieldPosition, int lookAhead) {
+		int indexOfClosestPoint = findClosestPoint(pathResult, fieldPosition); 
+		return Math.min(indexOfClosestPoint + lookAhead, pathResult.path.length - 1);
 	}
 
 	public static double getAngleToPoint(Vector point) {

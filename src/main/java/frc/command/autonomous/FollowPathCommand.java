@@ -4,13 +4,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.ServiceLocator;
 import frc.command.Command;
 import frc.math.DrivingUtility;
+import frc.math.DrivingUtility.Path;
 import frc.math.DrivingUtility.PathSegment;
-import frc.math.Vector;
 import frc.subsystem.DrivetrainSubsystem;
 
 public class FollowPathCommand extends Command {
     DrivetrainSubsystem drivetrainSubsystem = ServiceLocator.get(DrivetrainSubsystem.class);
-    Vector[] path;
+    Path pathResult;
     DrivetrainSubsystem.PurePursuitResult purePursuitResult; 
     boolean isBackwards;
 
@@ -22,19 +22,19 @@ public class FollowPathCommand extends Command {
 
     public void init() {
         purePursuitResult = null; 
-        path = DrivingUtility.makePath(isBackwards, -drivetrainSubsystem.getHeading(), drivetrainSubsystem.getRobotPosition(), pathSegments);
-        double[] xCoords = new double[path.length];
-        double[] yCoords = new double[path.length];
-        for(int i = 0 ; i < path.length; i++) {
-            xCoords[i] = path[i].x;
-            yCoords[i] = path[i].y;
+        pathResult = DrivingUtility.makePath(isBackwards, -drivetrainSubsystem.getHeading(), drivetrainSubsystem.getRobotPosition(), pathSegments);
+        double[] xCoords = new double[pathResult.path.length];
+        double[] yCoords = new double[pathResult.path.length];
+        for(int i = 0 ; i < pathResult.path.length; i++) {
+            xCoords[i] = pathResult.path[i].x;
+            yCoords[i] = pathResult.path[i].y;
         }
         SmartDashboard.putNumberArray("Values/PathXCoords", xCoords);
         SmartDashboard.putNumberArray("Values/PathYCoords", yCoords);
     }
 
     public void execute() {
-        purePursuitResult = drivetrainSubsystem.purePursuit(path, isBackwards);
+        purePursuitResult = drivetrainSubsystem.purePursuit(pathResult, isBackwards);
     }
 
     public boolean isFinished() {
@@ -42,10 +42,10 @@ public class FollowPathCommand extends Command {
             return false; 
         }
         if(isBackwards) {
-            return purePursuitResult.indexOfClosestPoint == path.length - 1 //closest point is last point
+            return purePursuitResult.indexOfClosestPoint == pathResult.numberOfActualPoints - 1 //closest point is last point
             && purePursuitResult.goalPoint.y >= 0; //goal point us behind us
         } else {
-            return purePursuitResult.indexOfClosestPoint == path.length - 1
+            return purePursuitResult.indexOfClosestPoint == pathResult.numberOfActualPoints - 1
             && purePursuitResult.goalPoint.y <= 0;
         }
     }

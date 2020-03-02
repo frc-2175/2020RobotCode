@@ -1,6 +1,7 @@
 package frc.math;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DrivingUtility {
     
@@ -57,7 +58,7 @@ public class DrivingUtility {
         for (int i = 0; i < numPoints - 1; i++) {
             path[i] = startPoint.add(pathVector.multiply(i));
         }
-        path[path.length - 1] = endPoint; 
+        path[path.length - 1] = endPoint;
         return path;
     }
 
@@ -98,11 +99,19 @@ public class DrivingUtility {
         return new PathSegment(degrees, leftPath);
     }
 
-    public static Vector[] makePath(boolean isBackwards, double startingAngle, Vector startingPosition, PathSegment... pathSegments) {
+    public static class Path {
+        public Vector[] path;
+        public int numberOfActualPoints;
+    }
+
+    public static Path makePath(boolean isBackwards, double startingAngle, Vector startingPosition, PathSegment... pathSegments) {
         ArrayList<Vector> finalPath = new ArrayList<Vector>();
         double previousAngle = 0;
         Vector previousPosition = new Vector(0, 0);
-        for (PathSegment aPathSegment : pathSegments) {
+        ArrayList<PathSegment> pathSegmentsList = new ArrayList<>(Arrays.asList(pathSegments));
+        PathSegment endingPoints = makeLinePathSegment(25);
+        pathSegmentsList.add(endingPoints);
+        for (PathSegment aPathSegment : pathSegmentsList) {
             for(Vector vector : aPathSegment.path) {
                 vector = vector.rotate(previousAngle); //turn your path segment to start where the previous segment ended!
                 vector = vector.add(previousPosition); 
@@ -121,7 +130,11 @@ public class DrivingUtility {
             almostFinalPath[i] = almostFinalPath[i].rotate(startingAngle).add(startingPosition);
         }
 
-        return almostFinalPath;
+        Path pathResult = new Path();
+        pathResult.path = almostFinalPath;
+        pathResult.numberOfActualPoints = almostFinalPath.length - endingPoints.path.length;
+
+        return pathResult;
 
     }
 }
