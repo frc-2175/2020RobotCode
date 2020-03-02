@@ -45,6 +45,7 @@ import frc.subsystem.IntakeSubsystem;
 import frc.subsystem.MagazineSubsystem;
 import frc.subsystem.ShooterSubsystem;
 import frc.subsystem.ShooterSubsystem.Mode;
+import frc.subsystem.VisionSubsystem;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -77,6 +78,7 @@ public class Robot extends TimedRobot {
   private CommandRunner autonomousCommand;
   private CommandRunner teleopAutoShootCommand;
   public ClimberSubsystem climberSubsystem;
+  public VisionSubsystem visionSubsystem;
   
   
   /*
@@ -110,6 +112,8 @@ public class Robot extends TimedRobot {
   public static final double topSpeed = 1;
   File propertyDirectory;
   String finalThingy;
+  private double initialGyroAngleForVision;
+  private double initialTurretOffset;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -130,6 +134,7 @@ public class Robot extends TimedRobot {
     feederSubsystem = new FeederSubsystem();
     magazineSubsystem = new MagazineSubsystem();
     climberSubsystem = new ClimberSubsystem();
+    visionSubsystem = new VisionSubsystem();
 
     SmartDashboard.putNumber("shooter flywheel manual speed", .5);
     
@@ -295,6 +300,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     teleopAutoShootCommand = new CommandRunner(new AutoShootCommand());
+    shooterSubsystem.updateTurretPIDConstants();
   }
 
 
@@ -399,7 +405,13 @@ public class Robot extends TimedRobot {
     shooterSubsystem.setHoodMotor(MathUtility.deadband(gamepad.getRawAxis(3), .05));
 
     // ✩ shooter turret ✩
-    shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(gamepad.getRawAxis(2), .05));
+    if (rightJoystick.getRawButtonPressed(1)) {
+      shooterSubsystem.setGoalAngle(visionSubsystem.getLimelightHorizontalOffset());
+    } else if (rightJoystick.getRawButton(1)) {
+      shooterSubsystem.turretPIDToGoalAngle();
+    } else {
+      shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(gamepad.getRawAxis(2), .05));
+    }
 
     // ✩ climbing subsystem ✩
     if (gamepad.getRawButton(GAMEPAD_START)) {

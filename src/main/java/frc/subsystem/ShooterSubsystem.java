@@ -11,6 +11,7 @@ import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.PIDController;
 import frc.ServiceLocator;
@@ -33,7 +34,12 @@ public class ShooterSubsystem {
     private static final double OVERSHOOTNESS = 100; //the amount to add to the target speed in bbspeed calculations!!!!!
     private static final double MAX_RPM = 5620;
     private static final double BUFFER_ZONE = 100;
-
+    private static final double TURRET_OUTPUT_GEAR_TEETH = 200.0; 
+    private static final double TURRET_INPUT_GEAR_TEETH = 30.0; 
+    private static final double TURRET_TICKS_TO_DEGREES = 4096.0/360.0 * (TURRET_OUTPUT_GEAR_TEETH / TURRET_INPUT_GEAR_TEETH);
+    private enum HoodPosition {Forward, Backward}; 
+    private HoodPosition desiredHoodPosition;
+    private HoodPosition actualHoodPosition;
 
 
     public ShooterSubsystem() {
@@ -43,11 +49,15 @@ public class ShooterSubsystem {
         hoodMotor = new WPI_VictorSPX(99); // get value!!
         hoodPiston = new Solenoid(3); 
 
-        double ti = 1;
-        double tp = 1;
-        double td = 1;
-        
+        double ti = 0;
+        double tp = 0.5/90.0;
+        double td = 0;
 
+        SmartDashboard.putNumber("turretpid i", ti);
+        SmartDashboard.putNumber("turretpid p", tp);
+        SmartDashboard.putNumber("turretpid d", td);
+
+        
         SmartDashboard.putNumber("speed goal()rpm??", 0);
         SmartDashboard.putNumber("overshootness", OVERSHOOTNESS);
         SmartDashboard.putNumber("turret encoder", turretMotor.getSelectedSensorPosition());
@@ -63,9 +73,16 @@ public class ShooterSubsystem {
         ServiceLocator.register(this);
     }
 
+        public void updateTurretPIDConstants() {
+            turretPidController.kp = SmartDashboard.getNumber("turretpid p", 0);
+            turretPidController.ki = SmartDashboard.getNumber("turretpid i", 0);
+            turretPidController.kd = SmartDashboard.getNumber("turretpid d", 0);
+        }
+
     public void periodic() {
         SmartDashboard.putNumber("flywheel speed (rpm)", getSpeedInRPM());
         speedThreshold = SmartDashboard.getNumber("speed goal()rpm??" , speedThreshold);
+        turretPidController.updateTime(Timer.getFPGATimestamp());
         if (currentMode == Mode.PID) { //PID!!
             CANPIDController noah2 = shooterMotorMaster.getPIDController();
             noah2.setP(.000006);
@@ -81,6 +98,16 @@ public class ShooterSubsystem {
             } 
         } else { //do manual stuff!!!!!!!!
             shooterMotorMaster.set(manualSpeed);
+        }
+        if (turretMotor.get() != 0) {
+            actualHoodPosition = HoodPosition.Forward; 
+        } else {
+            actualHoodPosition = desiredHoodPosition; 
+        }
+        if (actualHoodPosition == HoodPosition.Forward) {
+            hoodPiston.set(true);
+        } else {
+            hoodPiston.set(false);
         }
     }
 
@@ -98,9 +125,9 @@ public class ShooterSubsystem {
 
     public void toggleHoodAngle() {
         if(hoodPiston.get()) {
-            hoodPiston.set(false);
+            desiredHoodPosition = HoodPosition.Forward;
         } else {
-            hoodPiston.set(true);
+            desiredHoodPosition = HoodPosition.Backward;
         }
     }
 
@@ -114,6 +141,21 @@ public class ShooterSubsystem {
 
     public void setTurretSpeed(double speed) {
         turretMotor.set(speed);
+    }
+
+    public void turretPIDToGoalAngle() {
+        double currentAngle = turretTicksToDegrees(turretMotor.getSelectedSensorPosition());
+        double output = turretPidController.pid(currentAngle, goalAngle);
+        turretMotor.set(output);
+    }
+
+    public void setGoalAngle(double relativeGoalAngle) {
+        goalAngle = relativeGoalAngle + turretTicksToDegrees(turretMotor.getSelectedSensorPosition());
+    }
+
+
+    public void clearTurretPID() {
+        turretPidController.clear(Timer.getFPGATimestamp());
     }
 
     public double getTargetSpeed() {
@@ -132,6 +174,9 @@ public class ShooterSubsystem {
         return speedThreshold - BUFFER_ZONE <= getSpeedInRPM() && getSpeedInRPM() <= speedThreshold + BUFFER_ZONE;
     }
     
+    public static double turretTicksToDegrees(double ticks) {
+        return TURRET_TICKS_TO_DEGREES * ticks;
+    }
 }
 
 

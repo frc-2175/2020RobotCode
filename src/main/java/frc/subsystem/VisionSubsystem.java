@@ -1,5 +1,7 @@
 package frc.subsystem;
 
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import frc.ServiceLocator;
 import frc.math.Vector;
 
@@ -10,7 +12,11 @@ public class VisionSubsystem {
     private static final double targetHeight = 17;
     private static final double targetBottomHeightFromFloor = 81.25;
     private static final double targetTopHeightFromFloor = targetBottomHeightFromFloor + targetHeight;
+    private final NetworkTable limelightTable = NetworkTableInstance.getDefault().getTable("limelight");
 
+    public VisionSubsystem() {
+        ServiceLocator.register(this);
+    }
 
     public double getDistanceFromTarget(double pixelAngleY, double height) {
         ServiceLocator.register(this);
@@ -40,5 +46,9 @@ public class VisionSubsystem {
         double centerYPosition = (topLeftCornerPosition.y + topRightCornerPosition.y + bottomLeftCornerPosition.y + bottomRightCornerPosition.y)/4 ; 
        
         return new Vector(centerXPosition, centerYPosition);
+    }
+
+    public double getLimelightHorizontalOffset() {
+        return limelightTable.getEntry("tx").getDouble(0.0);
     }
 }
