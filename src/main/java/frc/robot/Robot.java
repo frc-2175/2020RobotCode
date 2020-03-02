@@ -22,7 +22,6 @@ import frc.command.CommandRunner;
 import frc.command.ParallelCommand;
 import frc.command.RunWhileCommand;
 import frc.command.SequentialCommand;
-import frc.command.autonomous.DriveBackwardCommand;
 import frc.command.autonomous.DriveStraightCommand;
 import frc.command.autonomous.FollowPathCommand;
 import frc.command.autonomous.IntakeCommand;
@@ -359,7 +358,7 @@ public class Robot extends TimedRobot {
       magazineSubsystem.magazineRollIn();
     } else {
       intakeSubsystem.stopIntake();
-      magazineSubsystem.stopmagazine();
+      magazineSubsystem.stopMagazine();
     }
 
     // ✩ intake piston ✩
@@ -434,7 +433,7 @@ public class Robot extends TimedRobot {
     } else if (rightJoystick.getRawButton(1)) {
       shooterSubsystem.turretPIDToGoalAngle();
     } else {
-      shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(gamepad.getRawAxis(2), .05));
+      shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(Math.pow(gamepad.getRawAxis(2), 2), .05)); // squared inputs babey!!!
     }
 
     // ✩ climbing subsystem ✩

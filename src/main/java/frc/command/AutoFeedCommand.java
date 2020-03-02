@@ -14,46 +14,36 @@ public class AutoFeedCommand extends Command {
     MagazineSubsystem magazineSubsystem = ServiceLocator.get(MagazineSubsystem.class);
     double startTime;
     boolean upToSpeed;
-    boolean waiting = true;
+    boolean waiting;
 
     public AutoFeedCommand() {
-        SmartDashboard.putNumber("magazine time", .10);
         SmartDashboard.putNumber("feeder time", .50);
     }
 
 	@Override
 	public void init() {
-		startTime = Timer.getFPGATimestamp();
+        waiting = true;
 	}
 
 	@Override
 	public void execute() {
-        double magazineTime = SmartDashboard.getNumber("magazine time", .07);
-        double feederTime = SmartDashboard.getNumber("feeder time", .25);
+        double feederTime = SmartDashboard.getNumber("feeder time", .5);
         if ( waiting ) {
-            if ( shooterSubsystem.nearTargetSpeed() ) {
+            if ( shooterSubsystem.nearTargetSpeed() || getElapsedTime() > 1) {
                 waiting = false;
                 startTime = Timer.getFPGATimestamp();
             }
         } else {
             if(Timer.getFPGATimestamp() - startTime < feederTime) {
                 feederSubsystem.rollUp();
-            } else if(Timer.getFPGATimestamp() - startTime < feederTime + magazineTime) {
-                feederSubsystem.stopFeeder();
-                magazineSubsystem.setMagazineMotor(.87);
+                magazineSubsystem.stopMagazine();
             } else {
-                magazineSubsystem.stopmagazine();
-                feederSubsystem.stopFeeder();
-                waiting = true;
+                feederSubsystem.rollUp();
+                magazineSubsystem.magazineRollIn();
             }
         }
-
-
-
-
-
-	}
-
+    }
+    
 	@Override
 	public boolean isFinished() {
 		return false;
@@ -62,6 +52,6 @@ public class AutoFeedCommand extends Command {
 	@Override
 	public void end() {
         feederSubsystem.stopFeeder();
-        magazineSubsystem.stopmagazine();
+        magazineSubsystem.stopMagazine();
 	}
 }
