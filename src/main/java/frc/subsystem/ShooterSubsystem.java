@@ -40,7 +40,8 @@ public class ShooterSubsystem {
     private enum HoodPosition {Forward, Backward}; 
     private HoodPosition desiredHoodPosition;
     private HoodPosition actualHoodPosition;
-
+    private static final double MAX_TURRET_ROTATION_DEGREES = 200; 
+    private static final double INITIAL_TURRET_ROTATION_DEGREES = 30; 
 
     public ShooterSubsystem() {
         shooterMotorMaster = new CANSparkMax(1, MotorType.kBrushless);
@@ -73,11 +74,11 @@ public class ShooterSubsystem {
         ServiceLocator.register(this);
     }
 
-        public void updateTurretPIDConstants() {
-            turretPidController.kp = SmartDashboard.getNumber("turretpid p", 0);
-            turretPidController.ki = SmartDashboard.getNumber("turretpid i", 0);
-            turretPidController.kd = SmartDashboard.getNumber("turretpid d", 0);
-        }
+    public void updateTurretPIDConstants() {
+        turretPidController.kp = SmartDashboard.getNumber("turretpid p", 0);
+        turretPidController.ki = SmartDashboard.getNumber("turretpid i", 0);
+        turretPidController.kd = SmartDashboard.getNumber("turretpid d", 0);
+    }
 
     public void periodic() {
         SmartDashboard.putNumber("flywheel speed (rpm)", getSpeedInRPM());
@@ -140,13 +141,17 @@ public class ShooterSubsystem {
     }
 
     public void setTurretSpeed(double speed) {
-        turretMotor.set(speed);
+        if (turretTicksToDegrees(Math.abs(turretMotor.getSelectedSensorPosition())) < MAX_TURRET_ROTATION_DEGREES) {
+            turretMotor.set(speed);
+        } else {
+            turretMotor.set(0);
+        }
     }
 
     public void turretPIDToGoalAngle() {
         double currentAngle = turretTicksToDegrees(turretMotor.getSelectedSensorPosition());
         double output = turretPidController.pid(currentAngle, goalAngle);
-        turretMotor.set(output);
+        setTurretSpeed(output);
     }
 
     public void setGoalAngle(double relativeGoalAngle) {
@@ -176,6 +181,10 @@ public class ShooterSubsystem {
     
     public static double turretTicksToDegrees(double ticks) {
         return TURRET_TICKS_TO_DEGREES * ticks;
+    }
+
+    public void zeroTurretPosition() {
+        turretMotor.setSelectedSensorPosition(0); 
     }
 }
 
