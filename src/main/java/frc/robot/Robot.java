@@ -113,6 +113,8 @@ public class Robot extends TimedRobot {
 	public static final int POV_DOWN_LEFT = 225;
 	public static final int POV_LEFT = 270;
   public static final int POV_UP_LEFT = 315;
+
+  public static final int CLOSE_SHOT_RPM = 3000;
   
 
   public static final double topSpeed = 1;
@@ -201,12 +203,12 @@ public class Robot extends TimedRobot {
     //drives forward and shoots
     SequentialCommand closeShotAuto = new SequentialCommand(new Command[] {
       deadline(5, new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115))),
-      new RunWhileCommand(new ShootCommand(10, 2900), new AutoFeedCommand())
+      new RunWhileCommand(new ShootCommand(10, CLOSE_SHOT_RPM), new AutoFeedCommand())
     });
 
     SequentialCommand farShotAuto = new SequentialCommand(new Command[] {
-      new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(10)),
-      new RunWhileCommand(new ShootCommand(10, 3500), new AutoFeedCommand())
+      new RunWhileCommand(new ShootCommand(10, 3500), new AutoFeedCommand()),
+      deadline(5, new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(115))),
     });
 
     autoChooser.setDefaultOption("Do Nothing", doNothing);
@@ -332,8 +334,6 @@ public class Robot extends TimedRobot {
         teleopAutoShootCommand.resetCommand();
       }
       teleopAutoShootCommand.runCommand();
-      // feederSubsystem.rollUp();
-      // magazineSubsystem.magazineRollIn();
     } else {
       teleopAutoShootCommand.endCommand();
 
@@ -360,7 +360,7 @@ public class Robot extends TimedRobot {
     if( gamepad.getRawButtonPressed(GAMEPAD_LEFT_TRIGGER) || gamepad.getRawButtonPressed(GAMEPAD_LEFT_BUMPER)) {
       aimTurretWithVisionCommand.resetCommand();
     } else if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
-      shooterSubsystem.setTargetSpeed(3000);
+      shooterSubsystem.setTargetSpeed(CLOSE_SHOT_RPM);
       shooterSubsystem.setMode(Mode.BangBang);
       aimTurretWithVisionCommand.runCommand();
     } else if (gamepad.getRawButton(GAMEPAD_LEFT_BUMPER)) {
