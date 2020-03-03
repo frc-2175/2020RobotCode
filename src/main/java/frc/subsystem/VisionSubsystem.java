@@ -16,6 +16,7 @@ public class VisionSubsystem {
 
     public VisionSubsystem() {
         ServiceLocator.register(this);
+        turnLimelightOff();
     }
 
     public double getDistanceFromTarget(double pixelAngleY, double height) {
@@ -50,5 +51,13 @@ public class VisionSubsystem {
 
     public double getLimelightHorizontalOffset() {
         return limelightTable.getEntry("tx").getDouble(0.0);
+    }
+
+    public void turnLimelightOn() {
+        limelightTable.getEntry("ledMode").forceSetNumber(3);
+    }
+
+    public void turnLimelightOff() {
+        limelightTable.getEntry("ledMode").forceSetNumber(1);
     }
 }

@@ -28,6 +28,7 @@ import frc.command.autonomous.AimTurretWithVisionCommand;
 import frc.command.autonomous.DriveStraightCommand;
 import frc.command.autonomous.FollowPathCommand;
 import frc.command.autonomous.IntakeCommand;
+import frc.command.autonomous.LimelightOnCommand;
 import frc.command.autonomous.ShootCommand;
 import frc.command.autonomous.TimerCommand;
 import frc.command.autonomous.TurningDegreesCommand;
@@ -269,8 +270,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    visionSubsystem.turnLimelightOff();
+    SequentialCommand limelightAimSequence = new SequentialCommand(new LimelightOnCommand(0.1), new AimTurretWithVisionCommand());
     teleopAutoShootCommand = new CommandRunner(new AutoFeedCommand());
-    aimTurretWithVisionCommand = new CommandRunner(new AimTurretWithVisionCommand());
+    aimTurretWithVisionCommand = new CommandRunner(limelightAimSequence);
     shooterSubsystem.updateTurretPIDConstants();
   }
 
@@ -305,6 +308,7 @@ public class Robot extends TimedRobot {
     if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER) || leftJoystick.getRawButton(2)) {
       magazineSubsystem.magazineRollOut();
       intakeSubsystem.intakeRollOut();
+    }
     if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER) || rightJoystick.getRawButton(2)) {
       intakeSubsystem.intakeRollIn();
       magazineSubsystem.magazineRollIn();
@@ -398,9 +402,9 @@ public class Robot extends TimedRobot {
     } else if (rightJoystick.getRawButtonReleased(1)) {
       aimTurretWithVisionCommand.endCommand();
     } else {
-      shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(Math.pow(gamepad.getRawAxis(2), 2), .05));
+      shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(MathUtility.squareInputs(gamepad.getRawAxis(2)), .05));
     }
-
+   
     // ✩ climbing subsystem ✩
     if (gamepad.getRawButton(GAMEPAD_START)) {
       climberSubsystem.climbUp();
@@ -456,6 +460,7 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     drivetrainSubsystem.resetTracking();
+    visionSubsystem.turnLimelightOn();
     //drivetrainSubsystem.orchestra.loadMusic("careless-whisper.chrp");
     //drivetrainSubsystem.orchestra.play();
   }

@@ -36,7 +36,7 @@ public class ShooterSubsystem {
     private static final double BUFFER_ZONE = 100;
     private static final double TURRET_OUTPUT_GEAR_TEETH = 200.0; 
     private static final double TURRET_INPUT_GEAR_TEETH = 30.0; 
-    private static final double TURRET_TICKS_TO_DEGREES = 4096.0/360.0 * (TURRET_OUTPUT_GEAR_TEETH / TURRET_INPUT_GEAR_TEETH);
+    private static final double TURRET_TICKS_TO_DEGREES = 360.0/4096.0 * (TURRET_INPUT_GEAR_TEETH / TURRET_OUTPUT_GEAR_TEETH);
     private enum HoodPosition {Forward, Backward}; 
     private HoodPosition desiredHoodPosition;
     private HoodPosition actualHoodPosition;
@@ -82,6 +82,7 @@ public class ShooterSubsystem {
 
     public void periodic() {
         SmartDashboard.putNumber("flywheel speed (rpm)", getSpeedInRPM());
+        SmartDashboard.putNumber("current turrent angle", getCurrentTurretAngle());
         turretPidController.updateTime(Timer.getFPGATimestamp());
         if (currentMode == Mode.PID) { //PID!!
             CANPIDController noah2 = shooterMotorMaster.getPIDController();
@@ -140,11 +141,7 @@ public class ShooterSubsystem {
     }
 
     public void setTurretSpeed(double speed) {
-        if (turretTicksToDegrees(Math.abs(turretMotor.getSelectedSensorPosition())) < MAX_TURRET_ROTATION_DEGREES) {
-            turretMotor.set(speed);
-        } else {
-            turretMotor.set(0);
-        }
+        turretMotor.set(speed);
     }
 
     public void turretPIDToGoalAngle() {
@@ -185,6 +182,15 @@ public class ShooterSubsystem {
     public void zeroTurretPosition() {
         turretMotor.setSelectedSensorPosition(0); 
     }
+
+    public double getAngleFromGoalAngle() {
+        return Math.abs(getCurrentTurretAngle() - goalAngle); 
+    }
+
+    public double getCurrentTurretAngle() {
+        return turretTicksToDegrees(turretMotor.getSelectedSensorPosition()); 
+    }
+ 
 }
 
 
