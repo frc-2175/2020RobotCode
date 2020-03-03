@@ -441,6 +441,7 @@ public class Robot extends TimedRobot {
     shooterSubsystem.periodic();
     climberSubsystem.periodic();
   }
+}
 
   /**
    * This function is called periodically during test mode.
@@ -452,3 +453,4 @@ public class Robot extends TimedRobot {
     //drivetrainSubsystem.orchestra.play();
   }
 }
+
