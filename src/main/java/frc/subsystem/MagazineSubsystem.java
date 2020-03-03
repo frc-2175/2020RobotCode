@@ -25,7 +25,7 @@ public class MagazineSubsystem {
         magazineMotor.set(0.87);   
     }
     
-    public void stopmagazine() {
+    public void stopMagazine() {
         magazineMotor.set(0);
     }
 
