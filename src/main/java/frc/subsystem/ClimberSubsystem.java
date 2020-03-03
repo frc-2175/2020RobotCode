@@ -34,7 +34,7 @@ public class ClimberSubsystem {
     } 
 
     public void deployDown() {
-        deployMotor.set(-.4);
+        deployMotor.set(-.2);
     }
 
     public void stopDeploy() {

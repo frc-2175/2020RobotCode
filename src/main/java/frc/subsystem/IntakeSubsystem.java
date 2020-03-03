@@ -50,10 +50,16 @@ public class IntakeSubsystem {
         intakeMotor.set(.5);
     }
 
+    /**
+     * sets intake position out (down)
+     */
     public void putOut() {
         intakePiston.set(DoubleSolenoid.Value.kForward);
     }
 
+    /**
+     * sets intake piston in (up)
+     */
     public void putIn() {
         intakePiston.set(DoubleSolenoid.Value.kReverse);
     }

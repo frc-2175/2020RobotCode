@@ -8,7 +8,7 @@ import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import com.ctre.phoenix.music.Orchestra;
+//import com.ctre.phoenix.music.Orchestra;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
@@ -60,7 +60,7 @@ public class DrivetrainSubsystem {
 	private static DifferentialDrive virtualRobotDrive;
 	private ArrayList<WPI_TalonFX> motorsCollection;
 	
-	public Orchestra orchestra;
+	//public Orchestra orchestra;
 	
 	
     public DrivetrainSubsystem() {
@@ -126,9 +126,9 @@ public class DrivetrainSubsystem {
 
 		purePursuitPID = new PIDController(0.015, 0, 0);
 
-		orchestra = new Orchestra();
-		orchestra.addInstrument(rightMaster);
-		orchestra.addInstrument(leftMaster);
+		// orchestra = new Orchestra();
+		// orchestra.addInstrument(rightMaster);
+		// orchestra.addInstrument(leftMaster);
 
 	}
 	
