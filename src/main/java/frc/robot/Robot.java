@@ -21,6 +21,7 @@ import frc.command.AutoFeedCommand;
 import frc.command.Command;
 import frc.command.CommandRunner;
 import frc.command.ParallelCommand;
+import frc.command.ParallelRaceCommand;
 import frc.command.RunWhileCommand;
 import frc.command.SequentialCommand;
 import frc.command.autonomous.AimTurretWithVisionCommand;
@@ -198,7 +199,7 @@ public class Robot extends TimedRobot {
 
     //drives forward and shoots
     SequentialCommand closeShotAuto = new SequentialCommand(new Command[] {
-      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115)),
+      deadline(5, new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115))),
       new RunWhileCommand(new ShootCommand(10, 2900), new AutoFeedCommand())
     });
 
@@ -214,6 +215,10 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Close Shot Auto", closeShotAuto);
     autoChooser.addOption("Right Trench Auto", rightToTrench);
     autoChooser.addOption("Middle Rendezvous Three Ball", middleRendezvousThreeBall);
+  }
+
+  public Command deadline(double duration, Command command) {
+    return new ParallelRaceCommand(new TimerCommand(duration), command);
   }
 
   /**
