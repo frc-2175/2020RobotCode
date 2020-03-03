@@ -383,12 +383,12 @@ public class Robot extends TimedRobot {
     //   shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(Math.pow(gamepad.getRawAxis(2), 2), .05)); // squared inputs babey!!!
     // }
     
-    if (rightJoystick.getRawButton(1)) {
-      if (rightJoystick.getRawButtonPressed(1)) {
+    if (gamepad.getRawButton(GAMEPAD_BACK)) {
+      if (gamepad.getRawButtonPressed(GAMEPAD_BACK)) {
         aimTurretWithVisionCommand.resetCommand();
       }
       aimTurretWithVisionCommand.runCommand();
-    } else if (rightJoystick.getRawButtonReleased(1)) {
+    } else if (gamepad.getRawButtonReleased(GAMEPAD_BACK)) {
       aimTurretWithVisionCommand.endCommand();
     } else {
       shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(Math.pow(gamepad.getRawAxis(2), 2), .05));
