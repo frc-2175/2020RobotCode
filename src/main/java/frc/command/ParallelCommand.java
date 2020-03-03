@@ -7,8 +7,8 @@ import frc.spacetime.SpacetimeEvent;
  * last of the commands in parallel has ended.
  */
 public class ParallelCommand extends Command {
-    private final Command[] commands;
-    private boolean[] hasEndRunYet;
+    protected final Command[] commands;
+    protected boolean[] hasEndRunYet;
 
     /**
      * @param commands an array of the commands to be run in parallel
