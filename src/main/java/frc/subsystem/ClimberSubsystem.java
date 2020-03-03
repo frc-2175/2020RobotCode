@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
+import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.ServiceLocator;
 import frc.info.RobotInfo;
@@ -14,6 +15,7 @@ public class ClimberSubsystem {
     private final RobotInfo robotInfo;
     private final WPI_TalonSRX deployMotor;
     private final WPI_VictorSPX climbMotor;
+    private final Solenoid deployRelease;
     public static final double CLIMBER_MAX_EXTENSION_ROTATIONS = 7.6595744;
 
     public ClimberSubsystem() {
@@ -23,6 +25,7 @@ public class ClimberSubsystem {
         deployMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
         climbMotor = new WPI_VictorSPX(5);
         deployMotor.setSelectedSensorPosition(0);
+        deployRelease = new Solenoid(4);
     }
 
     public void deployUp() {
@@ -35,6 +38,10 @@ public class ClimberSubsystem {
 
     public void deployDown() {
         deployMotor.set(-.2);
+    }
+
+    public void releaseDeployPiston() {
+        deployRelease.set(true);
     }
 
     public void stopDeploy() {

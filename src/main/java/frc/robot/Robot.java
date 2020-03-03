@@ -328,12 +328,12 @@ public class Robot extends TimedRobot {
 
     // ✩ auto shooting command ✩
     if( gamepad.getRawButton(GAMEPAD_X)) {
-      // if(gamepad.getRawButtonPressed(GAMEPAD_X)) {
-      //   teleopAutoShootCommand.resetCommand();
-      // }
-      // teleopAutoShootCommand.runCommand();
-      feederSubsystem.rollUp();
-      magazineSubsystem.magazineRollIn();
+      if(gamepad.getRawButtonPressed(GAMEPAD_X)) {
+        teleopAutoShootCommand.resetCommand();
+      }
+      teleopAutoShootCommand.runCommand();
+      // feederSubsystem.rollUp();
+      // magazineSubsystem.magazineRollIn();
     } else {
       teleopAutoShootCommand.endCommand();
 
@@ -414,6 +414,7 @@ public class Robot extends TimedRobot {
 
     //✩ deploying hook ✩
     if (gamepad.getPOV() == POV_UP) {
+      climberSubsystem.releaseDeployPiston();
       climberSubsystem.deployUp();
     } else if (gamepad.getPOV() == POV_DOWN) {
       climberSubsystem.deployDown();
@@ -450,7 +451,6 @@ public class Robot extends TimedRobot {
     shooterSubsystem.periodic();
     climberSubsystem.periodic();
   }
-}
 
   /**
    * This function is called periodically during test mode.
