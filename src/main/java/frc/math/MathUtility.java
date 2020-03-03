@@ -65,4 +65,8 @@ public class MathUtility {
 			return 0.0;
 		}
 	}
+
+	public static double squareInputs(double input) {
+		return Math.copySign(input * input, input); 
+	}
 }

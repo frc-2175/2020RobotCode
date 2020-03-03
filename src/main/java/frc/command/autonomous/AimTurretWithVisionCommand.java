@@ -1,6 +1,7 @@
 package frc.command.autonomous;
 
 import frc.command.Command;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.ServiceLocator;
 import frc.subsystem.ShooterSubsystem;
 import frc.subsystem.VisionSubsystem;
@@ -16,6 +17,7 @@ public class AimTurretWithVisionCommand extends Command {
 
     public void init() {
         shooterSubsystem.setGoalAngle(visionSubsystem.getLimelightHorizontalOffset());
+        SmartDashboard.putNumber("turret goal angle", visionSubsystem.getLimelightHorizontalOffset()); 
     }
 
     public void execute() {
@@ -23,10 +25,12 @@ public class AimTurretWithVisionCommand extends Command {
     }
 
     public boolean isFinished() {
-        return false; 
+        SmartDashboard.putNumber("angle from goal angle", shooterSubsystem.getAngleFromGoalAngle()); 
+       return shooterSubsystem.getAngleFromGoalAngle() < 1; 
     }
 
     public void end() {
+        visionSubsystem.turnLimelightOff();
         shooterSubsystem.setTurretSpeed(0);
     }
 

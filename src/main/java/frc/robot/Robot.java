@@ -21,12 +21,14 @@ import frc.command.AutoFeedCommand;
 import frc.command.Command;
 import frc.command.CommandRunner;
 import frc.command.ParallelCommand;
+import frc.command.ParallelRaceCommand;
 import frc.command.RunWhileCommand;
 import frc.command.SequentialCommand;
 import frc.command.autonomous.AimTurretWithVisionCommand;
 import frc.command.autonomous.DriveStraightCommand;
 import frc.command.autonomous.FollowPathCommand;
 import frc.command.autonomous.IntakeCommand;
+import frc.command.autonomous.LimelightOnCommand;
 import frc.command.autonomous.ShootCommand;
 import frc.command.autonomous.TimerCommand;
 import frc.command.autonomous.TurningDegreesCommand;
@@ -198,7 +200,7 @@ public class Robot extends TimedRobot {
 
     //drives forward and shoots
     SequentialCommand closeShotAuto = new SequentialCommand(new Command[] {
-      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115)),
+      deadline(5, new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115))),
       new RunWhileCommand(new ShootCommand(10, 2900), new AutoFeedCommand())
     });
 
@@ -214,6 +216,10 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Close Shot Auto", closeShotAuto);
     autoChooser.addOption("Right Trench Auto", rightToTrench);
     autoChooser.addOption("Middle Rendezvous Three Ball", middleRendezvousThreeBall);
+  }
+
+  public Command deadline(double duration, Command command) {
+    return new ParallelRaceCommand(new TimerCommand(duration), command);
   }
 
   /**
@@ -262,8 +268,10 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopInit() {
+    visionSubsystem.turnLimelightOff();
+    SequentialCommand limelightAimSequence = new SequentialCommand(new LimelightOnCommand(0.1), new AimTurretWithVisionCommand());
     teleopAutoShootCommand = new CommandRunner(new AutoFeedCommand());
-    aimTurretWithVisionCommand = new CommandRunner(new AimTurretWithVisionCommand());
+    aimTurretWithVisionCommand = new CommandRunner(limelightAimSequence);
     shooterSubsystem.updateTurretPIDConstants();
   }
 
@@ -298,6 +306,7 @@ public class Robot extends TimedRobot {
     if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER) || leftJoystick.getRawButton(2)) {
       magazineSubsystem.magazineRollOut();
       intakeSubsystem.intakeRollOut();
+    }
     if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER) || rightJoystick.getRawButton(2)) {
       intakeSubsystem.intakeRollIn();
       magazineSubsystem.magazineRollIn();
@@ -391,9 +400,9 @@ public class Robot extends TimedRobot {
     } else if (gamepad.getRawButtonReleased(GAMEPAD_BACK)) {
       aimTurretWithVisionCommand.endCommand();
     } else {
-      shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(Math.pow(gamepad.getRawAxis(2), 2), .05));
+      shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(MathUtility.squareInputs(gamepad.getRawAxis(2)), .05));
     }
-
+   
     // ✩ climbing subsystem ✩
     if (gamepad.getRawButton(GAMEPAD_START)) {
       climberSubsystem.climbUp();
@@ -441,6 +450,7 @@ public class Robot extends TimedRobot {
     shooterSubsystem.periodic();
     climberSubsystem.periodic();
   }
+}
 
   /**
    * This function is called periodically during test mode.
@@ -448,7 +458,9 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     drivetrainSubsystem.resetTracking();
+    visionSubsystem.turnLimelightOn();
     //drivetrainSubsystem.orchestra.loadMusic("careless-whisper.chrp");
     //drivetrainSubsystem.orchestra.play();
   }
 }
+
