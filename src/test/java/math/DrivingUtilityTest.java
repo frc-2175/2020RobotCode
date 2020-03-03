@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 
 import frc.math.DrivingUtility;
+import frc.math.DrivingUtility.Path;
 import frc.math.Vector;
 
 public class DrivingUtilityTest {
@@ -82,7 +83,7 @@ public class DrivingUtilityTest {
 
     @Test
     public void testMakePath() {
-        Vector[] path = DrivingUtility.makePath(false, 0, new Vector(0, 0), 
+        Path path = DrivingUtility.makePath(false, 0, new Vector(0, 0), 
             new DrivingUtility.PathSegment(-90, new Vector[] {
                 new Vector(0, 0),
                 new Vector(0, 1),
@@ -99,6 +100,10 @@ public class DrivingUtilityTest {
                 new Vector(0, 2)
             })
         );
+        Vector[] actualPath = new Vector[path.numberOfActualPoints];
+        for(int i = 0; i < actualPath.length; i++) {
+            actualPath[i] = path.path[i];
+        }
 
         assertArrayEquals(
             new Vector[] {
@@ -112,7 +117,7 @@ public class DrivingUtilityTest {
                 new Vector(2, 3),
                 new Vector(2, 4),
             }
-        , path);
+        , actualPath);
     }
 
 }
