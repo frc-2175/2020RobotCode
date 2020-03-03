@@ -15,6 +15,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.command.AutoFeedCommand;
 import frc.command.Command;
@@ -115,6 +116,7 @@ public class Robot extends TimedRobot {
   String finalThingy;
   private double initialGyroAngleForVision;
   private double initialTurretOffset;
+  private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   /**
    * This function is run when the robot is first started up and should be
@@ -145,6 +147,71 @@ public class Robot extends TimedRobot {
       new LogField("ExampleSmartDashboard", 2175, Logger.SMART_DASHBOARD_TAG));
     propertyDirectory = Filesystem.getDeployDirectory();
     finalThingy = propertyDirectory.getAbsolutePath();
+
+    SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(36))
+    });
+
+    SequentialCommand crossAutoLineBackwardsCommand = new SequentialCommand(new Command[] {
+      new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(36))
+    });
+
+    SequentialCommand doNothing = new SequentialCommand();
+
+     /*
+    Start on the right side, shoot three balls
+    Intake two balls from trench, and shoot
+    */
+    SequentialCommand rightToTrench = new SequentialCommand(new Command[] {
+      //Change all the "123", make robot in line with the trench
+      //new AimCommand
+      new ShootCommand(4, 4000),
+      new ParallelCommand(new Command[] { 
+        new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(60.0)), //change later
+        new IntakeCommand(5)
+      }),
+      //new TurretCommand
+      //new AimCommand
+      new ShootCommand(12, 4000)
+    });
+    
+    /*
+    Start in middle, shoot three balls
+    Intake three balls from rendezvous, and shoot
+    */
+    SequentialCommand middleRendezvousThreeBall = new SequentialCommand(new Command[] {
+      //Change all the "123", and angle robot towards the three balls
+      //new AimCommand
+      new ShootCommand(4, 4000),
+      new ParallelCommand(new Command[] { 
+        //new DriveStraightCommand(123, .5)
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(36)), 
+      new IntakeCommand(4) //3 balls
+      }),
+        //new DriveBackwardCommand(123)
+      new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(36)), 
+      //new AimCommand
+      new ShootCommand(9, 4000)
+    });
+
+    //drives forward and shoots
+    SequentialCommand closeShotAuto = new SequentialCommand(new Command[] {
+      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115)),
+      new RunWhileCommand(new ShootCommand(10, 2900), new AutoFeedCommand())
+    });
+
+    SequentialCommand farShotAuto = new SequentialCommand(new Command[] {
+      new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(10)),
+      new RunWhileCommand(new ShootCommand(10, 3500), new AutoFeedCommand())
+    });
+
+    autoChooser.setDefaultOption("Do Nothing", doNothing);
+    autoChooser.addOption("Cross Auto Line Forwards", crossAutoLineCommand);
+    autoChooser.addOption("Cross Auto Line Backwards", crossAutoLineBackwardsCommand);
+    autoChooser.addOption("Far Shot Auto", farShotAuto);
+    autoChooser.addOption("Close Shot Auto", closeShotAuto);
+    autoChooser.addOption("Right Trench Auto", rightToTrench);
+    autoChooser.addOption("Middle Rendezvous Three Ball", middleRendezvousThreeBall);
   }
 
   /**
@@ -177,132 +244,7 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    SequentialCommand crossAutoLineCommand = new SequentialCommand(new Command[] {
-      new DriveStraightCommand(4, .6)
-    });
-
-     /*
-    Start on the right side, shoot three balls
-    Intake two balls from trench, and shoot
-    */
-    SequentialCommand rightToTrench = new SequentialCommand(new Command[] {
-      //Change all the "123", make robot in line with the trench
-      //new AimCommand
-      new ShootCommand(4, 4000),
-      new ParallelCommand(new Command[] { 
-        new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(60.0)), //change later
-        new IntakeCommand(5)
-      }),
-      //new TurretCommand
-      //new AimCommand
-      new ShootCommand(12, 4000)
-    });
-
-    /*
-    Start on the right side, shoot three balls
-    Intake five balls from rendezvous, and shoot
-    */
-    SequentialCommand rightToRendezvous = new SequentialCommand(new Command[] {
-      //Change all the "123", make robot face rendezvous area before match
-      //new AimCommand
-      new ShootCommand(123, 1),
-      new ParallelCommand(new Command[] { 
-        new DriveStraightCommand(123, .5), //change later
-        new IntakeCommand(123)
-      }),
-      new TurningDegreesCommand(123),
-      new ParallelCommand(new Command[] { 
-        new DriveStraightCommand(123, .5), //change later
-        new IntakeCommand(123)
-      }),
-      //new AimCommand
-      new ShootCommand(123, 1)
-    });
-    
-    /*
-    Start in middle, shoot three balls
-    Intake three balls from rendezvous, and shoot
-    */
-    SequentialCommand middleRendezvousThreeBall = new SequentialCommand(new Command[] {
-      //Change all the "123", and angle robot towards the three balls
-      //new AimCommand
-      new ShootCommand(4, 4000),
-      new ParallelCommand(new Command[] { 
-        //new DriveStraightCommand(123, .5)
-      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(36)), 
-      new IntakeCommand(4) //3 balls
-      }),
-        //new DriveBackwardCommand(123)
-      new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(36)), 
-      //new AimCommand
-      new ShootCommand(9, 4000)
-    });
-
-    /*
-    Start in middle, shoot three balls
-    Intake all five balls from rendezvous point, and shoot
-    */
-    SequentialCommand middleRendezvousFiveBall = new SequentialCommand(new Command[] {
-      //Change all the "123", and angle robot towards the three balls
-      //new AimCommand
-      new ShootCommand(123, 4000),
-      new ParallelCommand(new Command[] { 
-        new DriveStraightCommand(123, .5), //change later
-        new IntakeCommand(123) //5 balls
-      }),
-      //new AimCommand
-      new ShootCommand(123, 4000)
-    });
-
-    /*
-    Start on left side w/ three balls
-    Drive into opp. side trench, intake two balls
-    Drive out of trench into middle area, and shoot
-    */
-    SequentialCommand leftTrench = new SequentialCommand(new Command[] {
-       //face two balls in oposite trench
-       //change 123
-       new ParallelCommand(new Command[] { 
-        new FollowPathCommand(false, 
-        DrivingUtility.makeLinePathSegment(36)
-        ),  
-        new IntakeCommand(4)
-      }),
-        new FollowPathCommand(true, 
-        DrivingUtility.makeLinePathSegment(24), 
-        DrivingUtility.makeLeftArcPathSegment(24, 80),
-        DrivingUtility.makeLinePathSegment(60)
-      ), //out of trench
-      //new AimCommand TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      new RunWhileCommand(new TimerCommand(123), new AutoFeedCommand())
-    });
-
-    FollowPathCommand purePursuit = new FollowPathCommand( false, 
-      DrivingUtility.makeLinePathSegment(29), //2 feet ish
-      DrivingUtility.makeLeftArcPathSegment(33, 90), //33 r
-      DrivingUtility.makeRightArcPathSegment(33, 90), //33 r
-      DrivingUtility.makeLinePathSegment(222) //252
-    );
-    FollowPathCommand purePursuit2 = new FollowPathCommand( true, 
-    DrivingUtility.makeLinePathSegment(29), //2 feet ish
-    DrivingUtility.makeLeftArcPathSegment(33, 90), //33 r
-    DrivingUtility.makeRightArcPathSegment(33, 90), //33 r
-    DrivingUtility.makeLinePathSegment(20) //252
-    );
-
-    //drives forward and shoots
-    SequentialCommand closeShotAuto = new SequentialCommand(new Command[] {
-      new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115)),
-      new RunWhileCommand(new ShootCommand(10, 2900), new AutoFeedCommand())
-    });
-
-    SequentialCommand farShotAuto = new SequentialCommand(new Command[] {
-      new FollowPathCommand(true, DrivingUtility.makeLinePathSegment(10)),
-      new RunWhileCommand(new ShootCommand(10, 3500), new AutoFeedCommand())
-    });
-
-
-    autonomousCommand = new CommandRunner(closeShotAuto); //INSERT COMMAND TO RUN HERE!!!!!!!!!!!!!!!!!
+    autonomousCommand = new CommandRunner(autoChooser.getSelected());
   } //29 + 66 / 2 + 252
 
   /**
