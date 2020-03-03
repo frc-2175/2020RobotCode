@@ -414,7 +414,6 @@ public class Robot extends TimedRobot {
 
     //✩ deploying hook ✩
     if (gamepad.getPOV() == POV_UP) {
-      climberSubsystem.releaseDeployPiston();
       climberSubsystem.deployUp();
     } else if (gamepad.getPOV() == POV_DOWN) {
       climberSubsystem.deployDown();
