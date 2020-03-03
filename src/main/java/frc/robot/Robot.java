@@ -330,12 +330,10 @@ public class Robot extends TimedRobot {
 
     // ✩ auto shooting command ✩
     if( gamepad.getRawButton(GAMEPAD_X)) {
-      // if(gamepad.getRawButtonPressed(GAMEPAD_X)) {
-      //   teleopAutoShootCommand.resetCommand();
-      // }
-      // teleopAutoShootCommand.runCommand();
-      feederSubsystem.rollUp();
-      magazineSubsystem.magazineRollIn();
+      if(gamepad.getRawButtonPressed(GAMEPAD_X)) {
+        teleopAutoShootCommand.resetCommand();
+      }
+      teleopAutoShootCommand.runCommand();
     } else {
       teleopAutoShootCommand.endCommand();
 
