@@ -241,6 +241,12 @@ public class Robot extends TimedRobot {
     logger.info("Robot program is disabled and ready.");
   }
 
+  @Override 
+  public void disabledPeriodic() {
+    super.disabledPeriodic();
+    visionSubsystem.turnLimelightOff();
+  }
+
   /**
    * This autonomous (along with the chooser code above) shows how to select
    * between different autonomous modes using the dashboard. The sendable

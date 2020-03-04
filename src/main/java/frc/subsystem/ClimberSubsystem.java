@@ -1,6 +1,7 @@
 package frc.subsystem;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
@@ -23,15 +24,16 @@ public class ClimberSubsystem {
         deployMotor = new WPI_TalonSRX(6);
         deployMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
         climbMotor = new WPI_VictorSPX(5);
+        deployMotor.setNeutralMode(NeutralMode.Brake);
         deployMotor.setSelectedSensorPosition(0);
     }
 
     public void deployUp() {
-        deployMotor.set(0.4);
+        deployMotor.set(0.2);
     } 
 
     public void deployDown() {
-        deployMotor.set(-.2);
+        deployMotor.set(-.5);
     }
 
     public void stopDeploy() {

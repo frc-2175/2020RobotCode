@@ -11,6 +11,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 //import com.ctre.phoenix.music.Orchestra;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.SpeedController;
@@ -54,6 +55,8 @@ public class DrivetrainSubsystem {
 
 	private SpeedControllerGroup leftMotors;
 	private SpeedControllerGroup rightMotors;
+
+	double currentSpeed;
 
 	private static VirtualSpeedController leftVirtualSpeedController = new VirtualSpeedController();
 	private static VirtualSpeedController rightVirtualSpeedController = new VirtualSpeedController();
@@ -187,8 +190,19 @@ public class DrivetrainSubsystem {
 	 * @param zRotation the curvature to drive/the in-place rotation
 	 * @see #getBlendedMotorValues(double, double)
 	 */
-	public void blendedDrive(double xSpeed, double zRotation, double inputThreshold) {
-		double[] blendedValues = getBlendedMotorValues(xSpeed, zRotation, inputThreshold);
+	public void blendedDrive(double desiredSpeed, double rotation, double inputThreshold) {
+		double MAX_SPEED_TIME = .5; //change this to change reaction itme!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		double MAX_CHANGE_PER_TICK = 1.0 / ( MAX_SPEED_TIME * 50.0);
+		double change = desiredSpeed - currentSpeed;
+		if((currentSpeed > 0 && change < 0 ) || (currentSpeed < 0 && change > 0)) {
+			if(change > MAX_CHANGE_PER_TICK) {
+				change = MAX_CHANGE_PER_TICK;
+			} else if( change < -MAX_CHANGE_PER_TICK) {
+				change = -MAX_CHANGE_PER_TICK;
+			}
+		}
+		currentSpeed += change;
+		double[] blendedValues = getBlendedMotorValues(currentSpeed, rotation, inputThreshold);
 		SmartDashboard.putNumber("blended values 1", blendedValues[0]);
 		SmartDashboard.putNumber("blended values 2", blendedValues[1]);
 		robotDrive.tankDrive(blendedValues[0], blendedValues[1]);
