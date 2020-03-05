@@ -71,4 +71,12 @@ public class ParallelCommandTest {
         assertTrue("command 2 didn't finish", testCommand2.isFinished());
     }
 
+    @Test
+	public void testEmpty() {
+		 ParallelCommand parralellommand = new ParallelCommand();
+		parralellommand.init();
+		parralellommand.execute();
+		assertTrue(parralellommand.isFinished());
+		parralellommand.end();
+	}
 }

@@ -15,7 +15,7 @@ public class ClimberSubsystem {
 
     private final RobotInfo robotInfo;
     private final WPI_TalonSRX deployMotor;
-    private final WPI_VictorSPX climbMotor;
+    private final WPI_VictorSPX winchMotor;
     public static final double CLIMBER_MAX_EXTENSION_ROTATIONS = 7.6595744;
 
     public ClimberSubsystem() {
@@ -23,9 +23,10 @@ public class ClimberSubsystem {
         robotInfo = ServiceLocator.get(RobotInfo.class);
         deployMotor = new WPI_TalonSRX(6);
         deployMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
-        climbMotor = new WPI_VictorSPX(5);
+        winchMotor = new WPI_VictorSPX(5);
         deployMotor.setNeutralMode(NeutralMode.Brake);
         deployMotor.setSelectedSensorPosition(0);
+        winchMotor.setInverted(true);
     }
 
     public void deployUp() {
@@ -40,16 +41,22 @@ public class ClimberSubsystem {
         deployMotor.set(0);
     }
 
+    /**
+     * use winch to climb up !!!!
+     */
     public void climbUp() {
-        climbMotor.set(1);
+        winchMotor.set(1);
     }
 
+    /**
+     * use winch to climb down !!!!
+     */
     public void climbDown() {
-        climbMotor.set(-1);
+        winchMotor.set(-1);
     }
 
     public void stopClimbing() {
-        climbMotor.set(0);
+        winchMotor.set(0);
     }
 
     public void periodic() {

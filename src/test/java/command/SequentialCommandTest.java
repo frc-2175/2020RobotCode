@@ -70,5 +70,16 @@ public class SequentialCommandTest {
 		seqCommand.execute();
 		assertTrue("Second command did not end", testCommand2.getHasEnded());
 		assertTrue("Second command did not finish", testCommand2.isFinished());
+
+		seqCommand.end();
+	}
+
+	@Test
+	public void testEmpty() {
+		SequentialCommand sequentialommand = new SequentialCommand();
+		sequentialommand.init();
+		sequentialommand.execute();
+		assertTrue(sequentialommand.isFinished());
+		sequentialommand.end();
 	}
 }

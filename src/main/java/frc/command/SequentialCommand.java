@@ -53,7 +53,9 @@ public class SequentialCommand extends Command {
     }
 
     public void end() {
-        commands[commands.length - 1]._end();
+        if(commands.length != 0) {
+            commands[commands.length - 1]._end();            
+        }
 	}
 
 	@Override

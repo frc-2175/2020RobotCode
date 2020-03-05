@@ -60,4 +60,13 @@ public class ParallelRaceCommandTest {
         assertTrue("command 2 didn't end", testCommand2.getHasEnded());
     }
 
+    @Test
+	public void testEmpty() {
+		ParallelRaceCommand parrallelraceommand = new ParallelRaceCommand();
+		parrallelraceommand.init();
+		parrallelraceommand.execute();
+		assertTrue(parrallelraceommand.isFinished());
+		parrallelraceommand.end();
+	}
+
 }
