@@ -51,7 +51,7 @@ public class DrivetrainSubsystem {
 	public Solenoid gearsSolenoid;
 	public static final double TICKS_TO_INCHES = 112.0/182931.0;
 	private Vector position = new Vector(0, 0); 
-	private PIDController purePursuitPID; 
+	private PIDController purePursuitPID;
 
 	private SpeedControllerGroup leftMotors;
 	private SpeedControllerGroup rightMotors;
@@ -190,18 +190,22 @@ public class DrivetrainSubsystem {
 	 * @param zRotation the curvature to drive/the in-place rotation
 	 * @see #getBlendedMotorValues(double, double)
 	 */
-	public void blendedDrive(double desiredSpeed, double rotation, double inputThreshold) {
-		double MAX_SPEED_TIME = .5; //change this to change reaction itme!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-		double MAX_CHANGE_PER_TICK = 1.0 / ( MAX_SPEED_TIME * 50.0);
-		double change = desiredSpeed - currentSpeed;
-		if((currentSpeed > 0 && change < 0 ) || (currentSpeed < 0 && change > 0)) {
-			if(change > MAX_CHANGE_PER_TICK) {
-				change = MAX_CHANGE_PER_TICK;
-			} else if( change < -MAX_CHANGE_PER_TICK) {
-				change = -MAX_CHANGE_PER_TICK;
+	public void blendedDrive(double desiredSpeed, double rotation, double inputThreshold, boolean speedSmoothing) {
+		if (speedSmoothing) {
+			double MAX_SPEED_TIME = .5; //change this to change reaction itme!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			double MAX_CHANGE_PER_TICK = 1.0 / ( MAX_SPEED_TIME * 50.0);
+			double change = desiredSpeed - currentSpeed;
+			if((currentSpeed > 0 && change < 0 ) || (currentSpeed < 0 && change > 0)) {
+				if(change > MAX_CHANGE_PER_TICK) {
+					change = MAX_CHANGE_PER_TICK;
+				} else if (change < -MAX_CHANGE_PER_TICK) {
+					change = -MAX_CHANGE_PER_TICK;
+				}
 			}
+			currentSpeed += change;
+		} else {
+			currentSpeed = desiredSpeed; 
 		}
-		currentSpeed += change;
 		double[] blendedValues = getBlendedMotorValues(currentSpeed, rotation, inputThreshold);
 		SmartDashboard.putNumber("blended values 1", blendedValues[0]);
 		SmartDashboard.putNumber("blended values 2", blendedValues[1]);
@@ -215,8 +219,8 @@ public class DrivetrainSubsystem {
 	 * @param xSpeed the forward/backward speed for the robot
 	 * @param zRotation the curvature to drive/the in-place rotation
 	 */
-	public void blendedDrive(double xSpeed, double zRotation) {
-		blendedDrive(xSpeed, zRotation, INPUT_THRESHOLD);
+	public void blendedDrive(double xSpeed, double zRotation, boolean speedSmoothing) {
+		blendedDrive(xSpeed, zRotation, INPUT_THRESHOLD, speedSmoothing);
 	}
 
 	// TODO(medium): We should move clamp and lerp to a MathUtils class or something. (done) There are now three different subsystems that each have their own definition of clamp, and Robot has its own definition of deadband.
@@ -345,10 +349,9 @@ public class DrivetrainSubsystem {
 		double speed = DrivingUtility.getTrapezoidSpeed(0.3, 0.75, 0.2, pathResult.path.length, 6, 10, indexOfClosestPoint);
 
 		if(isBackwards) {
-			blendedDrive(-speed, -turnValue);
+			blendedDrive(-speed, -turnValue, false);
 		} else {
-
-			blendedDrive(speed, turnValue);
+			blendedDrive(speed, turnValue, false);
 		}
 		
 

@@ -24,14 +24,10 @@ import frc.command.ParallelCommand;
 import frc.command.ParallelRaceCommand;
 import frc.command.RunWhileCommand;
 import frc.command.SequentialCommand;
-import frc.command.autonomous.AimTurretWithVisionCommand;
-import frc.command.autonomous.DriveStraightCommand;
 import frc.command.autonomous.FollowPathCommand;
 import frc.command.autonomous.IntakeCommand;
-import frc.command.autonomous.LimelightOnCommand;
 import frc.command.autonomous.ShootCommand;
 import frc.command.autonomous.TimerCommand;
-import frc.command.autonomous.TurningDegreesCommand;
 import frc.info.RobotInfo;
 import frc.logging.JSONHandler;
 import frc.logging.LogField;
@@ -92,6 +88,7 @@ public class Robot extends TimedRobot {
   (x)     (b)
       (a)
   */
+  public static final int JOYSTICK_TRIGGER = 1; 
   public static final int GAMEPAD_X = 1;
 	public static final int GAMEPAD_A = 2;
 	public static final int GAMEPAD_B = 3;
@@ -114,14 +111,14 @@ public class Robot extends TimedRobot {
 	public static final int POV_LEFT = 270;
   public static final int POV_UP_LEFT = 315;
 
-  public static final int CLOSE_SHOT_RPM = 3000;
+  public static final String CLOSE_SHOT_RPM_NAME = "Close Shot RPM";
+  public static final String AUTO_DELAY_TIME_NAME = "Auto delay time";
+
   
 
   public static final double topSpeed = 1;
   File propertyDirectory;
   String finalThingy;
-  private double initialGyroAngleForVision;
-  private double initialTurretOffset;
   private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
   /**
@@ -146,6 +143,8 @@ public class Robot extends TimedRobot {
     visionSubsystem = new VisionSubsystem();
 
     SmartDashboard.putNumber("shooter flywheel manual speed", .5);
+    SmartDashboard.putNumber(CLOSE_SHOT_RPM_NAME, 3000);
+    SmartDashboard.putNumber(AUTO_DELAY_TIME_NAME, 0);
     
 
     // Example use of robot logging with SmartDashboard
@@ -199,11 +198,24 @@ public class Robot extends TimedRobot {
       //new AimCommand
       new ShootCommand(9, 4000)
     });
-
+    // cout << "Hi from Yiannis";
     //drives forward and shoots
     SequentialCommand closeShotAuto = new SequentialCommand(new Command[] {
       deadline(5, new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115))),
-      new RunWhileCommand(new ShootCommand(10, CLOSE_SHOT_RPM), new AutoFeedCommand())
+      new RunWhileCommand(new ShootCommand(10, SmartDashboard.getNumber(CLOSE_SHOT_RPM_NAME, 3000)), new AutoFeedCommand())
+    });
+
+    SequentialCommand closeShotAutoTowardsTrench = new SequentialCommand(new Command[] {
+      deadline(4, new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115))),
+      new RunWhileCommand(new ShootCommand(6, SmartDashboard.getNumber(CLOSE_SHOT_RPM_NAME, 3000)), new AutoFeedCommand()), 
+      deadline(5, new FollowPathCommand(true, DrivingUtility.makeLeftArcPathSegment(24, 90), DrivingUtility.makeLinePathSegment(36))), 
+
+    });
+
+    SequentialCommand closeShotAutoAwayFromTrench = new SequentialCommand(new Command[] {
+      deadline(4, new FollowPathCommand(false, DrivingUtility.makeLinePathSegment(115))),
+      new RunWhileCommand(new ShootCommand(6, SmartDashboard.getNumber(CLOSE_SHOT_RPM_NAME, 3000)), new AutoFeedCommand()),
+      deadline(5, new FollowPathCommand(true, DrivingUtility.makeLeftArcPathSegment(24, 90), DrivingUtility.makeLinePathSegment(24))),
     });
 
     SequentialCommand farShotAuto = new SequentialCommand(new Command[] {
@@ -218,6 +230,10 @@ public class Robot extends TimedRobot {
     autoChooser.addOption("Close Shot Auto", closeShotAuto);
     autoChooser.addOption("Right Trench Auto", rightToTrench);
     autoChooser.addOption("Middle Rendezvous Three Ball", middleRendezvousThreeBall);
+    autoChooser.addOption("Close Shot Auto Towards Trench", closeShotAutoTowardsTrench); 
+    autoChooser.addOption("Close Shot Auto Away From Trench", closeShotAutoAwayFromTrench); 
+
+    SmartDashboard.putData(autoChooser);
   }
 
   public Command deadline(double duration, Command command) {
@@ -260,7 +276,12 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void autonomousInit() {
-    autonomousCommand = new CommandRunner(autoChooser.getSelected());
+    autonomousCommand = new CommandRunner(
+      new SequentialCommand(
+        new TimerCommand(SmartDashboard.getNumber(AUTO_DELAY_TIME_NAME, 0)),
+        autoChooser.getSelected()
+      )
+    );
   } //29 + 66 / 2 + 252
 
   /**
@@ -277,9 +298,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopInit() {
     visionSubsystem.turnLimelightOff();
-    SequentialCommand limelightAimSequence = new SequentialCommand(new LimelightOnCommand(0.1), new AimTurretWithVisionCommand());
     teleopAutoShootCommand = new CommandRunner(new AutoFeedCommand());
-    aimTurretWithVisionCommand = new CommandRunner(limelightAimSequence);
     shooterSubsystem.updateTurretPIDConstants();
   }
 
@@ -314,8 +333,7 @@ public class Robot extends TimedRobot {
     if(gamepad.getRawButton(GAMEPAD_RIGHT_BUMPER) || leftJoystick.getRawButton(2)) {
       magazineSubsystem.magazineRollOut();
       intakeSubsystem.intakeRollOut();
-    }
-    if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER) || rightJoystick.getRawButton(2)) {
+    } else if (gamepad.getRawButton(GAMEPAD_RIGHT_TRIGGER) || rightJoystick.getRawButton(2)) {
       intakeSubsystem.intakeRollIn();
       magazineSubsystem.magazineRollIn();
     } else {
@@ -363,21 +381,15 @@ public class Robot extends TimedRobot {
     }
     
     // ✩ shooter flywheel ✩
-    if( gamepad.getRawButtonPressed(GAMEPAD_LEFT_TRIGGER) || gamepad.getRawButtonPressed(GAMEPAD_LEFT_BUMPER)) {
-      aimTurretWithVisionCommand.resetCommand();
-    } else if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
-      shooterSubsystem.setTargetSpeed(CLOSE_SHOT_RPM);
+    if (gamepad.getRawButton(GAMEPAD_LEFT_TRIGGER)) {
+      shooterSubsystem.setTargetSpeed(SmartDashboard.getNumber(CLOSE_SHOT_RPM_NAME, 3000));
       shooterSubsystem.setMode(Mode.BangBang);
-      aimTurretWithVisionCommand.runCommand();
     } else if (gamepad.getRawButton(GAMEPAD_LEFT_BUMPER)) {
       shooterSubsystem.setTargetSpeed(SmartDashboard.getNumber("speed goal()rpm??" , 4500));
       shooterSubsystem.setMode(Mode.BangBang);
-      aimTurretWithVisionCommand.runCommand();
     //} else if (gamepad.getPOV() == POV_DOWN) {
       //shooterSubsystem.setMode(Mode.Manual);
       //shooterSubsystem.setManualSpeed(SmartDashboard.getNumber("shooter flywheel manual speed", .5)); 
-    } else if (gamepad.getRawButtonReleased(GAMEPAD_LEFT_TRIGGER) || gamepad.getRawButtonReleased(GAMEPAD_RIGHT_BUMPER)) {
-      aimTurretWithVisionCommand.endCommand();
     } else {
       shooterSubsystem.setMode(Mode.Manual);
       shooterSubsystem.setManualSpeed(0);
@@ -398,16 +410,7 @@ public class Robot extends TimedRobot {
     //   shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(Math.pow(gamepad.getRawAxis(2), 2), .05)); // squared inputs babey!!!
     // }
     
-    if (gamepad.getRawButton(GAMEPAD_BACK)) {
-      if (gamepad.getRawButtonPressed(GAMEPAD_BACK)) {
-        aimTurretWithVisionCommand.resetCommand();
-      }
-      aimTurretWithVisionCommand.runCommand();
-    } else if (gamepad.getRawButtonReleased(GAMEPAD_BACK)) {
-      aimTurretWithVisionCommand.endCommand();
-    } else {
-      shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(MathUtility.squareInputs(gamepad.getRawAxis(2)), .05));
-    }
+    shooterSubsystem.setTurretSpeed(0.5 * MathUtility.deadband(MathUtility.squareInputs(gamepad.getRawAxis(2)), .05)); 
    
     // ✩ climbing subsystem ✩
     if (gamepad.getRawButton(GAMEPAD_START)) {
@@ -441,15 +444,15 @@ public class Robot extends TimedRobot {
     //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), (rightJoystick.getX() * Math.abs( rightJoystick.getX() ) )*.5); //squared * .5
     //drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX() * .5); //linear * .5
     if(drivetrainSubsystem.gearsSolenoid.get()) {
-      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX()*.5); //ok actual linear but turning * .5
+      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX()*.5, !rightJoystick.getRawButton(JOYSTICK_TRIGGER)); //ok actual linear but turning * .5 (press button to get out of smoothing!)
     } else {
-      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX()); //ok actual linear
+      drivetrainSubsystem.blendedDrive(-leftJoystick.getY(), rightJoystick.getX(), !rightJoystick.getRawButton(JOYSTICK_TRIGGER)); //ok actual linear
     }
     
     
 
     // ✩ changing gears ✩
-    drivetrainSubsystem.setGear(leftJoystick.getRawButton(1)); //press and hold code
+    drivetrainSubsystem.setGear(leftJoystick.getRawButton(JOYSTICK_TRIGGER)); //press and hold code
     
     //✩✩✩ you have reached the end of teleop periodic !!!!!!!!!! : ) ✩✩✩
     drivetrainSubsystem.periodic();

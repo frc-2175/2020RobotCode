@@ -26,11 +26,12 @@ public class ClimberSubsystem {
         winchMotor = new WPI_VictorSPX(5);
         deployMotor.setNeutralMode(NeutralMode.Brake);
         deployMotor.setSelectedSensorPosition(0);
+        deployMotor.setInverted(true);
         winchMotor.setInverted(true);
     }
 
     public void deployUp() {
-        deployMotor.set(0.2);
+        deployMotor.set(1.0);
     } 
 
     public void deployDown() {
