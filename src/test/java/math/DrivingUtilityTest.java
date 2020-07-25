@@ -1,3 +1,5 @@
+package math;
+
 import static org.hamcrest.Matchers.closeTo;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
