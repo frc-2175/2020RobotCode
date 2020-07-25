@@ -1,7 +1,10 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2020.3.2"
+    id "com.github.umorigu.gradle-git-repo-plugin" version "1.0.1"
 }
+
+apply plugin: "com.github.umorigu.gradle-git-repo-plugin"
 
 sourceCompatibility = JavaVersion.VERSION_11
 targetCompatibility = JavaVersion.VERSION_11
@@ -9,7 +12,7 @@ targetCompatibility = JavaVersion.VERSION_11
 def ROBOT_MAIN_CLASS = "frc.robot.Main"
 
 repositories {
-    mavenLocal()
+    github("frc-2175", "maven-repo", "master", "releases")
 }
 
 // Define my targets (RoboRIO) and artifacts (deployable files)
